@@ -1,0 +1,11 @@
+# VASP OUTCAR file
+
+# Output of the VASP job
+
+...
+
+reached required accuracy - stopping structural energy minimisation
+
+...
+
+# End of the VASP job

@@ -1,0 +1,10 @@
+# VASP INCAR file
+
+ISTART = 0
+ICHARG = 2
+
+# Other parameters
+
+ENCUT = 500
+EDIFF = 1E-6
+ISMEAR = 0
