@@ -19,6 +19,8 @@ func main() {
     }
     defer outcarFile.Close()
 
+    
+
     // Check if the OUTCAR file contains the "reached required accuracy" string
     scanner := bufio.NewScanner(outcarFile)
     reachedRequiredAccuracy := false
