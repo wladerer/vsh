@@ -94,3 +94,19 @@ function restartVasp {
     echo "The INCAR file has been updated to restart the job(s)"
 
 }
+
+
+function sendFile {
+
+	echo `pwd`$1
+
+}
+
+function clearDirectory {
+	
+	# remove all files in the vasp directory other than the INCAR, POTCAR, KPOINTS and POSCAR files
+	echo "Clearing directory..."
+
+	ls | grep -v 'INCAR\|POTCAR\|KPOINTS\|POSCAR\*.pbs\*.sh' | xargs rm 
+
+}
