@@ -13,14 +13,14 @@ function nbands {
 }
 
 
-function updateINCAR {
+function updateTag {
         tag=$1
         value=$2
         sed "s/${tag}.*/${tag} = ${value}/g" ./INCAR
         sed -i "s/${tag}.*/${tag} = ${value}/g" ./INCAR
 }
 
-function converged {
+function isConverged {
 
         # a script to check uf a job has converged
         # has an optional flag to check all subdirectories in the current directory ( -d )
@@ -49,7 +49,7 @@ function converged {
         done
 }
 
-function restart_vasp {
+function restartVasp {
 
         # check if the -d flag is set
         if [[ "$1" == "-d" ]]; then
