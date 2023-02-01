@@ -95,18 +95,79 @@ function restartVasp {
 
 }
 
-
 function sendFile {
 
-	echo `pwd`$1
+    echo $(pwd)$1
 
 }
 
-function clearDirectory {
-	
-	# remove all files in the vasp directory other than the INCAR, POTCAR, KPOINTS and POSCAR files
-	echo "Clearing directory..."
+# function clearDirectory {
 
-	ls | grep -v 'INCAR\|POTCAR\|KPOINTS\|POSCAR\*.pbs\*.sh' | xargs rm 
+#     # remove all files in the vasp directory other than the INCAR, POTCAR, KPOINTS and POSCAR files
+#     echo "Clearing directory..."
+
+#     ls | grep -v
+
+# }
+
+function scfSteps {
+
+    #if $1 is empty, then assume $1=./OUTCAR
+
+    if [ -z "$1" ]; then
+        outcar=./OUTCAR
+    else
+        outcar=$1
+    fi
+
+    i=1
+    while read line; do
+      echo $i $(grep TOTEN $outcar | awk -v i=$i '{print $(NF-1)}') >> scf.dat
+      i=$((i+1))
+    done 
+
+    echo "The scf.dat file has been created"
+}
+
+function dirSub {
+
+    #submits a job to the queue with the name of the current directory
+
+    #if $1 is empty, then alert the user that a submission script is required
+
+    if [ -z "$1" ]; then
+        echo "A submission script is required"
+        exit
+    fi
+
+    qsub -N ${PWD##*/} $1
+}
+
+function duplicateDir {
+
+    # $1 is the path of the directory to be copied
+    # $2 is the name/path of the new directory
+    # there is an optional flag to copy the POSCAR instead of the CONTCAR
+
+    # check if the -p flag is set
+    files=("KPOINTS" "INCAR" "POTCAR")
+    if [[ "$1" == "-p" ]]; then
+        cp "$2/POSCAR" "$3/"
+
+        for file in "${files[@]}"; do
+            cp "$2/$file" "$3/"
+        done
+
+    else
+
+        cp "$1/CONTCAR" "$2/POSCAR"
+        for file in "${files[@]}"; do
+            cp "$1/$file" "$2/"
+        done
+
+        echo "NOTE: CONTCAR has been copied to the POSCAR in the new directory"
+        echo "NOTE: If you would like to copy the POSCAR instead, use the -p flag"
+
+    fi
 
 }
