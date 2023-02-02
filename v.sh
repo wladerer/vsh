@@ -12,6 +12,42 @@ function getNbands {
     grep NBANDS $outcar | awk -F " " '{print $NF}'
 }
 
+function getNatoms {
+
+    #if $1 is empty, then assume $1=./
+
+    if [ -z "$1" ]; then
+        outcar=./OUTCAR
+    else
+        outcar=$1
+    fi
+    grep NIONS $outcar | awk -F " " '{print $NF}'
+}
+
+function getEfermi {
+
+    #if $1 is empty, then assume $1=./
+
+    if [ -z "$1" ]; then
+        outcar=./OUTCAR
+    else
+        outcar=$1
+    fi
+    grep E-fermi $outcar | awk -F " " '{print $NF}'
+}
+
+function getElements {
+
+    # if $1 is empty, then assume $1=./OUTCAR
+    poscar=${1:-./POSCAR}
+
+    # combine the two lines to get the element list
+    sed -n 5p $poscar | awk -F " " '{print $0}' && sed -n 6p $poscar | awk -F " " '{print $0}'
+
+
+}
+
+
 function updateTag {
 
     # check if the $1 or $2 variables are the incar file
