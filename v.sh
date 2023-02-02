@@ -222,19 +222,12 @@ function createPotcar {
         return 1
     fi
 
-    potcar=""
-    while [ $# -gt 0 ]; do
-       
-        potfile=$(find "$VASP_POTENTIAL_DIRECTORY" -wholename "$1/POTCAR" -print -quit)
-        
-        if [ ! -f "$potfile" ]; then
-            echo "Error: POTCAR file for $1 not found in $VASP_POTENTIAL_DIRECTORY."
+    for atom in "$@"; do
+        potcar="$VASP_POTENTIAL_DIRECTORY/$atom/POTCAR"
+        if [ ! -f "$potcar" ]; then
+            echo "POTCAR for $atom not found."
             return 1
         fi
-        potcar="$potcar$(cat $potfile)\n"
-        shift
+        cat "$potcar"
+    
     done
-
-    echo -e "$potcar" >POTCAR
-
-}
