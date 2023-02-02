@@ -228,7 +228,7 @@ function createPotcar {
             echo "POTCAR for $atom not found."
             return 1
         fi
-        cat "$potcar"
+        cat "$potcar" >> POTCAR
     
     done
 }
