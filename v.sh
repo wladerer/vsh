@@ -157,6 +157,45 @@ function trackSCF {
     echo "The scf.dat file has been created"
 }
 
+function visualizeSCF {
+
+    # if step i+1 - step i is + , print /, if - print \, if 0 print --
+    # if $1 is empty, then assume $1=./OUTCAR
+    outcar=${1:-./OUTCAR}
+
+    #get the number of SCF cycles
+    nscf=$(grep -c "TOTEN" $outcar)
+
+    #use nscf as a counter for the rows
+    for ((i = 1; i <= nscf; i++)); do
+
+        #skip the first and last SCF cycles
+        if [[ $i -eq 1 ]] || [[ $i -eq $nscf ]]; then
+            continue
+        fi
+
+        #get the energy for each SCF cycle
+        energy=$(grep -m $i "TOTEN" $outcar | tail -n 1 | awk -F " " '{print $(NF-1)}')
+
+        #get the energy for the previous SCF cycle
+        energy_prev=$(grep -m $((i - 1)) "TOTEN" $outcar | tail -n 1 | awk -F " " '{print $(NF-1)}')
+
+        #calculate the difference between the two energies
+        energy_diff=$(echo "$energy - $energy_prev" | bc)
+
+        #print the difference
+        if (( $(echo "$energy_diff > 0" | bc -l) )); then
+            echo -ne "/\r"
+        elif (( $(echo "$energy_diff < 0" | bc -l) )); then
+            echo -ne "\\\r"
+        else
+            echo -ne "--\r"
+        fi
+
+    done
+
+}
+
 function submitJob {
 
     #submits a job to the queue with the name of the current directory
