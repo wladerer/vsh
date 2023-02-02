@@ -150,8 +150,10 @@ function trackSCF {
 
     i=1
     while read -r line; do
-        if  [ grep TOTEN $line ] ; then
-            data=$(awk -v i="$i" '{print i, $(NF-1)}')
+        #check if the line contains TOTEN
+
+        if grep -q "TOTEN" <<<"$line"; then
+            data=$(awk -v i="$i" '{print i, $(NF-1)}' <<<"$line")
             echo "$data" >>scf.dat
             i=$((i + 1))
         fi
