@@ -189,24 +189,26 @@ function visualizeSCF {
 
         #if the difference is positive, print a backslash
         if (( $(echo "$diff > 0" | bc -l) )); then
-            printf "%*s\\
+            
+            #print the number of spaces equal to the current SCF cycle and a backslash
+            printf "%${i}s\\
 
-" $i " "
+" ""
+
+        #if the difference is negative, print a forward slash
+        elif (( $(echo "$diff < 0" | bc -l) )); then
+
+            #print the number of spaces equal to the current SCF cycle and a forward slash
+            printf "%${i}s/
+
+" ""
     
-            #if the difference is negative, print a forward slash
-            elif (( $(echo "$diff < 0" | bc -l) )); then
-                printf "%*s/
-
-" $((i - 1)) " "
-        
-                    #if the difference is zero, print a dash
-                    else
-                        printf "%*s-- 
-
-" $i " "
-        fi
-    done
-
+            #if the difference is zero, print a dash
+            else
+    
+                #print the number of spaces equal to the current SCF cycle and a dash
+                printf "%${i}s-- 
+                " ""
 
 
 }
