@@ -147,19 +147,20 @@ function sendFile {
 function trackSCF {
     # if $1 is empty, then assume $1=./OUTCAR
     outcar=${1:-./OUTCAR}
-    i=1
-    while IFS= read -r line; do
-        # check if the line starts with TOTEN
-        if [[ "$line" = TOTEN* ]]; then
-            # use awk to extract the data and write to the file
-            awk -v i="$i" '{print i, $(NF-1)}' <<<"$line" >>scf.dat
-            i=$((i + 1))
+    #get the number of SCF cycles
+    nscf=$(grep -c "TOTEN" $outcar)
 
-            #update a progress bar
-            echo "Progress: $i"
+    #use nscf as a counter for the rows
+    for ((i = 1; i <= nscf; i++)); do
+        #get the energy for each SCF cycle
+        energy=$(sed -n "${i}p" $outcar | awk -F " " '{print $5}')
+        #add the iteration number and energy to the scf.dat file
+        echo "$i $energy" >>scf.dat
 
-        fi
-    done <"$outcar"
+        #upate a progress bar
+        echo -ne "SCF cycles completed: $i/$nscf\r"
+
+    done
 
     echo "The scf.dat file has been created"
 }
