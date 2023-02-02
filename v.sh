@@ -42,7 +42,7 @@ function getElements {
     poscar=${1:-./POSCAR}
 
     # combine the two lines to get the element list
-    sed -n 5p $poscar | awk -F " " '{print $0}' && sed -n 6p $poscar | awk -F " " '{print $0}'
+    sed -n 6p $poscar | awk -F " " '{print $0}' && sed -n 7p $poscar | awk -F " " '{print $0}'
 
 
 }
