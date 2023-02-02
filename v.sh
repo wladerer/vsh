@@ -225,7 +225,7 @@ function createPotcar {
     potcar=""
     while [ $# -gt 0 ]; do
        
-        potfile=$(find "$VASP_POTENTIAL_DIRECTORY" -name "$1/POTCAR" -print -quit)
+        potfile=$(find "$VASP_POTENTIAL_DIRECTORY" -wholename "$1/POTCAR" -print -quit)
         
         if [ ! -f "$potfile" ]; then
             echo "Error: POTCAR file for $1 not found in $VASP_POTENTIAL_DIRECTORY."
