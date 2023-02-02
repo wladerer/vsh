@@ -44,9 +44,7 @@ function getElements {
     # combine the two lines to get the element list
     sed -n 6p $poscar | awk -F " " '{print $0}' && sed -n 7p $poscar | awk -F " " '{print $0}'
 
-
 }
-
 
 function updateTag {
 
@@ -152,7 +150,7 @@ function trackSCF {
 
     i=1
     while read -r line; do
-        if [[ $line =~ TOTEN ]]; then
+        if  [[ grep TOTEN $line ]] ; then
             data=$(awk -v i="$i" '{print i, $(NF-1)}')
             echo "$data" >>scf.dat
             i=$((i + 1))
@@ -264,7 +262,7 @@ function createPotcar {
             echo "POTCAR for $atom not found."
             return 1
         fi
-        cat "$potcar" >> POTCAR
-    
+        cat "$potcar" >>POTCAR
+
     done
 }
