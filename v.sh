@@ -179,7 +179,7 @@ function summarizeOutcar {
     echo "Final total charge (e): $(grep 'number of electrons' $outcar | tail -1 | awk '{print $8}')"
 }
 
-function createKPOINTS {
+function createKpoints {
     mode=gamma
     while [ $# -gt 0 ]; do
         case "$1" in
@@ -194,7 +194,7 @@ function createKPOINTS {
     done
 
     if [ $# -ne 3 ]; then
-        echo "Usage: createKPOINTS [-m] k_x k_y k_z"
+        echo "Usage: createKpoints [-m] k_x k_y k_z"
         return 1
     fi
 
@@ -212,27 +212,29 @@ function createKPOINTS {
 
 function createPotcar {
 
-  if [ -z "$VASP_POTENTIAL_DIRECTORY" ]; then
-    echo "VASP_POTENTIAL_DIRECTORY is not set."
-    return 1
-  fi
-
-  if [ $# -lt 1 ]; then
-    echo "Usage: createPOTCAR atom1 [atom2 ...]"
-    return 1
-  fi
-
-  potcar=""
-  while [ $# -gt 0 ]; do
-    potfile="$VASP_POTENTIAL_DIRECTORY/$(echo $1 | tr '[:lower:]' '[:upper:]')/POTCAR"
-    if [ ! -f "$potfile" ]; then
-      echo "Error: POTCAR file for $1 not found in $VASP_POTENTIAL_DIRECTORY."
-      return 1
+    if [ -z "$VASP_POTENTIAL_DIRECTORY" ]; then
+        echo "VASP_POTENTIAL_DIRECTORY is not set."
+        return 1
     fi
-    potcar="$potcar$(cat $potfile)\n"
-    shift
-  done
 
-  echo -e "$potcar" > POTCAR
-  
+    if [ $# -lt 1 ]; then
+        echo "Usage: createPOTCAR atom1 [atom2 ...]"
+        return 1
+    fi
+
+    potcar=""
+    while [ $# -gt 0 ]; do
+       
+        potfile=$(find "$VASP_POTENTIAL_DIRECTORY" -name "$1/POTCAR" -print -quit)
+        
+        if [ ! -f "$potfile" ]; then
+            echo "Error: POTCAR file for $1 not found in $VASP_POTENTIAL_DIRECTORY."
+            return 1
+        fi
+        potcar="$potcar$(cat $potfile)\n"
+        shift
+    done
+
+    echo -e "$potcar" >POTCAR
+
 }
