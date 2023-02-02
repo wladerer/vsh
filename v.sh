@@ -159,9 +159,13 @@ function trackSCF {
 
 function visualizeSCF {
 
-    # if step i+1 - step i is + , print /, if - print \, if 0 print --
     # if $1 is empty, then assume $1=./OUTCAR
     outcar=${1:-./OUTCAR}
+
+    # if scf step i+1 - step i is + , print i+1 spaces, \ , and a new line
+    # if scf step i+1 - step i is - , print i-1 spaces, / , and a new line 
+    # if scf step i+1 - step i is 0 , print i spaces, - , and a new line
+
 
     #get the number of SCF cycles
     nscf=$(grep -c "TOTEN" $outcar)
@@ -178,21 +182,32 @@ function visualizeSCF {
         energy=$(grep -m $i "TOTEN" $outcar | tail -n 1 | awk -F " " '{print $(NF-1)}')
 
         #get the energy for the previous SCF cycle
-        energy_prev=$(grep -m $((i - 1)) "TOTEN" $outcar | tail -n 1 | awk -F " " '{print $(NF-1)}')
+        prev_energy=$(grep -m $((i - 1)) "TOTEN" $outcar | tail -n 1 | awk -F " " '{print $(NF-1)}')
 
-        #calculate the difference between the two energies
-        energy_diff=$(echo "$energy - $energy_prev" | bc)
+        #get the difference between the current and previous SCF cycles
+        diff=$(echo "$energy - $prev_energy" | bc)
 
-        #print the difference
-        if (( $(echo "$energy_diff > 0" | bc -l) )); then
-            echo -ne "/\r"
-        elif (( $(echo "$energy_diff < 0" | bc -l) )); then
-            echo -ne "\\\r"
-        else
-            echo -ne "--\r"
+        #if the difference is positive, print a backslash
+        if (( $(echo "$diff > 0" | bc -l) )); then
+            printf "%*s\\
+
+" $i " "
+    
+            #if the difference is negative, print a forward slash
+            elif (( $(echo "$diff < 0" | bc -l) )); then
+                printf "%*s/
+
+" $((i - 1)) " "
+        
+                    #if the difference is zero, print a dash
+                    else
+                        printf "%*s-- 
+
+" $i " "
         fi
-
     done
+
+
 
 }
 
