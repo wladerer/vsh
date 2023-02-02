@@ -154,6 +154,10 @@ function trackSCF {
             # use awk to extract the data and write to the file
             awk -v i="$i" '{print i, $(NF-1)}' <<<"$line" >>scf.dat
             i=$((i + 1))
+
+            #update a progress bar
+            echo -ne "Progress: $i\r"
+
         fi
     done <"$outcar"
 
