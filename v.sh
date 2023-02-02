@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function nbands {
+function getNbands {
 
     #if $1 is empty, then assume $1=./
 
@@ -110,26 +110,23 @@ function sendFile {
 
 # }
 
-function scfSteps {
-
-    #if $1 is empty, then assume $1=./OUTCAR
-
-    if [ -z "$1" ]; then
-        outcar=./OUTCAR
-    else
-        outcar=$1
-    fi
+function trackSCF {
+    # if $1 is empty, then assume $1=./OUTCAR
+    outcar=${1:-./OUTCAR}
 
     i=1
-    while read line; do
-        echo $i $(grep TOTEN $outcar | awk -v i=$i '{print $(NF-1)} \n') >> scf.dat
-        i=$((i + 1))
-    done
+    while read -r line; do
+        if [[ $line =~ TOTEN ]]; then
+            data=$(awk -v i="$i" '{print i, $(NF-1)}')
+            echo "$data" >>scf.dat
+            i=$((i + 1))
+        fi
+    done <"$outcar"
 
     echo "The scf.dat file has been created"
 }
 
-function dirSub {
+function submitJob {
 
     #submits a job to the queue with the name of the current directory
 
