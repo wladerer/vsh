@@ -162,10 +162,6 @@ function visualizeSCF {
     # if $1 is empty, then assume $1=./OUTCAR
     outcar=${1:-./OUTCAR}
 
-    # if scf step i+1 - step i is + , print i+1 spaces, \ , and a new line
-    # if scf step i+1 - step i is - , print i-1 spaces, / , and a new line 
-    # if scf step i+1 - step i is 0 , print i spaces, - , and a new line
-
 
     #get the number of SCF cycles
     nscf=$(grep -c "TOTEN" $outcar)
@@ -187,29 +183,14 @@ function visualizeSCF {
         #get the difference between the current and previous SCF cycles
         diff=$(echo "$energy - $prev_energy" | bc)
 
-        #if the difference is positive, print a backslash
+        #if the difference is positive, print an arrow pointing up and vice versa
         if (( $(echo "$diff > 0" | bc -l) )); then
-            
-            #print the number of spaces equal to the current SCF cycle and a backslash
-            printf "%${i}s\\
+            echo -e "$i \e[1;32m▲\e[0m"
+        else
+            echo -e "$i \e[1;31m▼\e[0m"
+        fi
 
-" ""
-
-        #if the difference is negative, print a forward slash
-        elif (( $(echo "$diff < 0" | bc -l) )); then
-
-            #print the number of spaces equal to the current SCF cycle and a forward slash
-            printf "%${i}s/
-
-" ""
-    
-            #if the difference is zero, print a dash
-            else
-    
-                #print the number of spaces equal to the current SCF cycle and a dash
-                printf "%${i}s-- 
-                " ""
-
+    done
 
 }
 
