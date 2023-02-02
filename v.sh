@@ -147,14 +147,12 @@ function sendFile {
 function trackSCF {
     # if $1 is empty, then assume $1=./OUTCAR
     outcar=${1:-./OUTCAR}
-
     i=1
-    while read -r line; do
-        #check if the line contains TOTEN
-
-        if grep -q "TOTEN" <<<"$line"; then
-            data=$(awk -v i="$i" '{print i, $(NF-1)}' <<<"$line")
-            echo "$data" >>scf.dat
+    while IFS= read -r line; do
+        # check if the line starts with TOTEN
+        if [[ "$line" = TOTEN* ]]; then
+            # use awk to extract the data and write to the file
+            awk -v i="$i" '{print i, $(NF-1)}' <<<"$line" >>scf.dat
             i=$((i + 1))
         fi
     done <"$outcar"
