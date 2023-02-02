@@ -231,3 +231,4 @@ function createPotcar {
         cat "$potcar"
     
     done
+}
