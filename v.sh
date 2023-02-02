@@ -54,7 +54,6 @@ function updateTag {
 
     if [[ "$1" == *"INCAR"* ]]; then
         echo "The order of arguments is \n updateTag tag value INCAR_file"
-        exit
     fi
 
     tag=$1
@@ -202,7 +201,6 @@ function submitJob {
 
     if [ -z "$1" ]; then
         echo "A submission script is required"
-        exit
     fi
 
     qsub -N ${PWD##*/} $1
@@ -303,16 +301,15 @@ function createPotcar {
 
 function createIncar {
 
-# These are the default env variables found in the .vshrc file
-  #  INCAR_BULK_GEOPT_LOW
-  #  INCAR_BULK_GEOPT_MED
-  #  INCAR_BULK_GEOPT_HIGH
-  #  INCAR_SLAB_GEOPT_LOW
-  #  INCAR_SLAB_GEOPT_MED
-  #  INCAR_SLAB_GEOPT_HIGH
-  #  INCAR_SPIN_ORBIT
-  #  INCAR_BAND_STRUCTURE
-
+    # These are the default env variables found in the .vshrc file
+    #  INCAR_BULK_GEOPT_LOW
+    #  INCAR_BULK_GEOPT_MED
+    #  INCAR_BULK_GEOPT_HIGH
+    #  INCAR_SLAB_GEOPT_LOW
+    #  INCAR_SLAB_GEOPT_MED
+    #  INCAR_SLAB_GEOPT_HIGH
+    #  INCAR_SPIN_ORBIT
+    #  INCAR_BAND_STRUCTURE
 
     if [ $# -lt 1 ]; then
         echo "Usage: createIncar [-b|-s] [low|med|high]"
