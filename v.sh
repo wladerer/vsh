@@ -156,7 +156,7 @@ function trackSCF {
             i=$((i + 1))
 
             #update a progress bar
-            echo -ne "Progress: $i\r"
+            echo -ne "Progress: $i\n"
 
         fi
     done <"$outcar"
