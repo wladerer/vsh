@@ -122,9 +122,9 @@ function scfSteps {
 
     i=1
     while read line; do
-      echo $i $(grep TOTEN $outcar | awk -v i=$i '{print $(NF-1)}') >> scf.dat
-      i=$((i+1))
-    done 
+        echo $i $(grep TOTEN $outcar | awk -v i=$i '{print $(NF-1)} \n') >> scf.dat
+        i=$((i + 1))
+    done
 
     echo "The scf.dat file has been created"
 }
