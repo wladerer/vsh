@@ -145,7 +145,7 @@ function trackSCF {
     #use nscf as a counter for the rows
     for ((i = 1; i <= nscf; i++)); do
         #get the energy for each SCF cycle
-        energy=$(grep -m $i "TOTEN" $outcar | tail -n 1 | awk -F " " '{print $NF-1}')
+        energy=$(grep -m $i "TOTEN" $outcar | tail -n 1 | awk -F " " '{print $(NF-1)}')
         #add the iteration number and energy to the scf.dat file
         echo "$i $energy" >>scf.dat
 
