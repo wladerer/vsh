@@ -135,7 +135,6 @@ function sendFile {
 
 }
 
-
 function trackSCF {
     # if $1 is empty, then assume $1=./OUTCAR
     outcar=${1:-./OUTCAR}
@@ -162,7 +161,6 @@ function visualizeSCF {
     # if $1 is empty, then assume $1=./OUTCAR
     outcar=${1:-./OUTCAR}
 
-
     #get the number of SCF cycles
     nscf=$(grep -c "TOTEN" $outcar)
 
@@ -184,9 +182,9 @@ function visualizeSCF {
         diff=$(echo "$energy - $prev_energy" | bc)
 
         #if the difference is positive, print an arrow pointing up and vice versa, if the difference is 0 then print a horizontal line
-        if (( $(echo "$diff > 0" | bc -l) )); then
+        if (($(echo "$diff > 0" | bc -l))); then
             echo -e "$i \e[32m▲\e[0m"
-        elif (( $(echo "$diff < 0" | bc -l) )); then
+        elif (($(echo "$diff < 0" | bc -l))); then
             echo -e "$i \e[31m▼\e[0m"
         else
             echo -e "$i \e[34m─\e[0m"
@@ -301,4 +299,89 @@ function createPotcar {
         cat "$potcar" >>POTCAR
 
     done
+}
+
+function createIncar {
+
+# These are the default env variables found in the .vshrc file
+  #  INCAR_BULK_GEOPT_LOW
+  #  INCAR_BULK_GEOPT_MED
+  #  INCAR_BULK_GEOPT_HIGH
+  #  INCAR_SLAB_GEOPT_LOW
+  #  INCAR_SLAB_GEOPT_MED
+  #  INCAR_SLAB_GEOPT_HIGH
+  #  INCAR_SPIN_ORBIT
+  #  INCAR_BAND_STRUCTURE
+
+
+    if [ $# -lt 1 ]; then
+        echo "Usage: createIncar [-b|-s] [low|med|high]"
+        return 1
+    fi
+
+    if [ "$1" == "-b" ]; then
+        if [ "$2" == "low" ]; then
+            cp "$INCAR_BULK_GEOPT_LOW" INCAR
+        elif [ "$2" == "med" ]; then
+            cp "$INCAR_BULK_GEOPT_MED" INCAR
+        elif [ "$2" == "high" ]; then
+            cp "$INCAR_BULK_GEOPT_HIGH" INCAR
+        else
+            cp "$INCAR_BULK_GEOPT_MED" INCAR
+        fi
+    elif [ "$1" == "-s" ]; then
+        if [ "$2" == "low" ]; then
+            cp "$INCAR_SLAB_GEOPT_LOW" INCAR
+        elif [ "$2" == "med" ]; then
+            cp "$INCAR_SLAB_GEOPT_MED" INCAR
+        elif [ "$2" == "high" ]; then
+            cp "$INCAR_SLAB_GEOPT_HIGH" INCAR
+        else
+            cp "$INCAR_SLAB_GEOPT_MED" INCAR
+        fi
+    else
+        echo "Usage: createIncar [-b|-s] [low|med|high]"
+        return 1
+    fi
+
+}
+
+function validateIncar {
+
+    # $1 is the path to the INCAR file, if $1 is empty, then assume $1=./INCAR
+    incar=${1:-./INCAR}
+    #checks if each INCAR tag exists in $VSHDIR/incar_tags.txt
+    #if it does not, then it is printed to the screen
+
+    #check if the INCAR file exists
+    if [ ! -f "$incar" ]; then
+        echo "INCAR file not found"
+        return 1
+    fi
+
+    #check if the incar_tags.txt file exists
+    if [ ! -f "$VSHDIR/incar_tags.txt" ]; then
+        echo "incar_tags.txt file not found"
+        return 1
+    fi
+
+    #check if the incar_tags.txt file is empty
+    if [ ! -s "$VSHDIR/incar_tags.txt" ]; then
+        echo "incar_tags.txt file is empty"
+        return 1
+    fi
+
+    #check if the INCAR file is empty
+    if [ ! -s "$incar" ]; then
+        echo "INCAR file is empty"
+        return 1
+    fi
+
+    #check if each tag in the INCAR file is in the incar_tags.txt file
+    while read tag; do
+        if ! grep -q "$tag" "$incar"; then
+            echo "$tag not found in INCAR file"
+        fi
+    done <"$VSHDIR/incar_tags.txt"
+
 }
