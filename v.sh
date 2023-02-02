@@ -183,11 +183,13 @@ function visualizeSCF {
         #get the difference between the current and previous SCF cycles
         diff=$(echo "$energy - $prev_energy" | bc)
 
-        #if the difference is positive, print an arrow pointing up and vice versa
+        #if the difference is positive, print an arrow pointing up and vice versa, if the difference is 0 then print a horizontal line
         if (( $(echo "$diff > 0" | bc -l) )); then
-            echo -e "$i \e[1;32m▲\e[0m"
+            echo -e "$i \e[32m▲\e[0m"
+        elif (( $(echo "$diff < 0" | bc -l) )); then
+            echo -e "$i \e[31m▼\e[0m"
         else
-            echo -e "$i \e[1;31m▼\e[0m"
+            echo -e "$i \e[34m─\e[0m"
         fi
 
     done
