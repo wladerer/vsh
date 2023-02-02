@@ -135,14 +135,6 @@ function sendFile {
 
 }
 
-# function clearDirectory {
-
-#     # remove all files in the vasp directory other than the INCAR, POTCAR, KPOINTS and POSCAR files
-#     echo "Clearing directory..."
-
-#     ls | grep -v
-
-# }
 
 function trackSCF {
     # if $1 is empty, then assume $1=./OUTCAR
@@ -153,7 +145,7 @@ function trackSCF {
     #use nscf as a counter for the rows
     for ((i = 1; i <= nscf; i++)); do
         #get the energy for each SCF cycle
-        energy=$(sed -n "${i}p" $outcar | awk -F " " '{print $5}')
+        energy=$(grep -m $i "TOTEN" $outcar | tail -n 1 | awk -F " " '{print $NF}')
         #add the iteration number and energy to the scf.dat file
         echo "$i $energy" >>scf.dat
 
