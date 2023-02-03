@@ -3,7 +3,7 @@ Command line utilities for interacting with VASP
 
 ***
 
-#### getNbands
+#### `getNbands`
 Function to extract the number of bands from an OUTCAR file.
 
 ###### Input
@@ -15,7 +15,7 @@ Function to extract the number of bands from an OUTCAR file.
 
 The function outputs the number of bands present in the OUTCAR file.
 
-#### getNatoms
+#### `getNatoms`
 Function to extract the number of atoms from an OUTCAR file.
 
 ###### Input
@@ -27,7 +27,7 @@ Function to extract the number of atoms from an OUTCAR file.
 
 The function outputs the number of atoms present in the OUTCAR file.
 
-#### getEfermi
+#### `getEfermi`
 Function to extract the Fermi energy from an OUTCAR file.
 
 ###### Input
@@ -39,7 +39,7 @@ Function to extract the Fermi energy from an OUTCAR file.
 
 The function outputs the Fermi energy from the OUTCAR file.
 
-#### getElements
+#### `getElements`
 Function to extract the list of elements from a POSCAR file.
 
 ###### Input
@@ -51,7 +51,7 @@ Function to extract the list of elements from a POSCAR file.
 
 The function outputs the list of elements in the POSCAR file.
 
-#### updateTag
+#### `updateTag`
 Function to update a tag in an INCAR file.
 
 ###### Input
@@ -65,7 +65,7 @@ Function to update a tag in an INCAR file.
 
 The function updates the tag in the INCAR file.
 
-#### isConverged
+#### `isConverged`
 Function to check if a VASP job has converged.
 
 ###### Input
