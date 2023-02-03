@@ -1,4 +1,4 @@
-## vsh
+# vsh
 Command line utilities for interacting with VASP
 
 #### getNbands
@@ -92,7 +92,7 @@ The function updates the INCAR file in each directory to restart the VASP job.
 
 
 
-#### Configuration
+### Configuration
 
 Firstly, update your ~/.bashrc so that the VSHDIR environment variable is set. A configure.sh script has been provided to update your ~/.bashrc so that it knows to source both the v.sh (where all functions are stored) and the vsh/.vshrc file where specific environment variables are set (e.g path to potential files, default incars, and other important defaults).
 
