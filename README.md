@@ -1,6 +1,8 @@
 # vsh
 Command line utilities for interacting with VASP
 
+***
+
 #### getNbands
 Function to extract the number of bands from an OUTCAR file.
 
@@ -76,7 +78,7 @@ Function to check if a VASP job has converged.
 
 The function outputs the directories that have converged, with the message "Directory has converged."
 
-#### restartVasp
+#### `restartVasp`
 Function to restart a VASP job.
 
 ###### Input
@@ -90,7 +92,7 @@ Function to restart a VASP job.
 The function updates the INCAR file in each directory to restart the VASP job.
 
 
-
+***
 
 ### Configuration
 
