@@ -130,7 +130,7 @@ function restartVasp {
 
 function sendFile {
 
-    echo $(pwd)$1
+    echo $(pwd)/$1
 
 }
 
