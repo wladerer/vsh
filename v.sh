@@ -114,7 +114,7 @@ function restartVasp {
     # update the INCAR file to restart the job, but ignore all dirs in the finished_job_dirs array
     for dir in "${subdirs[@]}"; do
         if [[ ! " ${finished_job_dirs[@]} " =~ " ${dir} " ]]; then
-            cd "$dir" || exit
+            cd "$dir" 
             sed 's/ISTART = 1/ISTART = 0/g' INCAR
             sed 's/ICHARG = 2/ICHARG = 1/g' INCAR
             sed -i 's/ISTART = 1/ISTART = 0/g' INCAR
@@ -239,10 +239,10 @@ function summarizeOutcar {
     # if $1 is empty, then assume $1=./OUTCAR
     outcar=${1:-./OUTCAR}
 
-    echo "Number of ionic steps: $(grep -c 'Iteration' $outcar)"
-    echo "Final energy (eV): $(grep 'FREE ENERGIE' $outcar | tail -1 | awk '{print $5}')"
-    echo "Final total energy (eV): $(grep 'TOTAL ENERGIE' $outcar | tail -1 | awk '{print $4}')"
-    echo "Final total charge (e): $(grep 'number of electrons' $outcar | tail -1 | awk '{print $8}')"
+    echo "Number of steps: $(grep -c 'Iteration' $outcar)"
+    echo "Ionic Steps: $(grep -a Iteration OUTCAR | tail -1 | awk '{print $3}' | tr -d '(' )"
+    echo "Final Energy: $(grep -a TOTEN $outcar | tail -1 | awk '{print $5}')" \(eV\)
+    echo "Total Drift (x, y, z): $(grep -a drift $outcar | tail -1 | awk '{print $3 , $4 , $5}' )" 
 }
 
 function createKpoints {
