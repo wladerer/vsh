@@ -393,6 +393,7 @@ function testKpoints {
     #check if $1 is a directory, if not, assume current directory
     if [ ! -d "$1" ]; then
         echo "Directory not found"
+        echo "Usage: testKpoints directory number_of_directories increment"
         return 1
     fi
 
@@ -400,6 +401,7 @@ function testKpoints {
 
     if ! [[ "$2" =~ ^[0-9]+$ ]]; then
         echo "Not a number"
+        echo "Usage: testKpoints directory number_of_directories increment"
         return 1
     fi
 
@@ -417,6 +419,7 @@ function testKpoints {
 
     if ! [[ "$3" =~ ^[0-9]+$ ]]; then
         echo "Not a number"
+        echo "Usage: testKpoints directory number_of_directories increment"
         return 1
     fi
 
