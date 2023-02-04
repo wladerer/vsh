@@ -382,3 +382,58 @@ function validateIncar {
     done <"$VSHDIR/incar_tags.txt"
 
 }
+
+function testKpoints {
+
+    #takes a directory, $1, and pulls the kpoints from the KPOINTS file
+    #number of new directories to create, $2
+    #increments the kpoints by $3
+    #creates a new directory with new kpoints and adds existing INCAR, POTCAR, and POSCAR to the new directories 
+
+    #check if $1 is a directory, if not, assume current directory
+    if [ ! -d "$1" ]; then
+        echo "Directory not found"
+        return 1
+    fi
+
+    #check if $2 is a number, if not, assume 1
+
+    if ! [[ "$2" =~ ^[0-9]+$ ]]; then
+        echo "Not a number"
+        return 1
+    fi
+
+    #check if $1/KPOINTS exists
+
+    if [ ! -f "$1/KPOINTS" ]; then
+        echo "KPOINTS file not found"
+        return 1
+    fi
+
+    #get the kpoints from the KPOINTS file
+    kpoints=$(grep -a "kpoints" "$1/KPOINTS" | awk '{print $1, $2, $3}')
+
+    #check if $3 is a number, if not, assume 3
+
+    if ! [[ "$3" =~ ^[0-9]+$ ]]; then
+        echo "Not a number"
+        return 1
+    fi
+
+    #create the new directories
+
+    for ((i = 1; i <= $2; i++)); do
+        mkdir "$1/kpoints_$i"
+        cp "$1/INCAR" "$1/kpoints_$i"
+        cp "$1/POTCAR" "$1/kpoints_$i"
+        cp "$1/POSCAR" "$1/kpoints_$i"
+        echo "Automatic mesh" >"$1/kpoints_$i/KPOINTS"
+        echo "mesh" >>"$1/kpoints_$i/KPOINTS"
+        echo "0" >>"$1/kpoints_$i/KPOINTS"
+        echo "$kpoints" >>"$1/kpoints_$i/KPOINTS"
+        echo "0 0 0" >>"$1/kpoints_$i/KPOINTS"
+        kpoints=$(($kpoints + $3))
+    done
+    
+
+}
