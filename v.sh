@@ -427,11 +427,10 @@ function testKpoints {
         cp "$1/INCAR" "$1/kpoints_$i"
         cp "$1/POTCAR" "$1/kpoints_$i"
         cp "$1/POSCAR" "$1/kpoints_$i"
-        echo "Automatic mesh" >"$1/kpoints_$i/KPOINTS"
-        echo "mesh" >>"$1/kpoints_$i/KPOINTS"
+        echo "Kpoint Testing File" >"$1/kpoints_$i/KPOINTS"
         echo "0" >>"$1/kpoints_$i/KPOINTS"
+        echo "Gamma" >>"$1/kpoints_$i/KPOINTS"
         echo "$kpoints" >>"$1/kpoints_$i/KPOINTS"
-        echo "0 0 0" >>"$1/kpoints_$i/KPOINTS"
         kpoints=$(($kpoints + $3))
     done
     
