@@ -414,6 +414,9 @@ function testKpoints {
 
     #get the kpoints from the KPOINTS file
     kpoints=$(cat $1/KPOINTS | head -n 4 | tail -1 | awk '{print $1, $2, $3}')
+    k_x=$(echo $kpoints | awk '{print $1}')
+    k_y=$(echo $kpoints | awk '{print $2}')
+    k_z=$(echo $kpoints | awk '{print $3}')
 
     #check if $3 is a number, if not, assume 3
 
@@ -434,7 +437,13 @@ function testKpoints {
         echo "0" >>"$1/kpoints_$i/KPOINTS"
         echo "Gamma" >>"$1/kpoints_$i/KPOINTS"
         echo "$kpoints" >>"$1/kpoints_$i/KPOINTS"
-        kpoints=$(($kpoints + $3))
+
+        k_x=$((k_x + $3))
+        k_y=$((k_y + $3))
+        k_z=$((k_z + $3))
+
+        kpoints="$k_x $k_y $k_z"
+
     done
     
 
