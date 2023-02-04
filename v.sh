@@ -448,3 +448,57 @@ function testKpoints {
     
 
 }
+
+function addTag {
+
+    # $1 is the INCAR file, if $1 is empty, then assume $1=./INCAR
+    incar=${1:-./INCAR}
+    # $2 is the tag to add
+    tag=$2
+    # $3 is the value of the tag to add
+    value=$3
+
+    #check if the INCAR file exists
+    if [ ! -f "$incar" ]; then
+        echo "INCAR file not found"
+        return 1
+    fi
+
+    line="$tag = $value"
+
+    #check if the tag already exists in the INCAR file
+    if grep -q "$tag" "$incar"; then
+        echo "Tag already exists in INCAR file"
+        return 1
+    fi
+
+    #update the INCAR file
+    echo "$line" >>"$incar"
+
+}
+
+function removeTag {
+
+    # $1 is the INCAR file, if $1 is empty, then assume $1=./INCAR
+    incar=${1:-./INCAR}
+    # $2 is the tag to remove
+    tag=$2
+
+    #check if the first argument is a file
+    if [ ! -f "$1" ]; then
+        echo "First argument is not a file"
+        return 1
+    fi
+
+
+    #check if the tag exists in the INCAR file
+    if ! grep -q "$tag" "$incar"; then
+        echo "Tag not found in INCAR file"
+        return 1
+    fi
+
+    #remove the tag from the INCAR file
+    sed -i "/$tag/d" "$incar"
+
+}
+
