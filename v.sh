@@ -411,7 +411,7 @@ function testKpoints {
     fi
 
     #get the kpoints from the KPOINTS file
-    kpoints=$(grep -a "kpoints" "$1/KPOINTS" | awk '{print $1, $2, $3}')
+    kpoints=$(cat $1/KPOINTS | head -n 4 | tail -1 | awk '{print $1, $2, $3}')
 
     #check if $3 is a number, if not, assume 3
 
