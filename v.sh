@@ -504,22 +504,27 @@ function removeTag {
 
 function estimateBands {
 
-  # extract the number of atoms in the unit cell
-  NATOMS=$(sed -n '7p' POSCAR | awk '{sum=0; for (i=1; i<=NF; i++) {sum+=$i}} END {print sum}')
+    # extract the number of atoms in the unit cell
+    NATOMS=$(sed -n '7p' POSCAR | awk '{sum=0; for (i=1; i<=NF; i++) {sum+=$i}} END {print sum}')
 
-  # extract the number of k-points from the KPOINTS file
-  NKPTS=$(sed -n '4p' KPOINTS | awk '{product=1; for (i=1; i<=NF; i++) {product*=$i}} END {print product}')
+    # extract the number of k-points from the KPOINTS file
+    NKPTS=$(sed -n '4p' KPOINTS | awk '{product=1; for (i=1; i<=NF; i++) {product*=$i}} END {print product}')
 
-  # extract the number of electrons per atom from the POTCAR file
-  NEL=$(grep "TITEL" POTCAR | awk '{sum=0; for (i=5; i<=NF; i++) {sum+=$i}} END {print sum}')
+    # extract the number of electrons per atom from the POTCAR file
+    NEL=$(grep "TITEL" POTCAR | awk '{sum=0; for (i=5; i<=NF; i++) {sum+=$i}} END {print sum}')
 
-  # estimate the total number of electrons
-  NEL_TOT=$(echo "$NEL * $NATOMS" | bc -l)
+    # estimate the total number of electrons
+    NEL_TOT=$(echo "$NEL * $NATOMS" | bc -l)
 
-  # estimate the number of bands
-  NBANDS=$(echo "$NEL_TOT * $NKPTS * $NATOMS" | bc -l)
+    # estimate the number of bands
+    NBANDS=$(echo "$NEL_TOT * $NKPTS / $NATOMS" | bc -l)
 
-  echo "Estimated number of bands: $NBANDS"
+    # vasp recommended number of bands (NELECT + NIONS) / 2
+    NBANDS_REC=$(echo "$(($NEL_TOT/2 + $NATOMS/2))" | bc -l)
+
+    echo "Estimated number of bands (kpoint  method): $NBANDS"
+    echo "Recommended number of bands (NELECT + NIONS) / 2: $NBANDS_REC"
+  
 
 }
 
@@ -558,7 +563,7 @@ function recommendPerformanceTags {
     NATOMS=$(sed -n '7p' $directory/POSCAR | awk '{sum=0; for (i=1; i<=NF; i++) {sum+=$i}} END {print sum}')
 
     #extract the number of k-points from the KPOINTS file
-    NKPTS=$(sed -n '4p' $directory/KPOINTS | awk '{print $1}')
+    NKPTS=$(sed -n '4p' $directory/KPOINTS | awk '{product=1; for (i=1; i<=NF; i++) {product*=$i}} END {print product}')
 
     echo "Recommended tags:"
     echo "NPAR = $CORES_PER_NODE"
