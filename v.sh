@@ -502,3 +502,67 @@ function removeTag {
 
 }
 
+function estimateBands {
+
+  # extract the number of atoms in the unit cell
+  NATOMS=$(sed -n '6p' POSCAR | awk '{sum=0; for (i=1; i<=NF; i++) {sum+=$i}} END {print sum}')
+
+  # extract the number of k-points from the KPOINTS file
+  NKPTS=$(sed -n '3p' KPOINTS | awk '{print $1}')
+
+  # extract the number of electrons per atom from the POTCAR file
+  NEL=$(grep "TITEL" POTCAR | awk '{sum=0; for (i=5; i<=NF; i++) {sum+=$i}} END {print sum}')
+
+  # estimate the total number of electrons
+  NEL_TOT=$(echo "$NEL * $NATOMS" | bc -l)
+
+  # estimate the number of bands
+  NBANDS=$(echo "$NEL_TOT * $NKPTS / $NATOMS" | bc -l)
+
+  echo "Estimated number of bands: $NBANDS"
+
+}
+
+function recommendPerformanceTags {
+
+    directory=$1
+    CORES_PER_NODE=$2
+
+    #check if INCAR, POSCAR, and KPOINTS files exist
+    if [ ! -f "$directory/INCAR" ]; then
+        echo "INCAR file not found"
+        return 1
+    fi
+
+    if [ ! -f "$directory/POSCAR" ]; then
+        echo "POSCAR file not found"
+        return 1
+    fi
+
+    if [ ! -f "$directory/KPOINTS" ]; then
+        echo "KPOINTS file not found"
+        return 1
+    fi
+
+    #check if the number of cores per node is a number
+    if ! [[ "$CORES_PER_NODE" =~ ^[0-9]+$ ]]; then
+        echo "Not a number"
+        return 1
+    fi
+
+    # VASP recommends 1 core per atom, 4-8 bands per core, KPAR = nodes
+
+    NBANDS=$(estimateBands)
+
+    #extract the number of atoms in the unit cell
+    NATOMS=$(sed -n '6p' $directory/POSCAR | awk '{sum=0; for (i=1; i<=NF; i++) {sum+=$i}} END {print sum}')
+
+    #extract the number of k-points from the KPOINTS file
+    NKPTS=$(sed -n '3p' $directory/KPOINTS | awk '{print $1}')
+
+    echo "Recommended tags:"
+    echo "NPAR = $CORES_PER_NODE"
+    echo "NBANDS = $NBANDS"
+    echo "KPAR = $CORES_PER_NODE"
+
+}
