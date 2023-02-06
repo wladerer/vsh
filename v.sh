@@ -505,10 +505,10 @@ function removeTag {
 function estimateBands {
 
   # extract the number of atoms in the unit cell
-  NATOMS=$(sed -n '6p' POSCAR | awk '{sum=0; for (i=1; i<=NF; i++) {sum+=$i}} END {print sum}')
+  NATOMS=$(sed -n '7p' POSCAR | awk '{sum=0; for (i=1; i<=NF; i++) {sum+=$i}} END {print sum}')
 
   # extract the number of k-points from the KPOINTS file
-  NKPTS=$(sed -n '3p' KPOINTS | awk '{print $1}')
+  NKPTS=$(sed -n '4p' KPOINTS | awk '{product=1; for (i=1; i<=NF; i++) {product*=$i}} END {print product}')
 
   # extract the number of electrons per atom from the POTCAR file
   NEL=$(grep "TITEL" POTCAR | awk '{sum=0; for (i=5; i<=NF; i++) {sum+=$i}} END {print sum}')
@@ -555,10 +555,10 @@ function recommendPerformanceTags {
     NBANDS=$(estimateBands)
 
     #extract the number of atoms in the unit cell
-    NATOMS=$(sed -n '6p' $directory/POSCAR | awk '{sum=0; for (i=1; i<=NF; i++) {sum+=$i}} END {print sum}')
+    NATOMS=$(sed -n '7p' $directory/POSCAR | awk '{sum=0; for (i=1; i<=NF; i++) {sum+=$i}} END {print sum}')
 
     #extract the number of k-points from the KPOINTS file
-    NKPTS=$(sed -n '3p' $directory/KPOINTS | awk '{print $1}')
+    NKPTS=$(sed -n '4p' $directory/KPOINTS | awk '{print $1}')
 
     echo "Recommended tags:"
     echo "NPAR = $CORES_PER_NODE"
