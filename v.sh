@@ -517,7 +517,7 @@ function estimateBands {
   NEL_TOT=$(echo "$NEL * $NATOMS" | bc -l)
 
   # estimate the number of bands
-  NBANDS=$(echo "$NEL_TOT * $NKPTS / $NATOMS" | bc -l)
+  NBANDS=$(echo "$NEL_TOT * $NKPTS * $NATOMS" | bc -l)
 
   echo "Estimated number of bands: $NBANDS"
 
