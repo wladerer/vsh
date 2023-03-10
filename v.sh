@@ -794,8 +794,16 @@ function updateDatabase {
 
 function getPoscar {
 
-    mp_code=$2
+    mp_code=$1
     script=$VSHDIR/scripts/getPoscar.py
-    python3 "$script" $MP_API_KEY "$mp_code"
+    python3 "$script" "$MP_API_KEY" "$mp_code"
+
+}
+
+function getPrimitive {
+
+    mp_code=$1
+    script=$VSHDIR/scripts/getPrimitive.py
+    python3 "$script" "$MP_API_KEY" "$mp_code"
 
 }
