@@ -610,7 +610,7 @@ function tabulateResults {
     fi
 
     #write the results to the file
-    echo "$formula,$natoms,$kpoints,$energy,$scf_steps,$ionic_steps,$final_energy,$drift_x,$drift_y,$drift_z,$path" >>"$2" 
+    echo "$atom_types,$natoms,$kpoints,$energy,$scf_steps,$ionic_steps,$final_energy,$drift_x,$drift_y,$drift_z,$path" >>"$2" 
 
 }
 
