@@ -603,12 +603,32 @@ function tabulateResults {
     drift_y=$(grep -a drift "$outcar" | tail -1 | awk '{print $4}' ) 
     drift_z=$(grep -a drift "$outcar" | tail -1 | awk '{print $5}' )
     date_added=$(date)
+    path=$(pwd)
     #create a header if the file does not exist
     if [ ! -f "$2" ]; then
-        echo "formula,natoms,kpoints,energy,scf_steps,ionic_steps,final_energy,drift_x,drift_y,drift_z,date_added" >"$2"
+        echo "formula,natoms,kpoints,energy,scf_steps,ionic_steps,final_energy,drift_x,drift_y,drift_z,date_added,path" >"$2"
     fi
 
     #write the results to the file
-    echo "$formula,$natoms,$kpoints,$energy,$scf_steps,$ionic_steps,$final_energy,$drift_x,$drift_y,$drift_z,$date_added" >>"$2" 
+    echo "$formula,$natoms,$kpoints,$energy,$scf_steps,$ionic_steps,$final_energy,$drift_x,$drift_y,$drift_z,$date_added,$path" >>"$2" 
+
+}
+
+
+function updateDatabase {
+	#get the user database file from the environment variable $VSHDB
+	dbfile=$VSHDB
+
+	#check if the database file exists
+	if [ ! -f "$dbfile" ]; then
+		echo "Database file not found"
+		return 1
+	fi
+
+	#use the tabulateResults function to update the database
+	tabulateResults "$1" "$dbfile"
+	
+	#notify the user that the database has been updated
+	echo "Database updated"
 
 }
