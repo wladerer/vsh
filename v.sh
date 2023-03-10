@@ -594,8 +594,6 @@ function tabulateResults {
     outcar="$directory/OUTCAR"
 
     atom_types=$(sed -n '6p' "$directory"/POSCAR)
-    #join atom types into a single string
-    atom_types=$(echo "$atom_types" | tr -d '[:space:]')
     natoms=$(sed -n '7p' "$directory"/POSCAR | awk '{sum=0; for (i=1; i<=NF; i++) {sum+=$i}} END {print sum}')
     kpoints=$(sed -n '4p' "$directory"/KPOINTS | awk '{product=1; for (i=1; i<=NF; i++) {product*=$i}} END {print product}')
     energy=$(grep "energy  without entropy" "$directory"/OUTCAR | tail -1 | awk '{print $NF}')
