@@ -42,8 +42,10 @@ function getElements {
     poscar=${1:-./POSCAR}
 
     # combine the two lines to get the element list
-    sed -n 6p $poscar | awk -F " " '{print $0}' && sed -n 7p $poscar | awk -F " " '{print $0}'
+    elements=$(sed -n 6p $poscar | awk -F " " '{print $0}')
 
+    return $elements
+    
 }
 
 function getKx {
@@ -55,11 +57,9 @@ function getKx {
     if [[ $(sed -n 3p $kpoints) == *"Reciprocal"* ]]; then
         echo "Null"
     else
-    #fourth line of the KPOINTS file
-    sed -n 4p $kpoints | awk -F " " '{print $1}'
+        #fourth line of the KPOINTS file
+        sed -n 4p $kpoints | awk -F " " '{print $1}'
     fi
-
-
 
 }
 
@@ -68,14 +68,13 @@ function getKy {
     # if $1 is empty, then assume $1=./KPOINTS
     kpoints=${1:-./KPOINTS}
 
-       #check if 3rd line of the KPOINTS file is Recirprocal or reciprocal, if so return Null
+    #check if 3rd line of the KPOINTS file is Recirprocal or reciprocal, if so return Null
     if [[ $(sed -n 3p $kpoints) == *"Reciprocal"* ]]; then
         echo "Null"
     else
-    #fourth line of the KPOINTS file
-    sed -n 4p $kpoints | awk -F " " '{print $2}'
+        #fourth line of the KPOINTS file
+        sed -n 4p $kpoints | awk -F " " '{print $2}'
     fi
-
 
 }
 
@@ -88,12 +87,11 @@ function getKz {
     if [[ $(sed -n 3p $kpoints) == *"Reciprocal"* ]]; then
         echo "Null"
     else
-    #fourth line of the KPOINTS file
-    sed -n 4p $kpoints | awk -F " " '{print $3}'
+        #fourth line of the KPOINTS file
+        sed -n 4p $kpoints | awk -F " " '{print $3}'
     fi
 
 }
-
 
 function getESteps {
 
@@ -138,7 +136,6 @@ function getDriftz {
     grep -a drift "$outcar" | tail -1 | awk '{print $5}'
 
 }
-
 
 function getEdiffg {
 
@@ -235,7 +232,7 @@ function restartVasp {
     # update the INCAR file to restart the job, but ignore all dirs in the finished_job_dirs array
     for dir in "${subdirs[@]}"; do
         if [[ ! " ${finished_job_dirs[@]} " =~ " ${dir} " ]]; then
-            cd "$dir" 
+            cd "$dir"
             sed 's/ISTART = 1/ISTART = 0/g' INCAR
             sed 's/ICHARG = 2/ICHARG = 1/g' INCAR
             sed -i 's/ISTART = 1/ISTART = 0/g' INCAR
@@ -361,9 +358,9 @@ function summarizeOutcar {
     outcar=${1:-./OUTCAR}
 
     echo "Number of steps: $(grep -c 'Iteration' $outcar)"
-    echo "Ionic Steps: $(grep -a Iteration OUTCAR | tail -1 | awk '{print $3}' | tr -d '(' )"
+    echo "Ionic Steps: $(grep -a Iteration OUTCAR | tail -1 | awk '{print $3}' | tr -d '(')"
     echo "Final Energy: $(grep -a TOTEN $outcar | tail -1 | awk '{print $5}')" \(eV\)
-    echo "Total Drift (x, y, z): $(grep -a drift $outcar | tail -1 | awk '{print $3 , $4 , $5}' )" 
+    echo "Total Drift (x, y, z): $(grep -a drift $outcar | tail -1 | awk '{print $3 , $4 , $5}')"
 }
 
 function createKpoints {
@@ -509,7 +506,7 @@ function testKpoints {
     #takes a directory, $1, and pulls the kpoints from the KPOINTS file
     #number of new directories to create, $2
     #increments the kpoints by $3
-    #creates a new directory with new kpoints and adds existing INCAR, POTCAR, and POSCAR to the new directories 
+    #creates a new directory with new kpoints and adds existing INCAR, POTCAR, and POSCAR to the new directories
 
     #check if $1 is a directory, if not, assume current directory
     if [ ! -d "$1" ]; then
@@ -566,7 +563,6 @@ function testKpoints {
         kpoints="$k_x $k_y $k_z"
 
     done
-    
 
 }
 
@@ -611,7 +607,6 @@ function removeTag {
         return 1
     fi
 
-
     #check if the tag exists in the INCAR file
     if ! grep -q "$tag" "$incar"; then
         echo "Tag not found in INCAR file"
@@ -641,11 +636,10 @@ function estimateBands {
     NBANDS=$(echo "$NEL_TOT * $NKPTS / $NATOMS" | bc -l)
 
     # vasp recommended number of bands (NELECT + NIONS) / 2
-    NBANDS_REC=$(echo "$(($NEL_TOT/2 + $NATOMS/2))" | bc -l)
+    NBANDS_REC=$(echo "$(($NEL_TOT / 2 + $NATOMS / 2))" | bc -l)
 
     echo "Estimated number of bands (kpoint  method): $NBANDS"
     echo "Recommended number of bands (NELECT + NIONS) / 2: $NBANDS_REC"
-  
 
 }
 
@@ -694,13 +688,41 @@ function recommendPerformanceTags {
 }
 
 
+
 function tabulateResults {
 
     #$1 is the directory to search for vasp files
     directory=$1
 
     #$2 is the file to write the results to
-    
+
+    #check if the directory exists
+    if [ ! -d "$directory" ]; then
+        echo "Directory not found"
+        return 1
+    fi
+
+    #check if the directory contains vasp files
+    if [ ! -f "$directory/OUTCAR" ]; then
+        echo "OUTCAR file not found"
+        return 1
+    fi
+    outcar="$directory/OUTCAR"
+    poscar="$directory/POSCAR"
+    kpoints="$directory/KPOINTS"
+
+    atom_types=$(getAtomTypes "$poscar")
+
+}
+
+
+function tabulateResults {
+
+    #$1 is the directory to search for vasp files
+    directory=$1
+
+    #$2 is the file to write the results to
+
     #check if the directory exists
     if [ ! -d "$directory" ]; then
         echo "Directory not found"
@@ -719,11 +741,11 @@ function tabulateResults {
     kpoints=$(sed -n '4p' "$directory"/KPOINTS | awk '{product=1; for (i=1; i<=NF; i++) {product*=$i}} END {print product}')
     energy=$(grep "energy  without entropy" "$directory"/OUTCAR | tail -1 | awk '{print $NF}')
     scf_steps=$(grep -c 'Iteration' "$directory/OUTCAR")
-    ionic_steps=$(grep -a Iteration "$directory/OUTCAR" | tail -1 | awk '{print $3}' | tr -d '(' )
+    ionic_steps=$(grep -a Iteration "$directory/OUTCAR" | tail -1 | awk '{print $3}' | tr -d '(')
     final_energy="$(grep -a TOTEN "$outcar" | tail -1 | awk '{print $5}')"
-    drift_x=$(grep -a drift "$outcar" | tail -1 | awk '{print $3}' )
-    drift_y=$(grep -a drift "$outcar" | tail -1 | awk '{print $4}' ) 
-    drift_z=$(grep -a drift "$outcar" | tail -1 | awk '{print $5}' )
+    drift_x=$(grep -a drift "$outcar" | tail -1 | awk '{print $3}')
+    drift_y=$(grep -a drift "$outcar" | tail -1 | awk '{print $4}')
+    drift_z=$(grep -a drift "$outcar" | tail -1 | awk '{print $5}')
     path=$(pwd)
     #create a header if the file does not exist
     if [ ! -f "$2" ]; then
@@ -731,25 +753,24 @@ function tabulateResults {
     fi
 
     #write the results to the file
-    echo "$atom_types,$natoms,$kpoints,$energy,$scf_steps,$ionic_steps,$final_energy,$drift_x,$drift_y,$drift_z,$path" >>"$2" 
+    echo "$atom_types,$natoms,$kpoints,$energy,$scf_steps,$ionic_steps,$final_energy,$drift_x,$drift_y,$drift_z,$path" >>"$2"
 
 }
 
-
 function updateDatabase {
-	#get the user database file from the environment variable $VSHDB
-	dbfile=$VSHDB
+    #get the user database file from the environment variable $VSHDB
+    dbfile=$VSHDB
 
-	#check if the database file exists
-	if [ ! -f "$dbfile" ]; then
-		echo "Database file not found"
-		return 1
-	fi
+    #check if the database file exists
+    if [ ! -f "$dbfile" ]; then
+        echo "Database file not found"
+        return 1
+    fi
 
-	#use the tabulateResults function to update the database
-	tabulateResults "$1" "$dbfile"
-	
-	#notify the user that the database has been updated
-	echo "Database updated"
+    #use the tabulateResults function to update the database
+    tabulateResults "$1" "$dbfile"
+
+    #notify the user that the database has been updated
+    echo "Database updated"
 
 }
