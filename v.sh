@@ -50,7 +50,7 @@ function getElements {
     # if $1 is empty, then assume $1=./OUTCAR
     poscar=${1:-./POSCAR}
 
-    sed -n '6p' "$poscar" 
+    sed -n '6p' "$poscar"
 
 }
 
@@ -764,47 +764,13 @@ function tabulateResults {
     is_spin=$(isSpinPolarized "$outcar")
     path=$directory
 
-
-}
-
-function tabulateResults {
-
-    #$1 is the directory to search for vasp files
-    directory=$1
-
-    #$2 is the file to write the results to
-
-    #check if the directory exists
-    if [ ! -d "$directory" ]; then
-        echo "Directory not found"
-        return 1
-    fi
-
-    #check if the directory contains vasp files
-    if [ ! -f "$directory/OUTCAR" ]; then
-        echo "OUTCAR file not found"
-        return 1
-    fi
-    outcar="$directory/OUTCAR"
-
-    atom_types=$(sed -n '6p' "$directory"/POSCAR)
-    natoms=$(sed -n '7p' "$directory"/POSCAR | awk '{sum=0; for (i=1; i<=NF; i++) {sum+=$i}} END {print sum}')
-    kpoints=$(sed -n '4p' "$directory"/KPOINTS | awk '{product=1; for (i=1; i<=NF; i++) {product*=$i}} END {print product}')
-    energy=$(grep "energy  without entropy" "$directory"/OUTCAR | tail -1 | awk '{print $NF}')
-    scf_steps=$(grep -c 'Iteration' "$directory/OUTCAR")
-    ionic_steps=$(grep -a Iteration "$directory/OUTCAR" | tail -1 | awk '{print $3}' | tr -d '(')
-    final_energy="$(grep -a TOTEN "$outcar" | tail -1 | awk '{print $5}')"
-    drift_x=$(grep -a drift "$outcar" | tail -1 | awk '{print $3}')
-    drift_y=$(grep -a drift "$outcar" | tail -1 | awk '{print $4}')
-    drift_z=$(grep -a drift "$outcar" | tail -1 | awk '{print $5}')
-    path=$(pwd)
-    #create a header if the file does not exist
-    if [ ! -f "$2" ]; then
-        echo "atom_types,natoms,kpoints,energy,scf_steps,ionic_steps,final_energy,drift_x,drift_y,drift_z,path" >"$2"
+    #create a tab delineated header if the first line of the file is not a header
+    if ! grep -q "atom_types" "$2"; then
+        echo -e "atom_types\tnatoms\tkx\tky\tkz\tfinal_energy\tEdiff\tEdiffg\tEncut\tNbands\tDriftx\tDrifty\tDriftz\tionic_steps\telectronic_steps\tis_soc\tis_spin\tpath" >"$2"
     fi
 
     #write the results to the file
-    echo "$atom_types,$natoms,$kpoints,$energy,$scf_steps,$ionic_steps,$final_energy,$drift_x,$drift_y,$drift_z,$path" >>"$2"
+    echo -e "$atom_types\t$natoms\t$kx\t$ky\t$kz\t$final_energy\t$Ediff\t$Ediffg\t$Encut\t$Nbands\t$Driftx\t$Drifty\t$Driftz\t$ionic_steps\t$electronic_steps\t$is_soc\t$is_spin\t$path" >>"$2"
 
 }
 
