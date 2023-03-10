@@ -51,6 +51,12 @@ function getKx {
     # if $1 is empty, then assume $1=./KPOINTS
     kpoints=${1:-./KPOINTS}
 
+    #check if 3rd line of the KPOINTS file is Recirprocal or reciprocal, if so return Null
+    if [[ $(sed -n 3p $kpoints) == *"Reciprocal"* ]]; then
+        echo "Null"
+    fi
+
+
     #fourth line of the KPOINTS file
     sed -n 4p $kpoints | awk -F " " '{print $1}'
 
@@ -61,6 +67,11 @@ function getKy {
     # if $1 is empty, then assume $1=./KPOINTS
     kpoints=${1:-./KPOINTS}
 
+       #check if 3rd line of the KPOINTS file is Recirprocal or reciprocal, if so return Null
+    if [[ $(sed -n 3p $kpoints) == *"Reciprocal"* ]]; then
+        echo "Null"
+    fi
+
     #fourth line of the KPOINTS file
     sed -n 4p $kpoints | awk -F " " '{print $2}'
 
@@ -70,6 +81,11 @@ function getKz {
 
     # if $1 is empty, then assume $1=./KPOINTS
     kpoints=${1:-./KPOINTS}
+
+    #check if 3rd line of the KPOINTS file is Recirprocal or reciprocal, if so return Null
+    if [[ $(sed -n 3p $kpoints) == *"Reciprocal"* ]]; then
+        echo "Null"
+    fi
 
     #fourth line of the KPOINTS file
     sed -n 4p $kpoints | awk -F " " '{print $3}'
