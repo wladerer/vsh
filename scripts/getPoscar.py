@@ -26,11 +26,8 @@ def to_poscar(structure: Structure, filename: str = "POSCAR") -> None:
     poscar.write_file(filename)
 
 if __name__ == "__main__":
-
-    api_key = os.environ.get("MP_API_KEY")
-    #remove quotes from api_key 
-    api_key = api_key.replace('"', '')
-
+    
+    api_key = sys("echo $MP_API_KEY")
 
     if api_key is None:
         raise ValueError("No API key found. Please set the MP_API_KEY environment variable.")
