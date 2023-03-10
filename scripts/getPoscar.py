@@ -32,14 +32,7 @@ def to_poscar(structure: Structure, filename: str = "POSCAR") -> None:
 
 if __name__ == "__main__":
 
-    bash_command = "echo $MP_API_KEY"
-    process = subprocess.Popen(bash_command.split(), stdout=subprocess.PIPE)
-    api_key, error = process.communicate()
-
-    if api_key is None:
-        raise ValueError(
-            "No API key found. Please set the MP_API_KEY environment variable.")
-
-    mpcode = sys.argv[1]
+    api_key = sys.argv[1]
+    mpcode = sys.argv[2]
     structure = structure_from_mpi_code(mpcode, api_key)
     to_poscar(structure)
