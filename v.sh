@@ -24,6 +24,15 @@ function getNatoms {
     grep NIONS $outcar | awk -F " " '{print $NF}'
 }
 
+function getFinalEnergy {
+
+    #if $1 is empty, then assume $1=./OUTCAR
+    outcar=${1:-./OUTCAR}
+
+    grep -a TOTEN "$outcar" | tail -1 | awk '{print $5}'
+
+}
+
 function getEfermi {
 
     #if $1 is empty, then assume $1=./
@@ -41,8 +50,7 @@ function getElements {
     # if $1 is empty, then assume $1=./OUTCAR
     poscar=${1:-./POSCAR}
 
-    # combine the two lines to get the element list
-    sed -n 6p $poscar | awk -F " " '{print $0}'
+    sed -n '6p' "$poscar" 
 
 }
 
@@ -159,6 +167,36 @@ function getEncut {
     outcar=${1:-./OUTCAR}
 
     grep -a ENCUT "$outcar" | head -n 1 | awk '{print $3}'
+
+}
+
+function isSoc {
+
+    #check outcar to see if spin-orbit coupling is used
+    # if $1 is empty, then assume $1=./OUTCAR
+    outcar=${1:-./OUTCAR}
+
+    #if the third field of grep LSORBIT OUTCAR is T then soc is used
+    if [[ $(grep -a LSORBIT "$outcar" | awk '{print $3}') == "T" ]]; then
+        echo "True"
+    else
+        echo "False"
+    fi
+
+}
+
+function isSpinPolarized {
+
+    #check outcar to see if spin-polarized calculation is used
+    # if $1 is empty, then assume $1=./OUTCAR
+    outcar=${1:-./OUTCAR}
+
+    #if the third field of grep ISPIN OUTCAR is 2 then spin-polarized calculation is used
+    if [[ $(grep -a ISPIN "$outcar" | awk '{print $3}') == "2" ]]; then
+        echo "True"
+    else
+        echo "False"
+    fi
 
 }
 
@@ -707,7 +745,25 @@ function tabulateResults {
     poscar="$directory/POSCAR"
     kpoints="$directory/KPOINTS"
 
-    atom_types=$(getAtomTypes "$poscar")
+    atom_types=$(getElements "$poscar")
+    natoms=$(getNatoms "$poscar")
+    kx=$(getKx "$kpoints")
+    ky=$(getKy "$kpoints")
+    kz=$(getKz "$kpoints")
+    final_energy=$(getFinalEnergy "$outcar")
+    Ediff=$(getEdiff "$outcar")
+    Ediffg=$(getEdiffg "$outcar")
+    Encut=$(getEncut "$outcar")
+    Nbands=$(getNbands "$outcar")
+    Driftx=$(getDriftx "$outcar")
+    Drifty=$(getDrifty "$outcar")
+    Driftz=$(getDriftz "$outcar")
+    ionic_steps=$(getISteps "$outcar")
+    electronic_steps=$(getESteps "$outcar")
+    is_soc=$(isSoc "$outcar")
+    is_spin=$(isSpinPolarized "$outcar")
+    path=$directory
+
 
 }
 
@@ -767,5 +823,14 @@ function updateDatabase {
 
     #notify the user that the database has been updated
     echo "Database updated"
+
+}
+
+function getPoscar {
+
+    mp_code=$1
+    script=$VSHDIR/scripts/getPoscar.py
+
+    python3 "$script" "$mp_code"
 
 }
