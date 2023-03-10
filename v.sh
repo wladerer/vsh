@@ -33,7 +33,7 @@ function getEfermi {
     else
         outcar=$1
     fi
-    grep E-fermi $outcar | awk -F " " '{print $NF}'
+    grep E-fermi $outcar | tail -1 | awk -F " " '{print $3}'
 }
 
 function getElements {
@@ -43,6 +43,109 @@ function getElements {
 
     # combine the two lines to get the element list
     sed -n 6p $poscar | awk -F " " '{print $0}' && sed -n 7p $poscar | awk -F " " '{print $0}'
+
+}
+
+function getKx {
+
+    # if $1 is empty, then assume $1=./KPOINTS
+    kpoints=${1:-./KPOINTS}
+
+    #fourth line of the KPOINTS file
+    sed -n 4p $kpoints | awk -F " " '{print $1}'
+
+}
+
+function getKy {
+
+    # if $1 is empty, then assume $1=./KPOINTS
+    kpoints=${1:-./KPOINTS}
+
+    #fourth line of the KPOINTS file
+    sed -n 4p $kpoints | awk -F " " '{print $2}'
+
+}
+
+function getKz {
+
+    # if $1 is empty, then assume $1=./KPOINTS
+    kpoints=${1:-./KPOINTS}
+
+    #fourth line of the KPOINTS file
+    sed -n 4p $kpoints | awk -F " " '{print $3}'
+
+}
+
+
+function getESteps {
+
+    # if $1 is empty, then assume $1=./OUTCAR
+    outcar=${1:-./OUTCAR}
+
+    grep -c 'Iteration' "$outcar"
+
+}
+
+function getISteps {
+
+    # if $1 is empty, then assume $1=./OUTCAR
+    outcar=${1:-./OUTCAR}
+
+    grep -a Iteration "$outcar" | tail -1 | awk '{print $3}' | tr -d '('
+}
+
+function getDriftx {
+
+    # if $1 is empty, then assume $1=./OUTCAR
+    outcar=${1:-./OUTCAR}
+
+    grep -a drift "$outcar" | tail -1 | awk '{print $3}'
+
+}
+
+function getDrifty {
+
+    # if $1 is empty, then assume $1=./OUTCAR
+    outcar=${1:-./OUTCAR}
+
+    grep -a drift "$outcar" | tail -1 | awk '{print $4}'
+
+}
+
+function getDriftz {
+
+    # if $1 is empty, then assume $1=./OUTCAR
+    outcar=${1:-./OUTCAR}
+
+    grep -a drift "$outcar" | tail -1 | awk '{print $5}'
+
+}
+
+
+function getEdiffg {
+
+    # if $1 is empty, then assume $1=./OUTCAR
+    outcar=${1:-./OUTCAR}
+
+    grep -a EDIFFG "$outcar" | tail -1 | awk '{print $3}'
+
+}
+
+function getEdiff {
+
+    # if $1 is empty, then assume $1=./OUTCAR
+    outcar=${1:-./OUTCAR}
+
+    grep -a EDIFF "$outcar" | head -n 1 | awk '{print $3}'
+
+}
+
+function getEncut {
+
+    # if $1 is empty, then assume $1=./OUTCAR
+    outcar=${1:-./OUTCAR}
+
+    grep -a ENCUT "$outcar" | head -n 1 | awk '{print $3}'
 
 }
 
