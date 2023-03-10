@@ -593,21 +593,22 @@ function tabulateResults {
     fi
     outcar="$directory/OUTCAR"
 
-    formula=$(sed -n '6p' "$directory"/POSCAR | awk '{sum=0; for (i=1; i<=NF; i++) {sum+=$i}} END {print sum}')
+    atom_types=$(sed -n '6p' "$directory"/POSCAR)
+    #join atom types into a single string
+    atom_types=$(echo "$atom_types" | tr -d '[:space:]')
     natoms=$(sed -n '7p' "$directory"/POSCAR | awk '{sum=0; for (i=1; i<=NF; i++) {sum+=$i}} END {print sum}')
     kpoints=$(sed -n '4p' "$directory"/KPOINTS | awk '{product=1; for (i=1; i<=NF; i++) {product*=$i}} END {print product}')
     energy=$(grep "energy  without entropy" "$directory"/OUTCAR | tail -1 | awk '{print $NF}')
     scf_steps=$(grep -c 'Iteration' "$directory/OUTCAR")
     ionic_steps=$(grep -a Iteration "$directory/OUTCAR" | tail -1 | awk '{print $3}' | tr -d '(' )
-    final_energy="$(grep -a TOTEN "$outcar" | tail -1 | awk '{print $5}') \(eV\)"
+    final_energy="$(grep -a TOTEN "$outcar" | tail -1 | awk '{print $5}')"
     drift_x=$(grep -a drift "$outcar" | tail -1 | awk '{print $3}' )
     drift_y=$(grep -a drift "$outcar" | tail -1 | awk '{print $4}' ) 
     drift_z=$(grep -a drift "$outcar" | tail -1 | awk '{print $5}' )
-    date_added=$(date)
     path=$(pwd)
     #create a header if the file does not exist
     if [ ! -f "$2" ]; then
-        echo "formula,natoms,kpoints,energy,scf_steps,ionic_steps,final_energy,drift_x,drift_y,drift_z,path" >"$2"
+        echo "atom_types,natoms,kpoints,energy,scf_steps,ionic_steps,final_energy,drift_x,drift_y,drift_z,path" >"$2"
     fi
 
     #write the results to the file
