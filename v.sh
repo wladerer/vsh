@@ -42,10 +42,8 @@ function getElements {
     poscar=${1:-./POSCAR}
 
     # combine the two lines to get the element list
-    elements=$(sed -n 6p $poscar | awk -F " " '{print $0}')
+    sed -n 6p $poscar | awk -F " " '{print $0}'
 
-    return $elements
-    
 }
 
 function getKx {
@@ -687,8 +685,6 @@ function recommendPerformanceTags {
 
 }
 
-
-
 function tabulateResults {
 
     #$1 is the directory to search for vasp files
@@ -714,7 +710,6 @@ function tabulateResults {
     atom_types=$(getAtomTypes "$poscar")
 
 }
-
 
 function tabulateResults {
 
