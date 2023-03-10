@@ -1,10 +1,11 @@
-#python script to get the POSCAR file from materials project
-
+# python script to get the POSCAR file from materials project
+import subprocess
 import sys
 import os
 from mp_api.client import MPRester
 from pymatgen.core import Structure
 from pymatgen.io.vasp import Poscar
+
 
 def structure_from_mpi_code(mpcode: str, api_key: str, is_conventional: bool = False) -> Structure:
     '''
@@ -14,9 +15,11 @@ def structure_from_mpi_code(mpcode: str, api_key: str, is_conventional: bool = F
         mpcode = "mp-"+mpcode
 
     with MPRester(api_key) as mpr:
-        structure = mpr.get_structure_by_material_id(mpcode, conventional_unit_cell=is_conventional)
+        structure = mpr.get_structure_by_material_id(
+            mpcode, conventional_unit_cell=is_conventional)
 
     return structure
+
 
 def to_poscar(structure: Structure, filename: str = "POSCAR") -> None:
     '''
@@ -25,16 +28,17 @@ def to_poscar(structure: Structure, filename: str = "POSCAR") -> None:
     poscar = Poscar(structure, sort_structure=True)
     poscar.write_file(filename)
 
+
 if __name__ == "__main__":
 
-    api_key = os.environ.get("MP_API_KEY")
-    #remove quotes from api_key 
-    api_key = api_key.replace('"', '')
-
+    bash_command = "echo $MP_API_KEY"
+    process = subprocess.Popen(bash_command.split(), stdout=subprocess.PIPE)
+    api_key, error = process.communicate()
 
     if api_key is None:
-        raise ValueError("No API key found. Please set the MP_API_KEY environment variable.")
-    
-    mpcode = sys.argv[1] 
+        raise ValueError(
+            "No API key found. Please set the MP_API_KEY environment variable.")
+
+    mpcode = sys.argv[1]
     structure = structure_from_mpi_code(mpcode, api_key)
     to_poscar(structure)
