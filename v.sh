@@ -807,3 +807,14 @@ function getPrimitive {
     python3 "$script" "$MP_API_KEY" "$mp_code"
 
 }
+
+function makeSupercell {
+
+    poscar=$1
+    x_repeat=$2
+    y_repeat=$3
+    z_repeat=$4
+    script=$VSHDIR/scripts/makeSupercell.py
+    python3 "$script" "$poscar" "$x_repeat" "$y_repeat" "$z_repeat"
+
+}
