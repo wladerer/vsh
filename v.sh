@@ -818,3 +818,11 @@ function makeSupercell {
     python3 "$script" "$poscar" "$x_repeat" "$y_repeat" "$z_repeat"
 
 }
+
+function trajVisualize {
+
+    directory=$1
+    script=$VSHDIR/scripts/trajVisualize.py
+    python3 "$script" "$directory"
+
+}
