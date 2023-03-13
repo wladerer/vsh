@@ -423,10 +423,9 @@ function createKpoints {
     k_z=$3
 
     echo "Automatic mesh" >kpoints.vsh
-    echo "$mode" >>kpoints.vsh
     echo "0" >>kpoints.vsh
+    echo "$mode" >>kpoints.vsh
     echo "$k_x $k_y $k_z" >>kpoints.vsh
-    echo "0 0 0" >>kpoints.vsh
 
 }
 
