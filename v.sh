@@ -745,7 +745,7 @@ function tabulateResults {
     kpoints="$directory/KPOINTS"
 
     atom_types=$(getElements "$poscar")
-    natoms=$(getNatoms "$poscar")
+    natoms=$(getNatoms "$outcar")
     kx=$(getKx "$kpoints")
     ky=$(getKy "$kpoints")
     kz=$(getKz "$kpoints")
@@ -761,7 +761,7 @@ function tabulateResults {
     electronic_steps=$(getESteps "$outcar")
     is_soc=$(isSoc "$outcar")
     is_spin=$(isSpinPolarized "$outcar")
-    path=$directory
+    path=$PWD
 
     #create a tab delineated header if the first line of the file is not a header
     if ! grep -q "atom_types" "$2"; then
