@@ -825,3 +825,11 @@ function trajVisualize {
     python3 "$script" "$directory"
 
 }
+
+function sortPoscar {
+
+    poscar=$1
+    script=$VSHDIR/scripts/sortPoscar.py
+    python3 "$script" "$poscar"
+
+}
