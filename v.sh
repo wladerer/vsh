@@ -833,3 +833,95 @@ function sortPoscar {
     python3 "$script" "$poscar"
 
 }
+
+function copyVaspInput {
+
+    directory=$1
+    destination='.'
+
+    #check if the directory exists
+    if [ ! -d "$directory" ]; then
+        echo "Directory not found"
+        return 1
+    fi
+
+    files=(INCAR KPOINTS POSCAR POTCAR)
+
+    while getopts "ed:" opt; do
+        case $opt in
+        e)
+            exclude=$OPTARG
+            ;;
+        d)
+            destination=$OPTARG
+            ;;
+        *)
+            echo "Invalid option"
+            return 1
+            ;;
+        esac
+    done
+
+    #exclude files if the user specifies
+    if [ -n "$exclude" ]; then
+        for file in $exclude; do
+            files=("${files[@]/$file}")
+        done
+    fi
+
+    #copy the files to the current directory
+    for file in "${files[@]}"; do
+        cp "$directory/$file" "$destination"
+    done
+
+
+}
+
+function linkOutput {
+
+    #use flags to specify if the CONTCAR of the $directory should be linked as POSCAR
+
+    directory=$1
+    destination='.'
+
+    while getopts "cd" opt; do
+        case $opt in
+        c)
+            copy_contcar=True
+            ;;
+        d)
+            destination=$OPTARG
+            ;;
+        *)
+            echo "Invalid option"
+            return 1
+            ;;
+        esac
+    done
+
+
+    #check if the directory exists
+    if [ ! -d "$directory" ]; then
+        echo "Directory not found"
+        return 1
+    fi
+
+    files=(OUTCAR CONTCAR DOSCAR EIGENVAL IBZKPT PROCAR REPORT WAVECAR)
+
+    #exclude files if the user specifies
+    if [ -n "$exclude" ]; then
+        for file in $exclude; do
+            files=("${files[@]/$file}")
+        done
+    fi
+
+    #copy the files to the current directory
+    for file in "${files[@]}"; do
+        ln -s "$directory/$file" "$destination"
+    done
+
+    #copy the CONTCAR as POSCAR if the user specifies
+    if [ -n "$copy_contcar" ]; then
+        cp "$directory/CONTCAR" "$destination/POSCAR"
+    fi
+}
