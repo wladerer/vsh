@@ -34,7 +34,7 @@ def create_variations():
     parser = argparse.ArgumentParser(description='Create variations of a vasp job')
 
     parser.add_argument('-f', '--file', type=str, help='Structure file')
-    parser.add_argument('-i', '-incar', type=str, help='Base incar.yaml file')
+    parser.add_argument('-i', '--incar', type=str, help='Base incar.yaml file')
     parser.add_argument('-c', '--custom', nargs='+', help='Custom steps. Tag must be specified with -t or --tag')
     parser.add_argument('-n', '--number', type=int, default=1, help='Number of variations')
     parser.add_argument('-s', '--step', type=float, help='Step size')
