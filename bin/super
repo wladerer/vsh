@@ -18,7 +18,7 @@ def create_super_cell():
     atoms = read(args.file)
     x_rep, y_rep, z_rep = args.supercell
     M = [[x_rep, 0, 0], [0, y_rep, 0], [0, 0, z_rep]]
-    supercell = make_supercell(M, atoms)
+    supercell = make_supercell(atoms, M)
 
     if args.vacuum > 0.0:
         supercell.center(vacuum=args.vacuum, axis=2)
