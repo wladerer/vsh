@@ -18,6 +18,11 @@ if ! grep -q "source $VSHDIR/.vshrc" ~/.bashrc; then
     echo "source $VSHDIR/.vshrc" >>~/.bashrc
 fi
 
+if ! grep -q "source $VSHDIR/bin" ~/.bashrc; then
+    echo "source $VSHDIR/bin" >>~/.bashrc
+fi
+
+
 
 #source the .bashrc file
 source ~/.bashrc
