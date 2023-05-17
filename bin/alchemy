@@ -7,7 +7,7 @@ def convert_atoms():
     parser = argparse.ArgumentParser(description='Convert atoms using ASE')
 
     parser.add_argument('-f', '--file', type=str, help='Structure file')
-    parser.add_argument('=n', '--new', type=str, help='New atom type')
+    parser.add_argument('-n', '--new', type=str, help='New atom type')
     parser.add_argument('-i', '--indices', type=int, nargs='+', help='Atom indices to convert')
     parser.add_argument('-t', '--type', type=str, help='Atom type to convert')
     parser.add_argument('-o', '--output', type=str, default='converted.vasp' , help='Output file name')
