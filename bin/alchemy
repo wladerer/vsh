@@ -17,7 +17,7 @@ def convert_atoms():
 
     if args.type:
         indices = [i for i, atom in enumerate(atoms) if atom.symbol == args.type]
-        args.indices = list(set(args.indices + indices))
+        args.indices = list(set(indices))
 
     for i in args.indices:
         atoms[i].symbol = args.new
