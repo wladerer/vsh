@@ -28,6 +28,7 @@ def create_vasp_inputs():
                         help='Number of kpoints along each reciprocal lattice vector')
     parser.add_argument('--kgamma', action='store_true',
                         help='Use Gamma-centered kpoint grid')
+    parser.add_argument('--linemode', action='store_true', help='Use line mode for band structure')
     
     # Exchange-correlation parameters
     parser.add_argument('--xc', type=str, default='pbe',
