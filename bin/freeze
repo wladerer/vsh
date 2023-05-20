@@ -21,17 +21,10 @@ def freeze_atoms():
 
     if args.type:
         indices = [i for i, atom in enumerate(atoms) if atom.symbol == args.type]
-        if args.intersection:
-            args.indices = list(set(args.indices).intersection(indices))
-        else:
-            args.indices = list(set(args.indices + indices))
-
+    
     if args.zmax:
         indices = [i for i, atom in enumerate(atoms) if atom.position[2] < args.zmax]
-        if args.intersection:
-            args.indices = list(set(args.indices).intersection(indices))
-        else:
-            args.indices = list(set(args.indices + indices))
+ 
     
 
     atoms.set_constraint(FixAtoms(indices=args.indices))
