@@ -1,0 +1,8 @@
+LICENSE
+README.md
+setup.py
+vsh.egg-info/PKG-INFO
+vsh.egg-info/SOURCES.txt
+vsh.egg-info/dependency_links.txt
+vsh.egg-info/requires.txt
+vsh.egg-info/top_level.txt

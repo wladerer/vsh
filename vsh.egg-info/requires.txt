@@ -1,0 +1,5 @@
+ase
+numpy
+matplotlib
+ifermi
+scipy
