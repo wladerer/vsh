@@ -21,13 +21,14 @@ def freeze_atoms():
 
     if args.type:
         indices = [i for i, atom in enumerate(atoms) if atom.symbol == args.type]
+
     
     if args.zmax:
         indices = [i for i, atom in enumerate(atoms) if atom.position[2] < args.zmax]
  
     
 
-    atoms.set_constraint(FixAtoms(indices=args.indices))
+    atoms.set_constraint(FixAtoms(indices=indices))
     write(args.output, atoms, vasp5=True, sort=args.sort)
 
 if __name__ == '__main__':
