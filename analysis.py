@@ -15,6 +15,14 @@ def validate_atoms(atoms: Atoms) -> bool:
     else:
         return True
 
+def is_diatomic(atoms: Atoms) -> bool:
+    '''Checks if an atoms object is diatomic'''
+    if validate_atoms(atoms) == False:
+        raise ValueError("Invalid atoms object")
+    if len(atoms) == 2:
+        return True
+    else:
+        return False
 
 def get_adjacency_matrix(atoms: Atoms) -> np.ndarray:
     '''Gets the adjacency matrix of a structure'''
@@ -26,12 +34,17 @@ def get_adjacency_matrix(atoms: Atoms) -> np.ndarray:
 
     return adjacency_matrix
 
+def get_number_of_atoms(atoms: Atoms) -> int:
+    '''Gets the number of atoms in an atoms object'''
+    return len(atoms)
+
 def analyze_adjacency_matrix(adjacency_matrix: np.ndarray, min_dist: float):
     '''Checks if the adjacency matrix is reasonable'''
     #update diagonals to be very large
     np.fill_diagonal(adjacency_matrix, 1000)
     #check if any off diagonal is less than min_dist, return the indices of the offending atoms
     indices = np.where(adjacency_matrix < min_dist)
+
     bond_lengths = adjacency_matrix[indices]
     if len(indices) > 0:
         return indices, bond_lengths
@@ -40,14 +53,12 @@ def analyze_adjacency_matrix(adjacency_matrix: np.ndarray, min_dist: float):
 
 def unpack_indices(indices: tuple[np.ndarray], element_list: list[str], bond_lengths: np.ndarray):
     '''Returns a dictionary of atom pairs'''
-
     #check if indices is an empty np array, if so return None
     if any(len(index) < 2  for index in indices) or len(indices) == 0 or indices == None:
-        raise ValueError("No conflicting atoms")
+        return None
 
     atom_pairs = {}
     for length, pair in enumerate(indices):
-        print(pair)
         first_element_index, second_element_index = pair
         first_element = element_list[first_element_index]
         second_element = element_list[second_element_index]
@@ -60,12 +71,27 @@ def unpack_indices(indices: tuple[np.ndarray], element_list: list[str], bond_len
 
 def conflicting_atoms(atoms: Atoms, min_dist: float) -> dict:
     '''Checks if a structure has atoms that are too close together'''
+    if is_diatomic(atoms):
+        #get length between the two atoms
+        positions = atoms.get_positions()
+        bond_length = np.linalg.norm(positions[0] - positions[1])
+        if bond_length < min_dist:
+            return {f"{atoms[0].symbol}{0}-{atoms[1].symbol}{1}": bond_length}
+        else:
+            return None
+        
     neighbor_list = get_adjacency_matrix(atoms)
     indices, bond_lengths = analyze_adjacency_matrix(neighbor_list, min_dist)
     element_list: tuple[np.ndarray] = atoms.get_chemical_symbols()
 
     if indices == None or len(indices) == 0:
         return None
+    
+    print(indices)
+    print(get_number_of_atoms(atoms))
+    #check if indices is greater than or equal to the number of atoms
+    if len(indices) >= get_number_of_atoms(atoms):
+        raise ValueError("Min distance is too large or the structure may be corrupt")
     
     return unpack_indices(indices, element_list, bond_lengths)
 
