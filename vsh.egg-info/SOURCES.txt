@@ -1,6 +1,7 @@
 LICENSE
 README.md
 setup.py
+tests/test_analysis.py
 vsh.egg-info/PKG-INFO
 vsh.egg-info/SOURCES.txt
 vsh.egg-info/dependency_links.txt

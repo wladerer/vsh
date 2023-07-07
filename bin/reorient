@@ -1,0 +1,5 @@
+#!/bin/env python
+from reorient import reorient_molecule
+
+if __name__ == '__main__':
+    reorient_molecule()
