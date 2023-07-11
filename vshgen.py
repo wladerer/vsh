@@ -3,16 +3,6 @@ import argparse
 from ase.calculators.vasp import Vasp
 from ase.io import read, write
 
-low_slab_options = {'encut': 400, 'ibrion': 2, 'nsw': 100, 'isif': 2, 'ediff': 0.5e-5, 'ediffg': -0.01, 'lwave': False}
-low_bulk_options = {'encut': 400, 'ibrion': 2, 'nsw': 100, 'isif': 3, 'ediff': 0.5e-5, 'ediffg': -0.01, 'lwave': False}
-med_slab_options = {'encut': 520, 'ibrion': 2, 'nsw': 100, 'isif': 2, 'ediff': 1.0e-5, 'ediffg': -0.01, 'lwave': False}
-med_bulk_options = {'encut': 520, 'ibrion': 2, 'nsw': 100, 'isif': 3, 'ediff': 1.0e-5, 'ediffg': -0.01, 'lwave': False}
-
-med_single_point = {'encut': 520, 'ibrion': 2, 'nsw': 0, 'isif': 2, 'ediff': 1.0e-5, 'ediffg': -0.01, 'lwave': False}
-
-bader = {'lcharg': True, 'laechg': True}
-soc_options = {'lsorbit': True, 'lwave': False, 'lcharg': False}
-
 def parse_args():
     parser = argparse.ArgumentParser(description='Create VASP inputs using ASE')
     
