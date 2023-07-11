@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from pymatgen.core.structure import Structure, Molecule
 import argparse
+
 M = [[0,0,-1],[0,-1,0],[-1,0,0]]
 
 
