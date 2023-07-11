@@ -1,7 +1,7 @@
 import argparse
 from ase.io import read
 from ase.calculators.vasp import Vasp
-import sys
+
 
 def yaml_to_dict(filename):
     '''Convert yaml file to dictionary'''
