@@ -32,6 +32,15 @@ def create_vasp_inputs():
     parser.add_argument('--isif', type=int, choices=[0, 1, 2, 3, 4, 5, 6, 7],
                         help='Ionic relaxation method')
     # Add more arguments as needed
+    parser.add_argument('--nsw', type=int, help='Number of ionic steps')
+    parser.add_argument('--ibrion', type=int, help='Ionic relaxation algorithm')
+    parser.add_argument('--potim', type=float, help='Ionic relaxation time step')
+
+    #add nelm
+    parser.add_argument('--nelm', type=int, help='Number of electronic steps')
+
+    #ispin
+    parser.add_argument('--ispin', type=int, help='Spin polarization')
 
     # Kpoints parameters
     parser.add_argument('--kpts', type=int, nargs=3, default=[1, 1, 1],
@@ -98,7 +107,13 @@ def create_vasp_inputs():
                 symprec=args.symprec,
                 isym=args.isym,
                 icharg=args.icharg,
-                lsorbit=args.lsorbit)
+                lsorbit=args.lsorbit,
+                nelm=args.nelm,
+                ibrion=args.ibrion,
+                nsw=args.nsw,
+                potim=args.potim,
+                ispin=args.ispin)
+    
     
     atoms.calc = calc
     calc.write_input(atoms)
