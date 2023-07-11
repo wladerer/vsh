@@ -25,3 +25,5 @@ nosetests.xml
 
 # Translations
 *.mo
+conda-env
+vsh.egg-info

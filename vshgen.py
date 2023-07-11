@@ -7,7 +7,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Create VASP inputs using ASE")
 
     # Structure parameters from file -f or --file
-    parser.add_argument("-f", "--file", type=str, help="Structure file")
+    parser.add_argument("poscar", type=open, help="Structure file")
 
     # Electronic parameters
     parser.add_argument("--encut", type=float, help="Cutoff energy for plane waves")
@@ -98,14 +98,18 @@ def parse_args():
         "--ismear", type=int, choices=[-5, -4, -3, -2, -1, 0, 1], help="Smearing method"
     )
     parser.add_argument("--sigma", type=float, help="Smearing width")
-    args = parser.parse_args()
 
+
+    args = parser.parse_args()
+    # Process arguments
+    args.atoms = read(args.poscar)
+    args.poscar.close()
     return args
 
 
 def create_vasp_inputs(args):
     # Read the structure from the specified file
-    atoms = read(args.file)
+    atoms = args.atoms
 
     # Use the specified arguments to create the Vasp calculator
     calc = Vasp(
