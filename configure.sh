@@ -18,8 +18,8 @@ if ! grep -q "source $VSHDIR/.vshrc" ~/.bashrc; then
     echo "source $VSHDIR/.vshrc" >>~/.bashrc
 fi
 
-echo "Add $VSHDIR/bin to path for input file generation"
-echo 'export PATH=$VSHDIR/bin:$PATH'
+echo "Add $VSHDIR to path for input file generation"
+echo 'export PATH=$VSHDIR:$PATH'
 
 #source the .bashrc file
 source ~/.bashrc

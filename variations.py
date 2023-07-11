@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import argparse
 from ase.io import read
 from ase.calculators.vasp import Vasp

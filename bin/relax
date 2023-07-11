@@ -1,5 +1,0 @@
-#!/bin/env python
-from relax import create_vasp_inputs
-
-if __name__ == '__main__':
-    create_vasp_inputs()

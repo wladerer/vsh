@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import argparse
 from ase.io import read, write
 from ase.constraints import FixAtoms

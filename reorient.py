@@ -4,7 +4,6 @@ import argparse
 
 M = [[0,0,-1],[0,-1,0],[-1,0,0]]
 
-
 def read_file(filename):
     '''Reads a molecule from a file.'''
     return Molecule.from_file(filename)

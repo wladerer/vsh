@@ -7,7 +7,8 @@
 *.egg-info
 dist/
 build/
-
+tests/__pycache__/
+vsh.egg-info/
 
 # Installer logs
 pip-log.txt

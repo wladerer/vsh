@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import argparse
 from ase.calculators.vasp import Vasp
 from ase.spacegroup import get_spacegroup
@@ -6,7 +5,6 @@ from ase import Atoms
 from ase.io import read, write
 from scipy.spatial.distance import cdist
 import numpy as np
-import phonopy 
 
 def validate_atoms(atoms: Atoms) -> bool:
     '''Checks if an atoms object is valid'''
