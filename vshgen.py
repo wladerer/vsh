@@ -13,8 +13,7 @@ med_single_point = {'encut': 520, 'ibrion': 2, 'nsw': 0, 'isif': 2, 'ediff': 1.0
 bader = {'lcharg': True, 'laechg': True}
 soc_options = {'lsorbit': True, 'lwave': False, 'lcharg': False}
 
-
-def create_vasp_inputs():
+def parse_args():
     parser = argparse.ArgumentParser(description='Create VASP inputs using ASE')
     
     # Structure parameters from file -f or --file
@@ -81,8 +80,11 @@ def create_vasp_inputs():
     # Smearing parameters
     parser.add_argument('--ismear', type=int, choices=[-5, -4, -3, -2, -1, 0, 1], help='Smearing method')
     parser.add_argument('--sigma', type=float, help='Smearing width')
-
     args = parser.parse_args()
+
+    return args
+
+def create_vasp_inputs(args):
     
     # Read the structure from the specified file
     atoms = read(args.file)
@@ -118,8 +120,14 @@ def create_vasp_inputs():
     atoms.calc = calc
     calc.write_input(atoms)
 
+
+def main():
+    args = parse_args()
+    create_vasp_inputs(args)
+
+
 if __name__ == '__main__':
-    create_vasp_inputs()
+    main()
     
 
 
