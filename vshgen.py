@@ -9,7 +9,7 @@ def check_magmom(args):
     try:
         magmom = eval(args.magmom)
     except:
-        raise
+        raise Exception('MAGMOM should be a python list!')
     if not type(magmom) == list:
         raise Exception('MAGMOM format is wrong!')
     if len(magmom) != args.natoms:
