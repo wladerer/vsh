@@ -19,6 +19,7 @@ def check_magmom(args):
            raise Exception('MAGMOM list should only contain integers!') 
     return magmom
 
+
 def parse_args():
     parser = argparse.ArgumentParser(description="Create VASP inputs using ASE")
 
@@ -73,47 +74,42 @@ def parse_args():
     # IO parameters
     parser.add_argument("--lwave", action="store_true", help="Write WAVECAR")
     parser.add_argument("--lcharg", action="store_true", help="Write CHGCAR")
-    parser.add_argument(
-        "--lreal",
-        type=str,
-        choices=["Auto", "None", "A", "B", "C"],
-        help="Type of real-space projection",
-    )
-    parser.add_argument(
-        "--laechg", action="store_true", help="Write AECCAR0 and AECCAR2"
-    )
-    #
+    parser.add_argument("--lreal",
+                        type=str,
+                        choices=["Auto", "None", "A", "B", "C"],
+                        help="Type of real-space projection")
+    parser.add_argument("--laechg", 
+                        action="store_true", 
+                        help="Write AECCAR0 and AECCAR2")
 
     # Precison parameters
-    parser.add_argument(
-        "--prec", type=str, choices=["N", "L", "M", "H", "A"], help="Precision"
-    )
+    parser.add_argument("--prec", 
+                        type=str, 
+                        choices=["N", "L", "M", "H", "A"], 
+                        help="Precision")
 
     # Symmetry parameters
     parser.add_argument("--symprec", type=float, help="Symmetry precision")
     parser.add_argument("--isym", type=int, choices=[-1, 0, 1, 2, 3])
 
     # Charge density parameters
-    parser.add_argument(
-        "--icharg",
-        type=int,
-        choices=[0, 1, 2, 4, 10, 11, 12],
-        help="Charge density initialization",
-    )
+    parser.add_argument("--icharg",
+                        type=int,
+                        choices=[0, 1, 2, 4, 10, 11, 12],
+                        help="Charge density initialization")
 
     # Spin orbit coupling parameters
     parser.add_argument("--lsorbit", action="store_true", help="Spin orbit coupling")
 
     # Smearing parameters
-    parser.add_argument(
-        "--ismear", type=int, choices=[-5, -4, -3, -2, -1, 0, 1], help="Smearing method"
-    )
+    parser.add_argument("--ismear", 
+                        type=int, 
+                        choices=[-5, -4, -3, -2, -1, 0, 1], 
+                        help="Smearing method")
     parser.add_argument("--sigma", type=float, help="Smearing width")
 
     # MAGMOM
     parser.add_argument("--magmom", help="List of magnetic moments. [Order matters]")
-
-
     args = parser.parse_args()
     # Process arguments
     args.atoms = read(args.poscar)
@@ -130,7 +126,7 @@ def create_vasp_inputs(args):
 
     # Use the specified arguments to create the Vasp calculator
     calc = Vasp(
-        atoms=atoms,
+        atoms=args.atoms,
         encut=args.encut,
         ediff=args.ediff,
         ediffg=args.ediffg,
