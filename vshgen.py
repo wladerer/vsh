@@ -47,9 +47,10 @@ def parse_args():
     parser.add_argument("--kgamma", 
                         action="store_true", 
                         help="Use Gamma-centered kpoint grid")
-    parser.add_argument("--linemode", 
-                        action="store_true", 
-                        help="Use line mode for band structure")
+    #FIXME IMPLEMENT THIS PARAMETER
+    #parser.add_argument("--linemode", 
+    #                    action="store_true", 
+    #                    help="Use line mode for band structure")
 
     # Exchange-correlation parameters
     parser.add_argument("--xc", 
@@ -104,46 +105,15 @@ def parse_args():
                         in the order they appear in the file")
     args = parser.parse_args()
     # Process arguments
-    args.natoms = args.atoms.get_global_number_of_atoms()
-    if len(args.magmom) != args.natoms:
+    natoms = args.atoms.get_global_number_of_atoms()
+    if len(args.magmom) != natoms:
         raise Exception('Length of the MAGMOM list should be == number of atoms')
     return args
 
 
 def create_vasp_inputs(args):
-    # Read the structure from the specified file
-    atoms = args.atoms
-
     # Use the specified arguments to create the Vasp calculator
-    calc = Vasp(
-        atoms=args.atoms,
-        encut=args.encut,
-        ediff=args.ediff,
-        ediffg=args.ediffg,
-        algo=args.algo,
-        isif=args.isif,
-        kpts=args.kpts,
-        ismear=args.ismear,
-        sigma=args.sigma,
-        xc=args.xc,
-        npar=args.npar,
-        lwave=args.lwave,
-        lcharg=args.lcharg,
-        lreal=args.lreal,
-        laechg=args.laechg,
-        prec=args.prec,
-        symprec=args.symprec,
-        isym=args.isym,
-        icharg=args.icharg,
-        lsorbit=args.lsorbit,
-        nelm=args.nelm,
-        ibrion=args.ibrion,
-        nsw=args.nsw,
-        potim=args.potim,
-        ispin=args.ispin,
-        magmom=args.magmom
-    )
-
+    calc = Vasp(**vars(args))
     atoms.calc = calc
     calc.write_input(atoms)
 
