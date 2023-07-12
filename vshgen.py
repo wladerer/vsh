@@ -3,23 +3,6 @@ from ase.calculators.vasp import Vasp
 from ase.io import read, write
 
 
-def check_magmom(args):
-    # THE LIST CASE
-    magmom = 0
-    try:
-        magmom = eval(args.magmom)
-    except:
-        raise Exception('MAGMOM should be a python list!')
-    if not type(magmom) == list:
-        raise Exception('MAGMOM format is wrong!')
-    if len(magmom) != args.natoms:
-        raise Exception('Length of the MAGMOM list should be == number of atoms')
-    for i in magmom:
-        if not type(i) == int:
-           raise Exception('MAGMOM list should only contain integers!') 
-    return magmom
-
-
 def parse_args():
     parser = argparse.ArgumentParser(description="Create VASP inputs using ASE")
 
@@ -28,8 +11,10 @@ def parse_args():
         with open(x, 'r') as f:
             return read(f)
 
-    parser.add_argument("poscar", type=poscar_file, help="Structure file")
-
+    parser.add_argument("atoms", 
+                        type=poscar_file, 
+                        metavar='poscar',
+                        help="Structure file")
     # Electronic parameters
     parser.add_argument("--encut", type=float, help="Cutoff energy for plane waves")
     parser.add_argument("--ediff", type=float, help="Energy convergence criterion")
@@ -113,13 +98,15 @@ def parse_args():
     parser.add_argument("--sigma", type=float, help="Smearing width")
 
     # MAGMOM
-    parser.add_argument("--magmom", help="List of magnetic moments. [Order matters]")
+    parser.add_argument("--magmom", 
+                        type=eval, 
+                        help="PYTHON list of integers of magnetic moments\
+                        in the order they appear in the file")
     args = parser.parse_args()
     # Process arguments
-    args.atoms = args.poscar
     args.natoms = args.atoms.get_global_number_of_atoms()
-    args.magmom = check_magmom(args)
-
+    if len(args.magmom) != args.natoms:
+        raise Exception('Length of the MAGMOM list should be == number of atoms')
     return args
 
 
