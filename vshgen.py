@@ -3,6 +3,22 @@ from ase.calculators.vasp import Vasp
 from ase.io import read, write
 
 
+def check_magmom(args):
+    # THE LIST CASE
+    magmom = 0
+    try:
+        magmom = eval(args.magmom)
+    except:
+        raise
+    if not type(magmom) == list:
+        raise Exception('MAGMOM format is wrong!')
+    if len(magmom) != args.natoms:
+        raise Exception('Length of the MAGMOM list should be == number of atoms')
+    for i in magmom:
+        if not type(i) == int:
+           raise Exception('MAGMOM list should only contain integers!') 
+    return magmom
+
 def parse_args():
     parser = argparse.ArgumentParser(description="Create VASP inputs using ASE")
 
@@ -13,18 +29,14 @@ def parse_args():
     parser.add_argument("--encut", type=float, help="Cutoff energy for plane waves")
     parser.add_argument("--ediff", type=float, help="Energy convergence criterion")
     parser.add_argument("--ediffg", type=float, help="Force convergence criterion")
-    parser.add_argument(
-        "--algo",
-        type=str,
-        choices=["Normal", "Fast", "VeryFast"],
-        help="Electronic minimization algorithm",
-    )
-    parser.add_argument(
-        "--isif",
-        type=int,
-        choices=[0, 1, 2, 3, 4, 5, 6, 7],
-        help="Ionic relaxation method",
-    )
+    parser.add_argument("--algo",
+                        type=str,
+                        choices=["Normal", "Fast", "VeryFast"],
+                        help="Electronic minimization algorithm")
+    parser.add_argument("--isif",
+                        type=int,
+                        choices=[0, 1, 2, 3, 4, 5, 6, 7],
+                        help="Ionic relaxation method")
     # Add more arguments as needed
     parser.add_argument("--nsw", type=int, help="Number of ionic steps")
     parser.add_argument("--ibrion", type=int, help="Ionic relaxation algorithm")
@@ -37,24 +49,23 @@ def parse_args():
     parser.add_argument("--ispin", type=int, help="Spin polarization")
 
     # Kpoints parameters
-    parser.add_argument(
-        "--kpts",
-        type=int,
-        nargs=3,
-        default=[1, 1, 1],
-        help="Number of kpoints along each reciprocal lattice vector",
-    )
-    parser.add_argument(
-        "--kgamma", action="store_true", help="Use Gamma-centered kpoint grid"
-    )
-    parser.add_argument(
-        "--linemode", action="store_true", help="Use line mode for band structure"
-    )
+    parser.add_argument("--kpts",
+                        type=int,
+                        nargs=3,
+                        default=[1, 1, 1],
+                        help="Number of kpoints along each reciprocal lattice vector")
+    parser.add_argument("--kgamma", 
+                        action="store_true", 
+                        help="Use Gamma-centered kpoint grid")
+    parser.add_argument("--linemode", 
+                        action="store_true", 
+                        help="Use line mode for band structure")
 
     # Exchange-correlation parameters
-    parser.add_argument(
-        "--xc", type=str, default="pbe", help="Exchange-correlation functional"
-    )
+    parser.add_argument("--xc", 
+                        type=str, 
+                        default="pbe", 
+                        help="Exchange-correlation functional")
 
     # Parallelization parameters
     parser.add_argument("--npar", type=int, help="Number of cores to use")
@@ -99,11 +110,17 @@ def parse_args():
     )
     parser.add_argument("--sigma", type=float, help="Smearing width")
 
+    # MAGMOM
+    parser.add_argument("--magmom", help="List of magnetic moments. [Order matters]")
+
 
     args = parser.parse_args()
     # Process arguments
     args.atoms = read(args.poscar)
+    args.natoms = args.atoms.get_global_number_of_atoms()
     args.poscar.close()
+    args.magmom = check_magmom(args)
+
     return args
 
 
@@ -138,6 +155,7 @@ def create_vasp_inputs(args):
         nsw=args.nsw,
         potim=args.potim,
         ispin=args.ispin,
+        magmom=args.magmom
     )
 
     atoms.calc = calc
