@@ -24,7 +24,11 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Create VASP inputs using ASE")
 
     # Structure parameters from file -f or --file
-    parser.add_argument("poscar", type=open, help="Structure file")
+    def poscar_file(x):
+        with open(x, 'r') as f:
+            return read(f)
+
+    parser.add_argument("poscar", type=poscar_file, help="Structure file")
 
     # Electronic parameters
     parser.add_argument("--encut", type=float, help="Cutoff energy for plane waves")
@@ -112,9 +116,8 @@ def parse_args():
     parser.add_argument("--magmom", help="List of magnetic moments. [Order matters]")
     args = parser.parse_args()
     # Process arguments
-    args.atoms = read(args.poscar)
+    args.atoms = args.poscar
     args.natoms = args.atoms.get_global_number_of_atoms()
-    args.poscar.close()
     args.magmom = check_magmom(args)
 
     return args
