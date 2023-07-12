@@ -5,20 +5,24 @@ from ase.io import read, write
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Create VASP inputs using ASE")
-
     # Structure parameters from file -f or --file
     def poscar_file(x):
         with open(x, 'r') as f:
             return read(f)
-
     parser.add_argument("atoms", 
                         type=poscar_file, 
                         metavar='poscar',
                         help="Structure file")
     # Electronic parameters
-    parser.add_argument("--encut", type=float, help="Cutoff energy for plane waves")
-    parser.add_argument("--ediff", type=float, help="Energy convergence criterion")
-    parser.add_argument("--ediffg", type=float, help="Force convergence criterion")
+    parser.add_argument("--encut", 
+                        type=float, 
+                        help="Cutoff energy for plane waves")
+    parser.add_argument("--ediff", 
+                        type=float, 
+                        help="Energy convergence criterion")
+    parser.add_argument("--ediffg", 
+                        type=float, 
+                        help="Force convergence criterion")
     parser.add_argument("--algo",
                         type=str,
                         choices=["Normal", "Fast", "VeryFast"],
@@ -28,16 +32,21 @@ def parse_args():
                         choices=[0, 1, 2, 3, 4, 5, 6, 7],
                         help="Ionic relaxation method")
     # Add more arguments as needed
-    parser.add_argument("--nsw", type=int, help="Number of ionic steps")
-    parser.add_argument("--ibrion", type=int, help="Ionic relaxation algorithm")
-    parser.add_argument("--potim", type=float, help="Ionic relaxation time step")
-
-    # add nelm
-    parser.add_argument("--nelm", type=int, help="Number of electronic steps")
-
-    # ispin
-    parser.add_argument("--ispin", type=int, help="Spin polarization")
-
+    parser.add_argument("--nsw", 
+                        type=int, 
+                        help="Number of ionic steps")
+    parser.add_argument("--ibrion", 
+                        type=int, 
+                        help="Ionic relaxation algorithm")
+    parser.add_argument("--potim", 
+                        type=float, 
+                        help="Ionic relaxation time step")
+    parser.add_argument("--nelm", 
+                        type=int, 
+                        help="Number of electronic steps")
+    parser.add_argument("--ispin", 
+                        type=int, 
+                        help="Spin polarization")
     # Kpoints parameters
     parser.add_argument("--kpts",
                         type=int,
@@ -51,19 +60,20 @@ def parse_args():
     #parser.add_argument("--linemode", 
     #                    action="store_true", 
     #                    help="Use line mode for band structure")
-
-    # Exchange-correlation parameters
-    parser.add_argument("--xc", 
+    parser.add_argument("--xc", # exchange correlation
                         type=str, 
                         default="pbe", 
                         help="Exchange-correlation functional")
-
-    # Parallelization parameters
-    parser.add_argument("--npar", type=int, help="Number of cores to use")
-
+    parser.add_argument("--npar", # parallelization
+                        type=int, 
+                        help="Number of cores to use")
     # IO parameters
-    parser.add_argument("--lwave", action="store_true", help="Write WAVECAR")
-    parser.add_argument("--lcharg", action="store_true", help="Write CHGCAR")
+    parser.add_argument("--lwave", 
+                        action="store_true", 
+                        help="Write WAVECAR")
+    parser.add_argument("--lcharg", 
+                        action="store_true", 
+                        help="Write CHGCAR")
     parser.add_argument("--lreal",
                         type=str,
                         choices=["Auto", "None", "A", "B", "C"],
@@ -71,34 +81,32 @@ def parse_args():
     parser.add_argument("--laechg", 
                         action="store_true", 
                         help="Write AECCAR0 and AECCAR2")
-
-    # Precison parameters
-    parser.add_argument("--prec", 
+    parser.add_argument("--prec", # Precision
                         type=str, 
                         choices=["N", "L", "M", "H", "A"], 
                         help="Precision")
-
     # Symmetry parameters
-    parser.add_argument("--symprec", type=float, help="Symmetry precision")
-    parser.add_argument("--isym", type=int, choices=[-1, 0, 1, 2, 3])
-
-    # Charge density parameters
-    parser.add_argument("--icharg",
+    parser.add_argument("--symprec", 
+                        type=float, 
+                        help="Symmetry precision")
+    parser.add_argument("--isym", 
+                        type=int, 
+                        choices=[-1, 0, 1, 2, 3])
+    parser.add_argument("--icharg", # Charge density
                         type=int,
                         choices=[0, 1, 2, 4, 10, 11, 12],
                         help="Charge density initialization")
-
-    # Spin orbit coupling parameters
-    parser.add_argument("--lsorbit", action="store_true", help="Spin orbit coupling")
-
+    parser.add_argument("--lsorbit", # Spin-Orbit coupling
+                        action="store_true", 
+                        help="Spin orbit coupling")
     # Smearing parameters
-    parser.add_argument("--ismear", 
+    parser.add_argument("--ismear",
                         type=int, 
                         choices=[-5, -4, -3, -2, -1, 0, 1], 
                         help="Smearing method")
-    parser.add_argument("--sigma", type=float, help="Smearing width")
-
-    # MAGMOM
+    parser.add_argument("--sigma", 
+                        type=float, 
+                        help="Smearing width")
     parser.add_argument("--magmom", 
                         type=eval, 
                         help="PYTHON list of integers of magnetic moments\
