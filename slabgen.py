@@ -19,6 +19,16 @@ def generate_filename(structure: Structure, miller_plane: list, zmin) -> str:
     formula = structure.formula.replace(' ', '')
     return f'{formula}_slab_{miller_plane[0]}{miller_plane[1]}{miller_plane[2]}_{zmin}.vasp'
 
+def freeze_slab(structure: Structure, min_z: float) -> Structure:
+    '''Freezes atoms below a certain threshold'''
+
+    for site in structure.sites:
+        if site.z < min_z:
+            site.properties['selective_dynamics'] = [False, False, False]
+        else:
+            site.properties['selective_dynamics'] = [True, True, True]
+    
+
 
 def create_slabs():
     parser = argparse.ArgumentParser(description='Create slabs using pymatgen')
@@ -33,11 +43,17 @@ def create_slabs():
     parser.add_argument('--primitive', default=False, help='Create primitive cell')
     parser.add_argument('-c', '--center-slab', default=False, help='Center the slab')
     parser.add_argument('-u', '--in-unit-planes', default=False, type=bool, help='Specify zmin in multiples of miller plane spacing')
+    parser.add_argument('--freeze', default=5, type=float, help='Freeze the bottom layer of the slab')
 
     args = parser.parse_args()
 
     structure = structure_from_file(args.file)
     slabs = slab_from_structure(structure, args.miller_plane, args.zmin, args.vacuum, args.primitive, args.center_slab, args.in_unit_planes)
+    
+    if args.freeze:
+        for slab in slabs:
+            freeze_slab(slab, args.freeze)
+    
     for slab in slabs:
         write_slab_to_poscar(slab, generate_filename(structure, args.miller_plane, args.zmin))
 
