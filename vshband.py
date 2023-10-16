@@ -104,8 +104,5 @@ def plot():
                            fermi=args.fermi
                            )
 
-# if __name__ == '__main__':
-#     plot()
-
-atoms = handle_atoms('/Users/wladerer/github/vsh/test/files/snpt3.vasp')
-print(atoms)
+if __name__ == '__main__':
+    plot()
