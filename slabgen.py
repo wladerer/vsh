@@ -15,7 +15,7 @@ def slab_from_structure(structure: Structure, miller_plane: list, zmin, vacuum: 
 
 def write_slab_to_poscar(slab: Structure, filename: str) -> None:
     poscar = Poscar(slab, sort_structure=True)
-    poscar.write_file(filename)
+    poscar.write_file(filename, direct=False)
 
 def generate_filename(structure: Structure, miller_plane: list, zmin) -> str:
     formula = structure.formula.replace(' ', '')
