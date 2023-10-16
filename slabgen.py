@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import argparse
 from pymatgen.core.structure import Structure
 from pymatgen.core.surface import SlabGenerator
