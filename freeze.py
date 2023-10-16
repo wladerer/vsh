@@ -10,7 +10,7 @@ def freeze_atoms():
 
     parser.add_argument("-f", "--filename", type=str, help="Structure file", required=True)
     parser.add_argument(
-        "-i", "--indices", type=int, nargs="+", help="Atom indices to freeze"
+        "-i", "--indices", type=int, nargs="+", default=None, help="Atom indices to freeze"
     )
     parser.add_argument("-t", "--type", type=str, help="Atom type to freeze")
     parser.add_argument("-z", "--zmax", type=float, help="Freeze atoms with z < zmax")
