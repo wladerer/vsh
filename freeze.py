@@ -34,7 +34,7 @@ def freeze_atoms():
     if args.zmax:
         args.indices = [i for i, atom in enumerate(atoms) if atom.position[2] < args.zmax]
 
-    atoms.set_constraint(FixAtoms(indices=indices))
+    atoms.set_constraint(FixAtoms(indices=args.indices))
     
     if args.output:
         write(args.output, atoms, vasp5=True, sort=args.sort)
