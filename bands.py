@@ -1,3 +1,5 @@
+#!/bin/env python3
+
 #!/usr/bin/env python
 import argparse
 from ase.dft.kpoints import bandpath

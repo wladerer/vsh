@@ -1,10 +1,40 @@
+#!/bin/env python3
+
 import argparse
 from ase.calculators.vasp import Vasp
 from ase.io import read, write
 import os
 import pyprocar
 
-def handle_atoms(poscar: str) -> dict:
+orbital_dict = {'s': 0, 'p_y': 1, 'p_z': 2, 'p_x': 3, 'd_xy': 4, 'd_yz': 5, 'd_z2': 6, 'd_xz': 7, 'd_x2-y2': 8}
+
+def handle_orbitals(orbitals: list | str) -> list[int]:
+    '''Converts a string to a list of orbitals'''
+
+    if 'all' in orbitals:
+        orbital_list = list(range(9))
+
+    elif 's' in orbitals:
+        orbital_list = [0]
+    
+    elif 'p' in orbitals:
+        orbital_list = [1, 2, 3]
+    
+    elif 'd' in orbitals:
+        orbital_list = [4, 5, 6, 7, 8]
+
+    #if orbitals is a string, convert to indices
+    elif isinstance(args.orbitals, str):
+        orbital_list = [orbital_dict[args.orbitals]]
+
+    #if orbitals is a list of strings, convert to indices
+    elif isinstance(args.orbitals, list):
+        orbital_list = [orbital_dict[orbital] for orbital in args.orbitals]
+
+    return orbital_list
+
+
+def handle_atoms(poscar: str = './POSCAR') -> dict:
     '''Gets identities and indices of atoms from a POSCAR or CONTCAR file'''
 
     atoms = read(poscar)
@@ -38,6 +68,15 @@ def plot():
     parser.add_argument('--dpi', type=int, default=600, help='DPI of the output file')
 
     args = parser.parse_args()
+
+    #if atoms is a string, use handle atoms to convert to indices
+    if args.atoms:
+
+        if isinstance(args.atoms, str):
+            atom_dict = handle_atoms(args.atoms)
+            args.atoms = atom_dict[args.atoms]
+            
+
 
     if args.output:
         plot = pyprocar.bandsplot(code=args.code,
