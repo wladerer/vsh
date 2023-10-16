@@ -42,7 +42,7 @@ def create_slabs():
     parser.add_argument('--sort', help='Sort atoms')
     parser.add_argument('-v', '--vacuum', type=float, default=15.0, help='Vacuum size')
     parser.add_argument('-s', '--symmetric', type=bool, default=True, help='Ensure that the faces of the slab are symmetric')
-    parser.add_argument('--zmin', default=15.0, help='Minimum slab thickness in Angstrom or multiples of miller plane spacing')
+    parser.add_argument('-t', '--thickness',default=15.0, help='Minimum slab thickness in Angstrom or multiples of miller plane spacing')
     parser.add_argument('--primitive', default=False, help='Create primitive cell')
     parser.add_argument('-c', '--center-slab', default=False, help='Center the slab')
     parser.add_argument('-u', '--in-unit-planes', default=False, type=bool, help='Specify zmin in multiples of miller plane spacing')
@@ -51,7 +51,7 @@ def create_slabs():
     args = parser.parse_args()
 
     structure = structure_from_file(args.file)
-    slabs = slab_from_structure(structure, args.miller_plane, args.zmin, args.vacuum, args.primitive, args.center_slab, args.in_unit_planes)
+    slabs = slab_from_structure(structure=structure, miller_plane=args.miller_plane, zmin=args.zmin, vacuum=args.vacuum, is_primitive=args.primitive, center_slab=args.center_slab, in_unit_planes=args.in_unit_planes)
     
     if args.freeze:
         for slab in slabs:
