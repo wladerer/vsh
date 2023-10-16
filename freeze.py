@@ -26,7 +26,7 @@ def freeze_atoms():
     )
 
     args = parser.parse_args()
-    atoms = read(args.file)
+    atoms = read(args.filename)
 
     if args.type:
         indices = [i for i, atom in enumerate(atoms) if atom.symbol == args.type]
