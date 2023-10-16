@@ -51,14 +51,14 @@ def create_slabs():
     args = parser.parse_args()
 
     structure = structure_from_file(args.file)
-    slabs = slab_from_structure(structure=structure, miller_plane=args.miller_plane, zmin=args.zmin, vacuum=args.vacuum, is_primitive=args.primitive, center_slab=args.center_slab, in_unit_planes=args.in_unit_planes)
+    slabs = slab_from_structure(structure=structure, miller_plane=args.miller_plane, zmin=args.thickness, vacuum=args.vacuum, is_primitive=args.primitive, center_slab=args.center_slab, in_unit_planes=args.in_unit_planes)
     
     if args.freeze:
         for slab in slabs:
             freeze_slab(slab, args.freeze)
     
     for i, slab in enumerate(slabs):
-        write_slab_to_poscar(slab, f'{generate_filename(structure, args.miller_plane, args.zmin)}_{i}.vasp')
+        write_slab_to_poscar(slab, f'{generate_filename(structure, args.miller_plane, args.thickness)}_{i}.vasp')
 
 
 
