@@ -29,10 +29,10 @@ def freeze_atoms():
     atoms = read(args.filename)
 
     if args.type:
-        indices = [i for i, atom in enumerate(atoms) if atom.symbol == args.type]
+        args.indices = [i for i, atom in enumerate(atoms) if atom.symbol == args.type]
 
     if args.zmax:
-        indices = [i for i, atom in enumerate(atoms) if atom.position[2] < args.zmax]
+        args.indices = [i for i, atom in enumerate(atoms) if atom.position[2] < args.zmax]
 
     atoms.set_constraint(FixAtoms(indices=indices))
     
