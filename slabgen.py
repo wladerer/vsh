@@ -17,7 +17,7 @@ def write_slab_to_poscar(slab: Structure, filename: str) -> None:
 
 def generate_filename(structure: Structure, miller_plane: list, zmin) -> str:
     formula = structure.formula.replace(' ', '')
-    return f'{formula}_slab_{miller_plane[0]}{miller_plane[1]}{miller_plane[2]}_{zmin}.vasp'
+    return f'{formula}_slab_{miller_plane[0]}{miller_plane[1]}{miller_plane[2]}_{zmin}'
 
 def freeze_slab(structure: Structure, min_z: float) -> Structure:
     '''Freezes atoms below a certain threshold'''
@@ -34,7 +34,7 @@ def create_slabs():
     parser = argparse.ArgumentParser(description='Create slabs using pymatgen')
 
     parser.add_argument('-f', '--file', type=str, help='Structure file', required=True)
-    parser.add_argument('-m', '--miller-plane', type=list[int], nargs=3, default=[1, 1, 1], help='Miller plane')
+    parser.add_argument('-m', '--miller-plane', type=int, nargs=3, default=[0, 0, 1], help='Miller plane')
     parser.add_argument('-o', '--output', type=str, help='Output file basename')
     parser.add_argument('--sort', help='Sort atoms')
     parser.add_argument('-v', '--vacuum', type=float, default=15.0, help='Vacuum size')
@@ -54,8 +54,8 @@ def create_slabs():
         for slab in slabs:
             freeze_slab(slab, args.freeze)
     
-    for slab in slabs:
-        write_slab_to_poscar(slab, generate_filename(structure, args.miller_plane, args.zmin))
+    for i, slab in enumerate(slabs):
+        write_slab_to_poscar(slab, f'{generate_filename(structure, args.miller_plane, args.zmin)}_{i}.vasp')
 
 
 
