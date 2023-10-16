@@ -8,7 +8,7 @@ from ase.constraints import FixAtoms
 def freeze_atoms():
     parser = argparse.ArgumentParser(description="Freeze atoms using ASE")
 
-    parser.add_argument("-f", "--file", type=str, help="Structure file")
+    parser.add_argument("file", type=str, help="Structure file", required=True)
     parser.add_argument(
         "-i", "--indices", type=int, nargs="+", help="Atom indices to freeze"
     )
