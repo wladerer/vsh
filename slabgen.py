@@ -35,8 +35,6 @@ def freeze_slab(structure: Structure, min_z: float) -> Structure:
 def create_slabs():
     parser = argparse.ArgumentParser(description='Create slabs using pymatgen')
 
-    #add help messages
-    parser.add_argument('-h', '--help', action='help', help='Show this help message and exit')
 
     parser.add_argument('-f', '--file', type=str, help='Structure file', required=True)
     parser.add_argument('-m', '--miller-plane', type=int, nargs=3, default=[0, 0, 1], help='Miller plane')
