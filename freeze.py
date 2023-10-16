@@ -19,11 +19,7 @@ def freeze_atoms():
     )
     # sort atoms
     parser.add_argument("--sort", action="store_true", help="Sort atoms")
-    parser.add_argument(
-        "--intersection",
-        action="store_true",
-        help="Freeze atoms that satisfy all conditions",
-    )
+    parser.add_argument("--zrange", type=float, nargs=2, help="Freeze atoms with zmin < z < zmax")
 
     args = parser.parse_args()
     atoms = read(args.filename)
@@ -33,6 +29,9 @@ def freeze_atoms():
 
     if args.zmax:
         args.indices = [i for i, atom in enumerate(atoms) if atom.position[2] < args.zmax]
+
+    if args.zrange:
+        args.indices = [i for i, atom in enumerate(atoms) if args.zrange[0] < atom.position[2] < args.zrange[1]]
 
     atoms.set_constraint(FixAtoms(indices=args.indices))
     
