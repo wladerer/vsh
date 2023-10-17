@@ -133,7 +133,7 @@ def read_vasp_output():
     parser = argparse.ArgumentParser(description="Read VASP output using ASE")
 
     # Structure parameters from file -f or --file
-    parser.add_argument("-f", "--file", type=str, help="Specify structure file")
+    parser.add_argument("-f", "--file", type=str, help="Specify structure file", default="vasprun.xml")
     # parser.add_argument('-c', '--contcar', type=str, help='Specify CONTCAR file')
     parser.add_argument(
         "--volume", help="Prints the volume of the structure", action="store_true"
@@ -171,7 +171,7 @@ def read_vasp_output():
         "--positions", help="Prints the positions of the atoms"
     )
     parser.add_argument(
-        "--converged", action="store_true", help="Prints if the structure is converged")
+        "--converged", action="store_true", help="Prints if the structure is converged"))
     
 
     args = parser.parse_args()
@@ -234,7 +234,7 @@ def read_vasp_output():
 
     if args.converged:
 
-        electronic, ionic = check_convergence(args.converged)
+        electronic, ionic = check_convergence(args.file)
         print(f"Electronic convergence: {electronic}")
         print(f"Ionic convergence: {ionic}")
 
