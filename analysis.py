@@ -117,6 +117,17 @@ def print_conflicts(conflicts: dict):
 
     return None
 
+def check_convergence(file: str = './vasprun.xml') -> list[bool]:
+    '''Looks for vasprun.xml file and checks if converged'''
+    import os
+    #import Vasprun from pymatgen
+    from pymatgen.io.vasp.outputs import Vasprun
+
+    vasprun_object = Vasprun(file)
+    converged_electronic = vasprun_object.converged_electronic
+    converged_ionic = vasprun_object.converged_ionic
+
+    return [converged_electronic, converged_ionic]
 
 def read_vasp_output():
     parser = argparse.ArgumentParser(description="Read VASP output using ASE")
@@ -156,6 +167,12 @@ def read_vasp_output():
     parser.add_argument(
         "--vacuum", help="Prints the vacuum of the structure", action="store_true"
     )
+    parser.add_argument(
+        "--positions", help="Prints the positions of the atoms"
+    )
+    parser.add_argument(
+        "--converged", help="Prints if the structure is converged")
+    
 
     args = parser.parse_args()
 
@@ -209,6 +226,17 @@ def read_vasp_output():
         vacuum = z - (z_max - z_min)
         print(f"Vacuum: {vacuum:.5f}")
 
+    if args.energy:
+        atoms = read(args.file)
+        calculator = Vasp(atoms)
+        energy = calculator.get_potential_energy()
+        print(f"Energy: {energy:.5f}")
+
+    if args.converged:
+
+        electronic, ionic = check_convergence(args.file)
+        print(f"Electronic convergence: {electronic}")
+        print(f"Ionic convergence: {ionic}")
 
 if __name__ == "__main__":
     read_vasp_output()

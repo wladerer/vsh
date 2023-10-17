@@ -53,6 +53,7 @@ def create_slabs():
     structure = structure_from_file(args.file)
     slabs = slab_from_structure(structure=structure, miller_plane=args.miller_plane, zmin=float(args.thickness), vacuum=args.vacuum, is_primitive=args.primitive, center_slab=args.center_slab, in_unit_planes=args.in_unit_planes)
     
+
     if args.freeze:
         for slab in slabs:
             freeze_slab(slab, args.freeze)
