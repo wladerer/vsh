@@ -171,7 +171,7 @@ def read_vasp_output():
         "--positions", help="Prints the positions of the atoms"
     )
     parser.add_argument(
-        "--converged", help="Prints if the structure is converged")
+        "--converged", action="store_true", help="Prints if the structure is converged")
     
 
     args = parser.parse_args()
@@ -234,7 +234,7 @@ def read_vasp_output():
 
     if args.converged:
 
-        electronic, ionic = check_convergence(args.file)
+        electronic, ionic = check_convergence(args.converged)
         print(f"Electronic convergence: {electronic}")
         print(f"Ionic convergence: {ionic}")
 
