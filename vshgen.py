@@ -18,17 +18,21 @@ def parse_args():
     # Electronic parameters
     parser.add_argument("--encut", 
                         type=float, 
-                        help="Cutoff energy for plane waves")
+                        help="Cutoff energy for plane waves",
+                        default=600)
     parser.add_argument("--ediff", 
                         type=float, 
-                        help="Energy convergence criterion")
+                        help="Energy convergence criterion",
+                        default=1e-6)
     parser.add_argument("--ediffg", 
                         type=float, 
-                        help="Force convergence criterion")
+                        help="Force convergence criterion",
+                        default=-0.01)
     parser.add_argument("--algo",
                         type=str,
                         choices=["Normal", "Fast", "VeryFast"],
-                        help="Electronic minimization algorithm")
+                        help="Electronic minimization algorithm",
+                        default="Fast")
     parser.add_argument("--isif",
                         type=int,
                         choices=[0, 1, 2, 3, 4, 5, 6, 7],
@@ -45,7 +49,8 @@ def parse_args():
                         help="Ionic relaxation time step")
     parser.add_argument("--nelm", 
                         type=int, 
-                        help="Number of electronic steps")
+                        help="Number of electronic steps",
+                        default=100)
     parser.add_argument("--ispin", 
                         type=int, 
                         help="Spin polarization")
@@ -65,7 +70,8 @@ def parse_args():
     parser.add_argument("--xc", # exchange correlation
                         type=str, 
                         default="pbe", 
-                        help="Exchange-correlation functional")
+                        help="Exchange-correlation functional",
+                        default="PBE")
     parser.add_argument("--npar", # parallelization
                         type=int, 
                         help="Number of cores to use")
