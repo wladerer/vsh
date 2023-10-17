@@ -171,7 +171,7 @@ def read_vasp_output():
         "--positions", help="Prints the positions of the atoms"
     )
     parser.add_argument(
-        "--converged", action="store_true", help="Prints if the structure is converged"))
+        "--converged", action="store_true", help="Prints if the structure is converged")
     
 
     args = parser.parse_args()
