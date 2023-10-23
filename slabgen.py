@@ -44,7 +44,7 @@ def create_slabs():
     parser.add_argument('-s', '--symmetric', type=bool, default=True, help='Ensure that the faces of the slab are symmetric')
     parser.add_argument('-t', '--thickness',default=3.0, help='Minimum slab thickness in Angstrom or multiples of miller plane spacing')
     parser.add_argument('--primitive', default=False, help='Create primitive cell')
-    parser.add_argument('-c', '--center-slab', default=False, help='Center the slab')
+    parser.add_argument('-c', '--center-slab', default=True, help='Center the slab')
     parser.add_argument('-u', '--in-unit-planes', default=False, type=bool, help='Specify zmin in multiples of miller plane spacing')
     parser.add_argument('--freeze', default=5, type=float, help='Freeze the bottom layer of the slab')
 

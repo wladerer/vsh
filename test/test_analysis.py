@@ -1,5 +1,5 @@
 import pytest
-from analysis import *
+from ..analysis import *
 
 def test_get_adjacency_matrix():
     atoms = Atoms('H2', positions=[[0, 0, 0], [0, 0, 1]])
