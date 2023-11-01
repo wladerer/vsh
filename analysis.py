@@ -234,9 +234,16 @@ def read_vasp_output():
 
     if args.converged:
 
-        electronic, ionic = check_convergence(args.file)
-        print(f"Electronic convergence: {electronic}")
-        print(f"Ionic convergence: {ionic}")
+        #handle xml.elementree error. this means that the calculation is not finished or the file is corrupt
+        try:
+            electronic, ionic = check_convergence(args.file)
+            print(f"Electronic convergence: {electronic}")
+            print(f"Ionic convergence: {ionic}")
+        except:
+            print("Calculation not finished or file is corrupt")
+            exit()
+
+
 
 if __name__ == "__main__":
     read_vasp_output()
