@@ -6,13 +6,13 @@ from ase.io import read, write
 import os
 import pyprocar
 
-orbital_dict = {'s': 0, 'p_y': 1, 'p_z': 2, 'p_x': 3, 'd_xy': 4, 'd_yz': 5, 'd_z2': 6, 'd_xz': 7, 'd_x2-y2': 8}
+orbital_dict = {'s': 0, 'p_y': 1, 'p_z': 2, 'p_x': 3, 'd_xy': 4, 'd_yz': 5, 'd_z2': 6, 'd_xz': 7, 'd_x2-y2': 8, 'f_y(3x2 -y2)': 9, 'f_xyz': 10, 'f_yz2':11, 'f_z3':12, 'f_xz2':13, 'f_z(x2 -y2)':14, 'f_x(x2 -3y2)':15}
 
 def handle_orbitals(orbitals: list | str) -> list[int]:
     '''Converts a string to a list of orbitals'''
 
     if 'all' in orbitals:
-        orbital_list = list(range(9))
+        orbital_list = list(range(16))
 
     elif 's' in orbitals:
         orbital_list = [0]
@@ -22,14 +22,13 @@ def handle_orbitals(orbitals: list | str) -> list[int]:
     
     elif 'd' in orbitals:
         orbital_list = [4, 5, 6, 7, 8]
+    
+    elif 'f' in orbitals:
+        orbital_list = [9, 10, 11, 12, 13, 14, 15]
 
     #if orbitals is a string, convert to indices
-    elif isinstance(args.orbitals, str):
-        orbital_list = [orbital_dict[args.orbitals]]
-
-    #if orbitals is a list of strings, convert to indices
-    elif isinstance(args.orbitals, list):
-        orbital_list = [orbital_dict[orbital] for orbital in args.orbitals]
+    elif isinstance(orbitals, str):
+        orbital_list = [orbital_dict[orbitals]]
 
     return orbital_list
 
@@ -56,7 +55,7 @@ def plot():
 
     parser.add_argument('-e','--elimit', type=float, nargs='+', default=[-2,2], help='Range of energy to plot')
     parser.add_argument('-m', '--mode', type=str, default='parametric', help='Plotting mode')
-    parser.add_argument('--orbitals', type=int, nargs='+', default=None, help='Orbitals to plot')
+    parser.add_argument('--orbitals', type=int|str, nargs='+', default=None, help='Orbitals to plot')
     parser.add_argument('--spins', type=int, nargs='+', default=None, help='Spins to plot')
     parser.add_argument('--atoms', type=int, nargs='+', default=None, help='Atoms to plot')
     parser.add_argument('--cmap', type=str, default='cool', help='Color map')
@@ -69,14 +68,8 @@ def plot():
 
     args = parser.parse_args()
 
-    # #if atoms is a string, use handle atoms to convert to indices
-    # if args.atoms:
 
-    #     if isinstance(args.atoms, str):
-    #         atom_dict = handle_atoms(args.atoms)
-    #         args.atoms = atom_dict[args.atoms]
-            
-
+    args.orbitals = handle_orbitals(args.orbitals)
 
 
     plot = pyprocar.bandsplot(code=args.code,
@@ -91,8 +84,8 @@ def plot():
                            fermi=args.fermi,
                            show=args.output is None)
 
-
-    plot.fig.savefig(args.output, dpi=args.dpi)
+    if args.output:
+        plot.fig.savefig(args.output, dpi=args.dpi)
 
 
 
