@@ -2,6 +2,7 @@ from ase.io import read
 from os.path import abspath, dirname, join
 from vshband import handle_atoms
 
+
 def test_handle_atoms():
     # read the test file
     test_file = abspath(join(dirname(__file__), 'files', 'wp2CO.vasp'))
@@ -13,5 +14,15 @@ def test_handle_atoms():
     assert atom_indices['W'] == [i for i in range(48, 72)]
     assert atom_indices['C'] == [72]
     assert atom_indices['O'] == [73]
+
+    # test with a different file
+    test_file = abspath(join(dirname(__file__), 'files', 'Cu2O.vasp'))
+    atom_indices = handle_atoms(test_file)
+
+    # check if the atom types and counts match the expected values
+    assert len(atom_indices) == 2
+    assert atom_indices['Cu'] == [i for i in range(8)]
+    assert atom_indices['O'] == [i for i in range(8, 16)]
+
 
 test_handle_atoms()

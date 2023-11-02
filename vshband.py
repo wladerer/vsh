@@ -69,17 +69,17 @@ def plot():
 
     args = parser.parse_args()
 
-    #if atoms is a string, use handle atoms to convert to indices
-    if args.atoms:
+    # #if atoms is a string, use handle atoms to convert to indices
+    # if args.atoms:
 
-        if isinstance(args.atoms, str):
-            atom_dict = handle_atoms(args.atoms)
-            args.atoms = atom_dict[args.atoms]
+    #     if isinstance(args.atoms, str):
+    #         atom_dict = handle_atoms(args.atoms)
+    #         args.atoms = atom_dict[args.atoms]
             
 
 
-    if args.output:
-        plot = pyprocar.bandsplot(code=args.code,
+
+    plot = pyprocar.bandsplot(code=args.code,
                            mode=args.mode,
                            dirname=args.dirname,
                            orbitals=args.orbitals,
@@ -89,22 +89,12 @@ def plot():
                            clim=args.clim,
                            elimit=args.elimit,
                            fermi=args.fermi,
-                           show=False)
+                           show=args.output is None)
 
-        plot.fig.savefig(args.output, dpi=args.dpi)
 
-    else:
-        pyprocar.bandsplot(code=args.code,
-                           mode=args.mode,
-                           dirname=args.dirname,
-                           orbitals=args.orbitals,
-                           atoms=args.atoms,
-                           spins=args.spins,
-                           cmap=args.cmap,
-                           clim=args.clim,
-                           elimit=args.elimit,
-                           fermi=args.fermi
-                           )
+    plot.fig.savefig(args.output, dpi=args.dpi)
+
+
 
 if __name__ == '__main__':
     plot()
