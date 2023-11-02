@@ -65,7 +65,7 @@ def plot():
     parser.add_argument('--dirname', type=str, default='.', help='Directory where the data is stored')
     parser.add_argument('-o', '--output', type=str, default=None, help='Output file name')
     parser.add_argument('--fermi', type=float, default=None, help='Fermi energy (eV)')
-    parser.add_argument('--dpi', type=int, default=600, help='DPI of the output file')
+    parser.add_argument('--dpi', type=int, default=800, help='DPI of the output file')
 
     args = parser.parse_args()
 
@@ -83,6 +83,7 @@ def plot():
                            mode=args.mode,
                            dirname=args.dirname,
                            orbitals=args.orbitals,
+                           atoms=args.atoms,
                            spins=args.spins,
                            cmap=args.cmap,
                            clim=args.clim,
@@ -97,6 +98,7 @@ def plot():
                            mode=args.mode,
                            dirname=args.dirname,
                            orbitals=args.orbitals,
+                           atoms=args.atoms,
                            spins=args.spins,
                            cmap=args.cmap,
                            clim=args.clim,
