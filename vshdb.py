@@ -40,7 +40,7 @@ def get_metadata(file: str) -> dict:
     spin = vasprun.parameters['ISPIN']
     soc = vasprun.parameters['LSORBIT']
     xc = vasprun.parameters['GGA']
-    kpoints = handle_kpoints(vasprun.Kpoints.kpts)
+    kpoints = handle_kpoints(vasprun.kpoints.kpts)
     converged_ionic = vasprun.converged_ionic
     converged_electronic = vasprun.converged_electronic
 
@@ -69,7 +69,7 @@ def update_ase_db(vasprun_file: str, database: str):
 def parse_args():
     '''Parse command line arguments'''
     parser = argparse.ArgumentParser(description='Reads VASP output files and writes to a database')
-    parser.add_argument('-f', '--file', default='vasprun.xml', type=str, help='vasprun.xml file', required=True)
+    parser.add_argument('-f', '--file', default='vasprun.xml', type=str, help='vasprun.xml file')
     parser.add_argument('-d', '--database', type=str, help='Database file', required=True)
 
     args = parser.parse_args()
