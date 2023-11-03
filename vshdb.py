@@ -40,7 +40,7 @@ def get_metadata(file: str) -> dict:
     spin = vasprun.parameters['ISPIN']
     soc = vasprun.parameters['LSORBIT']
     xc = vasprun.parameters['GGA']
-    kpoints = handle_kpoints(vasprun.kpts)
+    kpoints = handle_kpoints(vasprun.Kpoints.kpts)
     converged_ionic = vasprun.converged_ionic
     converged_electronic = vasprun.converged_electronic
 
