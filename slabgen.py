@@ -50,6 +50,10 @@ def create_slabs():
 
     args = parser.parse_args()
 
+    #check if in unit planes was selected, if so, adjust the vacuum to 3 
+    if args.in_unit_planes:
+        args.vacuum = 3
+
     structure = structure_from_file(args.file)
     slabs = slab_from_structure(structure=structure, miller_plane=args.miller_plane, zmin=float(args.thickness), vacuum=args.vacuum, is_primitive=args.primitive, center_slab=args.center_slab, in_unit_planes=args.in_unit_planes)
     
