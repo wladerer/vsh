@@ -129,53 +129,41 @@ def check_convergence(file: str = './vasprun.xml') -> list[bool]:
 
     return [converged_electronic, converged_ionic]
 
-def read_vasp_output():
-    parser = argparse.ArgumentParser(description="Read VASP output using ASE")
+def setup_args(subparsers):
+    subp_analysis = subparsers.add_parser("analysis", help="Analyze structure using ASE and pymatgen utilities")
 
     # Structure parameters from file -f or --file
-    parser.add_argument("-f", "--file", type=str, help="Specify structure file", default="vasprun.xml")
-    # parser.add_argument('-c', '--contcar', type=str, help='Specify CONTCAR file')
-    parser.add_argument(
+    subp_analysis.add_argument("-f", "--file", type=str, help="Specify structure file", default="vasprun.xml")
+    subp_analysis.add_argument(
         "--volume", help="Prints the volume of the structure", action="store_true"
     )
-    parser.add_argument("--conflicts", type=float, help="Prints the conflicting atoms")
-    parser.add_argument(
+    subp_analysis.add_argument("--conflicts", type=float, help="Prints the conflicting atoms")
+    subp_analysis.add_argument(
         "--cell", help="Prints the unit cell dimensions", action="store_true"
     )
-    parser.add_argument(
+    subp_analysis.add_argument(
         "--params",
         help="Prints the unit cell parameters (a,b,c) of the structure",
         action="store_true",
     )
-    parser.add_argument(
+    subp_analysis.add_argument(
         "--symmetry",
         help="Prints the space group number and symbol",
         action="store_true",
     )
-    parser.add_argument(
-        "--forces", help="Prints the forces on the atoms", action="store_true"
-    )
-    parser.add_argument(
-        "--order", help="Prints the order of the atoms", action="store_true"
-    )
-    parser.add_argument(
+    subp_analysis.add_argument(
         "--energy", help="Prints the energy of the structure", action="store_true"
     )
-    parser.add_argument(
-        "--pullay", help="Prints the pullay stress tensor", action="store_true"
-    )
-    parser.add_argument(
+    subp_analysis.add_argument(
         "--vacuum", help="Prints the vacuum of the structure", action="store_true"
     )
-    parser.add_argument(
+    subp_analysis.add_argument(
         "--positions", help="Prints the positions of the atoms"
     )
-    parser.add_argument(
+    subp_analysis.add_argument(
         "--converged", action="store_true", help="Prints if the structure is converged")
-    
 
-    args = parser.parse_args()
-
+def run(args):
     # get conflicts
     if args.conflicts:
         atoms = read(args.file)
@@ -208,15 +196,6 @@ def read_vasp_output():
         print(f"Space group number: {spacegroup.no}")
         print(f"Space group symbol: {spacegroup.symbol}")
 
-    # if args.forces:
-    #     atoms = read(args.file)
-
-    #     calculator = Vasp(atoms)
-
-    #     forces = atoms.get_forces()
-    #     for force in forces:
-    #         print(f"{force[0]:.5f} {force[1]:.5f} {force[2]:.5f}")
-
     if args.vacuum:
         atoms = read(args.file)
         z = atoms.cell.cellpar()[2]
@@ -245,5 +224,3 @@ def read_vasp_output():
 
 
 
-if __name__ == "__main__":
-    read_vasp_output()

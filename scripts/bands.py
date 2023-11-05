@@ -1,9 +1,6 @@
-#!/bin/env python3
+#!/usr/bin/env python3
 
-import argparse
-from ase.calculators.vasp import Vasp
 from ase.io import read, write
-import os
 import pyprocar
 
 orbital_dict = {'s': 0, 'p_y': 1, 'p_z': 2, 'p_x': 3, 'd_xy': 4, 'd_yz': 5, 'd_z2': 6, 'd_xz': 7, 'd_x2-y2': 8, 'f_y(3x2 -y2)': 9, 'f_xyz': 10, 'f_yz2':11, 'f_z3':12, 'f_xz2':13, 'f_z(x2 -y2)':14, 'f_x(x2 -3y2)':15}
@@ -50,24 +47,24 @@ def handle_atoms(poscar: str = './POSCAR') -> dict:
 
     return atom_indices
 
-def plot():
-    parser = argparse.ArgumentParser()
+def setup_args(subparsers):
+    subp_band = subparsers.add_parser('bands', help='Plot band structure')
 
-    parser.add_argument('-e','--elimit', type=float, nargs='+', default=[-2,2], help='Range of energy to plot')
-    parser.add_argument('-m', '--mode', type=str, default='parametric', help='Plotting mode')
-    parser.add_argument('--orbitals', type=int|str, nargs='+', default=None, help='Orbitals to plot')
-    parser.add_argument('--spins', type=int, nargs='+', default=None, help='Spins to plot')
-    parser.add_argument('--atoms', type=int, nargs='+', default=None, help='Atoms to plot')
-    parser.add_argument('--cmap', type=str, default='cool', help='Color map')
-    parser.add_argument('--clim', type=float, nargs='+', default=[0,1], help='Color map limits')
-    parser.add_argument('--code', type=str, default='vasp', help='Code used to generate the data')
-    parser.add_argument('--dirname', type=str, default='.', help='Directory where the data is stored')
-    parser.add_argument('-o', '--output', type=str, default=None, help='Output file name')
-    parser.add_argument('--fermi', type=float, default=None, help='Fermi energy (eV)')
-    parser.add_argument('--dpi', type=int, default=800, help='DPI of the output file')
+    subp_band.add_argument('-e','--elimit', type=float, nargs='+', default=[-2,2], help='Range of energy to plot')
+    subp_band.add_argument('-m', '--mode', type=str, default='parametric', help='Plotting mode')
+    subp_band.add_argument('--orbitals', nargs='+', default=None, help='Orbitals to plot')
+    subp_band.add_argument('--spins', type=int, nargs='+', default=None, help='Spins to plot')
+    subp_band.add_argument('--atoms', type=int, nargs='+', default=None, help='Atoms to plot')
+    subp_band.add_argument('--cmap', type=str, default='cool', help='Color map')
+    subp_band.add_argument('--clim', type=float, nargs='+', default=[0,1], help='Color map limits')
+    subp_band.add_argument('--code', type=str, default='vasp', help='Code used to generate the data')
+    subp_band.add_argument('--dirname', type=str, default='.', help='Directory where the data is stored')
+    subp_band.add_argument('-o', '--output', type=str, default=None, help='Output file name')
+    subp_band.add_argument('--fermi', type=float, default=None, help='Fermi energy (eV)')
+    subp_band.add_argument('--dpi', type=int, default=800, help='DPI of the output file')
 
-    args = parser.parse_args()
 
+def run(args):
 
     args.orbitals = handle_orbitals(args.orbitals)
 
@@ -87,7 +84,3 @@ def plot():
     if args.output:
         plot.fig.savefig(args.output, dpi=args.dpi)
 
-
-
-if __name__ == '__main__':
-    plot()

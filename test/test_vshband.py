@@ -1,6 +1,6 @@
 from ase.io import read
 from os.path import abspath, dirname, join
-from vshband import handle_atoms
+from bands import handle_atoms
 
 
 def test_handle_atoms():
