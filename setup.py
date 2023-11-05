@@ -8,7 +8,7 @@ setup(
         'ase',
         'numpy',
         'matplotlib',
-        'ifermi',
+        'pymatgen',
         'scipy'
     ]
 )
