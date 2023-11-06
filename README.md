@@ -34,7 +34,7 @@ ___
  This can be used in combination with other shell commands to become a powerful organizational tool. For example, the following code block is a one-liner that does a recursive search for all directories containing `vasprun.xml` and checks to see if the calculation has converged. 
 
  ```bash 
-shopt -s globstar; for dir in /path/to/search/**/; do [ -f "$dir/vasprun.xml" ] && (cd "$dir" && your_command); done
+shopt -s globstar; for dir in /path/to/search/**/; do [ -f "$dir/vasprun.xml" ] && (cd "$dir" && vsh analysis --converged); done
  ```
 
 ##### bands
