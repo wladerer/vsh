@@ -1,50 +1,31 @@
 #!/usr/bin/env python3
 import argparse
-import scripts.bands as bands
-import scripts.analysis as analysis
-import scripts.db as db
-import scripts.slab as slab
-import scripts.freeze as freeze
-import scripts.inputs as inputs
+import scripts
+import importlib.util
+import sys
+
+
+def lazy_import(name):
+    spec = importlib.util.find_spec(name)
+    loader = importlib.util.LazyLoader(spec.loader)
+    spec.loader = loader
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    loader.exec_module(module)
+    return module
 
 
 def parse_app_args(args=None):
     parser = argparse.ArgumentParser(description='vsh command line utility')
-    subparsers = parser.add_subparsers(dest='command')
+    subparsers = parser.add_subparsers(dest='command', required=True)
+    scripts.setup(subparsers)
+    return parser.parse_args()
 
-    #bands
-    bands.setup_args(subparsers)
-
-    #analysis
-    analysis.setup_args(subparsers)
-
-    #db
-    db.setup_args(subparsers)
-
-    #slab
-    slab.setup_args(subparsers)
-
-    #freeze
-    freeze.setup_args(subparsers)
-
-    #inputs
-    inputs.setup_args(subparsers)
-
-    return parser.parse_args(args)
 
 def main():
-    parsed_args = parse_app_args()
-
-    command_map = {
-        "bands": bands.run,
-        "analysis": analysis.run,
-        "db": db.run,
-        "slab": slab.run,
-        "freeze": freeze.run,
-        "inputs": inputs.run
-    }
-
-    command_map[parsed_args.command](parsed_args)
+    args = parse_app_args()
+    command = lazy_import('scripts.'+args.command)
+    command.run(args)
 
 if __name__ == "__main__":
     main()
