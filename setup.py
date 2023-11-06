@@ -10,7 +10,8 @@ setup(
         'matplotlib',
         'pymatgen',
         'mp-api',
-        'pyprocar'
+        'pyprocar',
+        'pydantic'
     ],
     entry_points={
         'console_scripts': [

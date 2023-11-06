@@ -53,7 +53,7 @@ def freeze_slab(structure: Structure, min_z: float) -> Structure:
 
 def setup_args(subparsers):
     subp_slabgen = subparsers.add_parser(
-        "slab", help="Generate slabs from structure using pymatgen"
+        "slab ", help="Generate slabs from structure using pymatgen"
     )
 
     subp_slabgen.add_argument("-f", "--file", type=str, help="Structure file", required=True)
