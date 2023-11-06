@@ -4,7 +4,7 @@ import argparse
 from ase.calculators.vasp import Vasp
 from ase.io import read, write
 
-from pymatgen.io.vasp.inputs import Potcar, Kpoints, Incar
+from pymatgen.io.vasp.inputs import Potcar, Kpoints, Incar, Poscar
 from pymatgen.symmetry.kpath import KPathSeek
 
 def get_atoms(args):
@@ -40,7 +40,10 @@ def write_kpath(args):
     kpath = KPathSeek(structure=args.atoms, symprec=args.symprec)
 
 
-
+def sort_poscar(poscar_file: str) -> Poscar:
+    structure = Poscar.from_file(poscar_file).structure
+    poscar = Poscar(structure, sort_structure=True)
+    poscar.write_file(poscar_file)
 
 def setup_args(subparsers):
     subp_inputs = subparsers.add_parser("inputs", help="Generate VASP inputs")
@@ -52,6 +55,7 @@ def setup_args(subparsers):
     # subp_inputs.add_argument("-i", "--incar", type=str, default=None, help="INCAR file type")
     subp_inputs.add_argument("--kpath", type=int, default=20, help="KPOINTS file for band structure calculation")
     subp_inputs.add_argument("--symprec", type=float, default=0.01, help="Symmetry precision for SeekPath algorithm")
+    subp_inputs.add_argument("--sort", action="store_true", help="Sort atoms in POSCAR file")
 
 def run(args):
 
@@ -63,6 +67,9 @@ def run(args):
 
     if args.kpath:
         write_kpath(args)
+
+    if args.sort:
+        sort_poscar(args.file)
 
     return None
 

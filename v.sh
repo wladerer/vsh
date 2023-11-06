@@ -567,14 +567,3 @@ function getPrimitive {
     python3 "$script" "$MP_API_KEY" "$mp_code"
 
 }
-
-
-
-function sortPoscar {
-
-    poscar=$1
-    script=$VSHDIR/scripts/sortPoscar.py
-    python3 "$script" "$poscar"
-
-}
-
