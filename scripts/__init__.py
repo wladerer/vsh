@@ -107,7 +107,7 @@ def inputs(subparsers):
 
 def slab(subparsers):
     subp_slabgen = subparsers.add_parser(
-        "slab ", help="Generate slabs from structure using pymatgen"
+        "slab", help="Generate slabs from structure using pymatgen"
     )
 
     subp_slabgen.add_argument("-f", "--file", type=str, help="Structure file", required=True)
