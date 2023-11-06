@@ -22,6 +22,12 @@ def handle_orbitals(orbitals: list | str) -> list[int]:
     
     elif 'f' in orbitals:
         orbital_list = [9, 10, 11, 12, 13, 14, 15]
+    
+    elif 'xy' in orbitals:
+        orbital_list = [1, 3, 4, 8]
+
+    elif 'z' in orbitals:
+        orbital_list = [2, 6, 12] 
 
     #if orbitals is a string, convert to indices
     elif isinstance(orbitals, str):
