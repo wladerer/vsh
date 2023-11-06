@@ -21,7 +21,7 @@ def parse_app_args(args=None):
     #db
     db.setup_args(subparsers)
 
-    #slabg
+    #slab
     slab.setup_args(subparsers)
 
     #freeze

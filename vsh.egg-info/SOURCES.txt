@@ -7,7 +7,7 @@ scripts/bands.py
 scripts/db.py
 scripts/freeze.py
 scripts/inputs.py
-scripts/slabgen.py
+scripts/slab.py
 test/test_analysis.py
 test/test_vshband.py
 vsh.egg-info/PKG-INFO

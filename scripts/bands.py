@@ -8,7 +8,10 @@ orbital_dict = {'s': 0, 'p_y': 1, 'p_z': 2, 'p_x': 3, 'd_xy': 4, 'd_yz': 5, 'd_z
 def handle_orbitals(orbitals: list | str) -> list[int]:
     '''Converts a string to a list of orbitals'''
 
-    if 'all' in orbitals:
+    if orbitals is None:
+        return None
+    
+    elif 'all' in orbitals:
         orbital_list = list(range(16))
 
     elif 's' in orbitals:
