@@ -1,7 +1,7 @@
-#!/bin/env python3
+#!/usr/bin/env python3
 
 import argparse
-from ase.io import read, write
+from ase.io import read
 
 import os 
 
@@ -9,7 +9,7 @@ from mp_api.client import MPRester
 from pymatgen.core import Structure
 from pymatgen.io.vasp import Poscar
 
-from pymatgen.io.vasp.inputs import Potcar, Kpoints, Incar, Poscar
+from pymatgen.io.vasp.inputs import Potcar, Kpoints, Poscar
 from pymatgen.symmetry.kpath import KPathSeek
 
 def get_atoms(args):
@@ -74,6 +74,28 @@ def to_poscar(structure: Structure, filename: str = "POSCAR") -> None:
     poscar = Poscar(structure, sort_structure=True)
     poscar.write_file(filename)
 
+def mp_poscar(mp_code: str):
+    '''Creates a POSCAR file from a Materials Project code'''
+    #check if the MP_API_KEY is set in the environment
+    if "MP_API_KEY" not in os.environ:
+        raise ValueError("MP_API_KEY not set in environment variables")
+        
+    api_key = os.environ["MP_API_KEY"]
+    structure = structure_from_mpi_code(mp_code, api_key, is_conventional=True)
+    to_poscar(structure)
+
+    return None   
+
+def mp_primitive(mp_code: str):
+    '''Creates a primtive POSCAR file from a Materials Project code'''
+    #check if the MP_API_KEY is set in the environment
+    if "MP_API_KEY" not in os.environ:
+        raise ValueError("MP_API_KEY not set in environment variables")
+    
+    api_key = os.environ["MP_API_KEY"]
+    structure = structure_from_mpi_code(mp_code, api_key, is_conventional=False)
+    to_poscar(structure)
+
 def setup_args(subparsers):
     subp_inputs = subparsers.add_parser("inputs", help="Generate VASP inputs")
 
@@ -103,13 +125,11 @@ def run(args):
         sort_poscar(args.file)
 
     if args.mp_poscar:
-        #check if the MP_API_KEY is set in the environment
-        if "MP_API_KEY" not in os.environ:
-            raise ValueError("MP_API_KEY not set in environment variables")
-        
-        api_key = os.environ["MP_API_KEY"]
-        structure = structure_from_mpi_code(args.mp_poscar, api_key)
-        to_poscar(structure)
+        mp_poscar(args.mp_poscar)
+
+    if args.mp_primitive:
+        mp_primitive(args.mp_primitive)
+
 
     return None
 
