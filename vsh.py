@@ -5,6 +5,7 @@ import scripts.analysis as analysis
 import scripts.db as db
 import scripts.slabgen as slabgen
 import scripts.freeze as freeze
+import scripts.inputs as inputs
 
 
 def parse_app_args(args=None):
@@ -26,6 +27,9 @@ def parse_app_args(args=None):
     #freeze
     freeze.setup_args(subparsers)
 
+    #inputs
+    inputs.setup_args(subparsers)
+
     return parser.parse_args(args)
 
 def main():
@@ -36,7 +40,8 @@ def main():
         "analysis": analysis.run,
         "db": db.run,
         "slabgen": slabgen.run,
-        "freeze": freeze.run
+        "freeze": freeze.run,
+        "inputs": inputs.run
     }
 
     command_map[parsed_args.command](parsed_args)

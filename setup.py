@@ -9,5 +9,12 @@ setup(
         'numpy',
         'matplotlib',
         'pymatgen',
-    ]
+        'mp-api',
+        'pyprocar'
+    ],
+    entry_points={
+        'console_scripts': [
+            'vsh = vsh:main'
+        ]
+    }
 )

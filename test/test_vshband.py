@@ -1,12 +1,11 @@
 from ase.io import read
 from os.path import abspath, dirname, join
-from bands import handle_atoms
+from scripts.bands import *
 
 
 def test_handle_atoms():
     # read the test file
-    test_file = abspath(join(dirname(__file__), 'files', 'wp2CO.vasp'))
-    atom_indices = handle_atoms(test_file)
+    atom_indices = handle_atoms('test/files/wp2CO.vasp')
 
     # check if the atom types and counts match the expected values
     assert len(atom_indices) == 4
@@ -16,13 +15,12 @@ def test_handle_atoms():
     assert atom_indices['O'] == [73]
 
     # test with a different file
-    test_file = abspath(join(dirname(__file__), 'files', 'Cu2O.vasp'))
-    atom_indices = handle_atoms(test_file)
+    atom_indices = handle_atoms('test/files/Cu2O.vasp')
 
     # check if the atom types and counts match the expected values
     assert len(atom_indices) == 2
-    assert atom_indices['Cu'] == [i for i in range(8)]
-    assert atom_indices['O'] == [i for i in range(8, 16)]
+    assert atom_indices['Cu'] == [i for i in range(4)]
+    assert atom_indices['O'] == [i for i in range(4, 6)]
 
 
 def test_handle_orbitals():

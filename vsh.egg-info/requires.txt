@@ -1,5 +1,6 @@
 ase
-numpy
 matplotlib
-ifermi
-scipy
+mp-api
+numpy
+pymatgen
+pyprocar

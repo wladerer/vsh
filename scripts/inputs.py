@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
 
 import argparse
-from ase.io import read
-
 import os 
+
+from ase.io import read
 
 from mp_api.client import MPRester
 from pymatgen.core import Structure
-from pymatgen.io.vasp import Poscar
-
 from pymatgen.io.vasp.inputs import Potcar, Kpoints, Poscar
 from pymatgen.symmetry.kpath import KPathSeek
 
@@ -99,13 +97,13 @@ def mp_primitive(mp_code: str):
 def setup_args(subparsers):
     subp_inputs = subparsers.add_parser("inputs", help="Generate VASP inputs")
 
-    subp_inputs.add_argument("-f", "--file", type=argparse.FileType('r'), default="POSCAR", help="Input file")
+    subp_inputs.add_argument("-f", "--file", type=str, default=None, help="Input file")
     subp_inputs.add_argument("-d", "--directory", type=str, default=".", help="Directory to write VASP inputs to")
     subp_inputs.add_argument("--potcar", type=bool, default=False, help="Write POTCAR file")
     subp_inputs.add_argument("-k", "--kpoints", type=int, nargs=3, default=None, help="Writes gamma centered KPOINTS file")
     # subp_inputs.add_argument("-i", "--incar", type=str, default=None, help="INCAR file type")
-    subp_inputs.add_argument("--kpath", type=int, default=20, help="KPOINTS file for band structure calculation")
-    subp_inputs.add_argument("--symprec", type=float, default=0.01, help="Symmetry precision for SeekPath algorithm")
+    subp_inputs.add_argument("--kpath", type=int, default=None, help="KPOINTS file for band structure calculation")
+    subp_inputs.add_argument("--symprec", type=float, default=None, help="Symmetry precision for SeekPath algorithm")
     subp_inputs.add_argument("--sort", action="store_true", help="Sort atoms in POSCAR file")
     subp_inputs.add_argument("--mp-poscar", type=str, default=None, help="Get POSCAR file from Materials Project")
     subp_inputs.add_argument("--mp-primitive", type=str, default=None, help="Get primitive POSCAR file from Materials Project")
