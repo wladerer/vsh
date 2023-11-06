@@ -2,7 +2,7 @@ def analysis(subparsers):
     subp_analysis = subparsers.add_parser("analysis", help="Analyze structure using ASE and pymatgen utilities")
 
     # Structure parameters from file -f or --file
-    subp_analysis.add_argument("-f", "--file", type=str, help="Specify structure file", default="vasprun.xml")
+    subp_analysis.add_argument("-i", "--input", type=str, help="Specify structure file", default="vasprun.xml")
     subp_analysis.add_argument(
         "--volume", help="Prints the volume of the structure", action="store_true"
     )
@@ -56,7 +56,7 @@ def db(subparsers):
         "db", help="Interact with ASE database using extended vsh logic"
     )
     subp_db.add_argument(
-        "-f", "--file", default="vasprun.xml", type=str, help="vasprun.xml file"
+        "-i", "--input", default="vasprun.xml", type=str, help="vasprun.xml file"
     )
     subp_db.add_argument(
         "-d", "--database", type=str, help="Database file", required=True
@@ -67,10 +67,9 @@ def freeze(subparsers):
     subp_freeze = subparsers.add_parser("freeze", help="Freeze atoms using ASE")
 
     subp_freeze.add_argument(
-        "-f", "--filename", type=str, help="Structure file", required=True
+        "-i", "--input", type=str, help="Structure file", required=True
     )
     subp_freeze.add_argument(
-        "-i",
         "--indices",
         type=int,
         nargs="+",
@@ -92,11 +91,11 @@ def freeze(subparsers):
 def inputs(subparsers):
     subp_inputs = subparsers.add_parser("inputs", help="Generate VASP inputs")
 
-    subp_inputs.add_argument("-f", "--file", type=str, default=None, help="Input file")
+    subp_inputs.add_argument("-i", "--input", type=str, default=None, help="Input file")
     subp_inputs.add_argument("-d", "--directory", type=str, default=".", help="Directory to write VASP inputs to")
     subp_inputs.add_argument("--potcar", type=bool, default=False, help="Write POTCAR file")
     subp_inputs.add_argument("-k", "--kpoints", type=int, nargs=3, default=None, help="Writes gamma centered KPOINTS file")
-    subp_inputs.add_argument("-i", "--incar", type=str, default=None, help="INCAR file type", choices=["bulk", "slab", "band", "single-point", "band-soc", "band-slab-soc"])
+    subp_inputs.add_argument("--incar", type=str, default=None, help="INCAR file type", choices=["bulk", "slab", "band", "single-point", "band-soc", "band-slab-soc"])
     subp_inputs.add_argument("--kpath", type=int, default=None, help="KPOINTS file for band structure calculation")
     subp_inputs.add_argument("--symprec", type=float, default=None, help="Symmetry precision for SeekPath algorithm")
     subp_inputs.add_argument("--sort", action="store_true", help="Sort atoms in POSCAR file")
@@ -110,7 +109,7 @@ def slab(subparsers):
         "slab", help="Generate slabs from structure using pymatgen"
     )
 
-    subp_slabgen.add_argument("-f", "--file", type=str, help="Structure file", required=True)
+    subp_slabgen.add_argument("-i", "--input", type=str, help="Structure file", required=True)
     subp_slabgen.add_argument(
         "-m",
         "--miller-plane",

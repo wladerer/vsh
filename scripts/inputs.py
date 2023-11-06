@@ -15,7 +15,7 @@ from pymatgen.symmetry.bandstructure import HighSymmKpath
 def get_atoms(args):
     '''Creates ASE atoms object from a file'''
 
-    atoms = read(args.file)
+    atoms = read(args.input)
     
     return atoms
 
@@ -54,7 +54,7 @@ def write_kpath(args) -> Kpoints:
     '''
     Makes a linemode Kpoints object from a structure
     '''
-    structure = Structure.from_file(args.file)
+    structure = Structure.from_file(args.input)
     kpath = HighSymmKpath(structure)
     kpoints = Kpoints.automatic_linemode(args.kpath, kpath)
     
@@ -66,7 +66,7 @@ def write_kpath(args) -> Kpoints:
     return kpoints
 
 def sort_poscar(args) -> Poscar:
-    structure = Poscar.from_file(args.file).structure
+    structure = Poscar.from_file(args.input).structure
     poscar = Poscar(structure, sort_structure=True)
     
     if not args.output:

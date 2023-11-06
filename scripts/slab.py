@@ -101,7 +101,7 @@ def run(args):
     if args.in_unit_planes:
         args.vacuum = 3
 
-    structure = structure_from_file(args.file)
+    structure = structure_from_file(args.input)
     slabs = slab_from_structure(
         structure=structure,
         miller_plane=args.miller_plane,

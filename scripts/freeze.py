@@ -9,10 +9,9 @@ def setup_args(subparsers):
     subp_freeze = subparsers.add_parser("freeze", help="Freeze atoms using ASE")
 
     subp_freeze.add_argument(
-        "-f", "--filename", type=str, help="Structure file", required=True
+        "-i", "--input", type=str, help="Structure file", required=True
     )
     subp_freeze.add_argument(
-        "-i",
         "--indices",
         type=int,
         nargs="+",
@@ -32,7 +31,7 @@ def setup_args(subparsers):
 
 
 def run(args):
-    atoms = read(args.filename)
+    atoms = read(args.inputname)
 
     if args.type:
         args.indices = [i for i, atom in enumerate(atoms) if atom.symbol == args.type]
