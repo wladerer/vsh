@@ -3,7 +3,7 @@ import argparse
 import scripts.bands as bands
 import scripts.analysis as analysis
 import scripts.db as db
-import scripts.slabgen as slabgen
+import scripts.slab as slab
 import scripts.freeze as freeze
 import scripts.inputs as inputs
 
@@ -21,8 +21,8 @@ def parse_app_args(args=None):
     #db
     db.setup_args(subparsers)
 
-    #slabgen
-    slabgen.setup_args(subparsers)
+    #slabg
+    slab.setup_args(subparsers)
 
     #freeze
     freeze.setup_args(subparsers)
@@ -39,7 +39,7 @@ def main():
         "bands": bands.run,
         "analysis": analysis.run,
         "db": db.run,
-        "slabgen": slabgen.run,
+        "slab": slab.run,
         "freeze": freeze.run,
         "inputs": inputs.run
     }

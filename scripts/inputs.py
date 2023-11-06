@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 
 import argparse
-import os 
+import os
+import json
 
 from ase.io import read
 
 from mp_api.client import MPRester
 from pymatgen.core import Structure
-from pymatgen.io.vasp.inputs import Potcar, Kpoints, Poscar
+from pymatgen.io.vasp.inputs import Potcar, Kpoints, Poscar, Incar
 from pymatgen.symmetry.kpath import KPathSeek
 
 def get_atoms(args):
@@ -94,6 +95,48 @@ def mp_primitive(mp_code: str):
     structure = structure_from_mpi_code(mp_code, api_key, is_conventional=False)
     to_poscar(structure)
 
+def write_incar(dict_key: str) -> dict:
+    '''Loads a dictionary from the incar.json file'''
+    script_dir = os.path.dirname(__file__)
+    docs_dir = os.path.join(script_dir, '..', 'docs')
+    file_path = os.path.join(docs_dir, 'incars.json')
+
+    with open(file_path, "r") as f:
+        incar_dict = json.load(f)
+
+    incar = Incar.from_dict(incar_dict[dict_key])
+    incar.write_file("./INCAR")
+
+# def summarize(directory: str = './'):
+#     '''Summarizes the INCAR, POSCAR, and KPOINTS files in the directory'''
+
+#     #check if the directory exists
+#     if not os.path.isdir(directory):
+#         raise ValueError(f"{directory} does not exist")
+    
+#     #check if the INCAR, POSCAR, and KPOINTS files exist
+
+#     for file in ["INCAR", "POSCAR", "KPOINTS"]:
+#         if not os.path.isfile(f"{directory}/{file}"):
+#             raise ValueError(f"{directory}/{file} does not exist")
+        
+#     #load the input files
+#     incar = Incar.from_file(f"{directory}/INCAR")
+#     kpoints = Kpoints.from_file(f"{directory}/KPOINTS")
+#     poscar = Poscar.from_file(f"{directory}/POSCAR")
+
+#     #get the unit cell parameters and symmetry group from the POSCAR
+#     unit_cell = poscar.structure.lattice
+#     symmetry = poscar.structure.get_space_group_info()
+
+#     #get kpoints type
+#     kpoints_type = kpoints.style
+
+#     #get the INCAR parameters
+#     incar_dict = incar.as_dict()
+
+    
+
 def setup_args(subparsers):
     subp_inputs = subparsers.add_parser("inputs", help="Generate VASP inputs")
 
@@ -101,10 +144,11 @@ def setup_args(subparsers):
     subp_inputs.add_argument("-d", "--directory", type=str, default=".", help="Directory to write VASP inputs to")
     subp_inputs.add_argument("--potcar", type=bool, default=False, help="Write POTCAR file")
     subp_inputs.add_argument("-k", "--kpoints", type=int, nargs=3, default=None, help="Writes gamma centered KPOINTS file")
-    # subp_inputs.add_argument("-i", "--incar", type=str, default=None, help="INCAR file type")
+    subp_inputs.add_argument("-i", "--incar", type=str, default=None, help="INCAR file type", choices=["bulk", "slab", "band", "single-point", "band-soc", "band-slab-soc"])
     subp_inputs.add_argument("--kpath", type=int, default=None, help="KPOINTS file for band structure calculation")
     subp_inputs.add_argument("--symprec", type=float, default=None, help="Symmetry precision for SeekPath algorithm")
     subp_inputs.add_argument("--sort", action="store_true", help="Sort atoms in POSCAR file")
+    subp_inputs.add_argument("--freeze", type=str, default=None, help="Freeze atoms in POSCAR file")
     subp_inputs.add_argument("--mp-poscar", type=str, default=None, help="Get POSCAR file from Materials Project")
     subp_inputs.add_argument("--mp-primitive", type=str, default=None, help="Get primitive POSCAR file from Materials Project")
 
@@ -127,6 +171,9 @@ def run(args):
 
     if args.mp_primitive:
         mp_primitive(args.mp_primitive)
+
+    if args.incar:
+        write_incar(args.incar)
 
 
     return None

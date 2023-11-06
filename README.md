@@ -55,7 +55,9 @@ slabgen is a module intended to simplify the process of making slabs of bulk mat
 
 ##### inputs
 
-inputs currently handles the creation and manipulation of multiple kinds of VASP input files. Pseudopotentials must be configured using the `pmg config` command provided by pymatgen. 
+inputs currently handles the creation and manipulation of multiple kinds of VASP input files. 
+
+Note: Pseudopotentials must be configured using the `pmg config` command provided by pymatgen. 
 
 
 
