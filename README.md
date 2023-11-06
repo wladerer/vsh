@@ -1,103 +1,61 @@
 # vsh
-Command line utilities for interacting with VASP
 
-***
+vsh is a command line utility for interacting with VASP. This is meant to simplify the numerous tools provided by libraries such as 
+[pymatgen](https://pymatgen.org/), [ASE](https://wiki.fysik.dtu.dk/ase/), [pyprocar](https://romerogroup.github.io/pyprocar/), and others alike. 
+___
 
-#### `getNbands`
-Function to extract the number of bands from an OUTCAR file.
+### Usage
 
-###### Input
+vsh comes with several modules meant to assist in the preperation and analysis of VASP calculations. To see all of the possible modules, invoke the '-h' flag 
+to see what is available
 
-- The function accepts an optional input, the path to the OUTCAR file.
-- If no path is provided, the function assumes that the OUTCAR file is in the current directory (./OUTCAR).
+```
+vsh -h
+```
 
-###### Output
+### Features
 
-The function outputs the number of bands present in the OUTCAR file.
+vsh is currently equipped with a wide range of tools. Most notably, vsh has utilities to prepare band structure calculations, generate slabs, and handle detailed ASE databases. Invoke either `vsh inputs -h`, `vsh slabgen -h`, or `vsh db -h` to learn more about their functionality. 
 
-#### `getNatoms`
-Function to extract the number of atoms from an OUTCAR file.
+#### Modules
 
-###### Input
+The repository is separated into several modules to compartmentalize the various needs of a computational scientist.  
+___
+##### analysis
 
-- The function accepts an optional input, the path to the OUTCAR file.
-- If no path is provided, the function assumes that the OUTCAR file is in the current directory (./OUTCAR).
+ Analysis is intended to quickly read data from the OUTCAR and vasprun.xml files produced by VASP. This is by no means a replacement for going over the data yourself - simply a tool to check on the status of a calculation and get a quick glance at the raw output. 
 
-###### Output
+ The most reqularly used utility is checking the ionic and electronic convergence of a VASP calculation. 
 
-The function outputs the number of atoms present in the OUTCAR file.
+ ```bash
+ vsh analysis --converged
+ ```
 
-#### `getEfermi`
-Function to extract the Fermi energy from an OUTCAR file.
+ This can be used in combination with other shell commands to become a powerful organizational tool. For example, the following code block is a one-liner that does a recursive search for all directories containing `vasprun.xml` and checks to see if the calculation has converged. 
 
-###### Input
+ ```bash 
+shopt -s globstar; for dir in /path/to/search/**/; do [ -f "$dir/vasprun.xml" ] && (cd "$dir" && your_command); done
+ ```
 
-- The function accepts an optional input, the path to the OUTCAR file.
-- If no path is provided, the function assumes that the OUTCAR file is in the current directory (./OUTCAR).
+##### bands
 
-###### Output
+bands is a glorified wrapper for [pyprocar](https://romerogroup.github.io/pyprocar/) with only an additional input parser to simplify plotting. Adjustments have been made to the default behavior - namely preference for the parametric plotting mode instead of the 'plain' mode. 
 
-The function outputs the Fermi energy from the OUTCAR file.
+##### db
 
-#### `getElements`
-Function to extract the list of elements from a POSCAR file.
+vsh contains a wrapper for the ASE database utility. There have been some adjustments to the default ASE database behavior to include more information regarding the initial parameters and results of a VASP calculation. 
 
-###### Input
+##### freeze
 
-- The function accepts an optional input, the path to the POSCAR file.
-- If no path is provided, the function assumes that the POSCAR file is in the current directory (./POSCAR).
+This is soon to be deprecated and moved into the `inputs` module. 
 
-###### Output
+##### slabgen
 
-The function outputs the list of elements in the POSCAR file.
+slabgen is a module intended to simplify the process of making slabs of bulk materials. Many options are included in the specification of typical parameters such as vacuum, slab thickness, and miller plane. 
 
-#### `updateTag`
-Function to update a tag in an INCAR file.
+##### inputs
 
-###### Input
-
-- The function accepts three inputs:
-  1. The tag to be updated.
-  2. The new value of the tag.
-  3. The path to the INCAR file.
-
-###### Output
-
-The function updates the tag in the INCAR file.
-
-#### `isConverged`
-Function to check if a VASP job has converged.
-
-###### Input
-
-- The function accepts an optional input, the -d flag.
-- If the -d flag is provided, the function checks all subdirectories in the current directory for convergence.
-- If the -d flag is not provided, the function checks the current directory for convergence.
-
-###### Output
-
-The function outputs the directories that have converged, with the message "Directory has converged."
-
-#### `restartVasp`
-Function to restart a VASP job.
-
-###### Input
-
-- The function accepts an optional input, the -d flag.
-- If the -d flag is provided, the function restarts all VASP jobs in the subdirectories of the current directory.
-- If the -d flag is not provided, the function restarts the VASP job in the current directory.
-
-###### Output
-
-The function updates the INCAR file in each directory to restart the VASP job.
-
-
-***
-
-### Configuration
-
-Firstly, update your ~/.bashrc so that the VSHDIR environment variable is set. A configure.sh script has been provided to update your ~/.bashrc so that it knows to source both the v.sh (where all functions are stored) and the vsh/.vshrc file where specific environment variables are set (e.g path to potential files, default incars, and other important defaults).
-
+inputs currently handles the creation and manipulation of multiple kinds of VASP input files. Pseudopotentials must be configured using the `pmg config` command provided by pymatgen. 
 
 
 
