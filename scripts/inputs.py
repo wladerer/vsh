@@ -9,7 +9,7 @@ from ase.io import read
 from mp_api.client import MPRester
 from pymatgen.core import Structure
 from pymatgen.io.vasp.inputs import Potcar, Kpoints, Poscar, Incar
-from pymatgen.symmetry.kpath import KPathSeek
+from pymatgen.symmetry.bandstructure import HighSymmKpath
 
 def get_atoms(args):
     '''Creates ASE atoms object from a file'''
@@ -26,7 +26,7 @@ def write_potcar(args):
     symbols = atoms.get_chemical_symbols()
 
     potcar = Potcar(symbols, functional='PBE')
-    potcar.write_file(f'{args.directory}/potcar.vsh')
+    potcar.write_file(f'{args.output}')
 
     return None
 
@@ -34,17 +34,20 @@ def write_kpoints(args):
     '''Writes a KPOINTS file'''
 
     kpoints = Kpoints.gamma_automatic(kpts=args.kpoints)
-    kpoints.write_file(f'{args.directory}/kpoints.vsh')
+    kpoints.write_file(f'{args.output}')
 
     return None
 
-def write_kpath(args):
-    '''Writes a KPOINTS file for band structure calculation'''
 
-    kpath = KPathSeek(structure=args.atoms, symprec=args.symprec)
-    kpoints = kpath.kpath['kpoints']
-    kpoints.write_file(f'{args.directory}/kpath.vsh')
-    
+def write_kpath(structure: Structure, divisions: int, filename: str = 'KPOINTS') -> Kpoints:
+    '''
+    Makes a linemode Kpoints object from a structure
+    '''
+    kpath = HighSymmKpath(structure)
+    kpoints = Kpoints.automatic_linemode(divisions, kpath)
+    kpoints.write_file(filename)
+
+    return kpoints
 
 def sort_poscar(poscar_file: str) -> Poscar:
     structure = Poscar.from_file(poscar_file).structure
@@ -73,7 +76,7 @@ def to_poscar(structure: Structure, filename: str = "POSCAR") -> None:
     poscar = Poscar(structure, sort_structure=True)
     poscar.write_file(filename)
 
-def mp_poscar(mp_code: str):
+def mp_poscar(mp_code: str, filename: str = "POSCAR"):
     '''Creates a POSCAR file from a Materials Project code'''
     #check if the MP_API_KEY is set in the environment
     if "MP_API_KEY" not in os.environ:
@@ -81,7 +84,7 @@ def mp_poscar(mp_code: str):
         
     api_key = os.environ["MP_API_KEY"]
     structure = structure_from_mpi_code(mp_code, api_key, is_conventional=True)
-    to_poscar(structure)
+    to_poscar(structure, filename)
 
     return None   
 
@@ -146,11 +149,12 @@ def setup_args(subparsers):
     subp_inputs.add_argument("-k", "--kpoints", type=int, nargs=3, default=None, help="Writes gamma centered KPOINTS file")
     subp_inputs.add_argument("-i", "--incar", type=str, default=None, help="INCAR file type", choices=["bulk", "slab", "band", "single-point", "band-soc", "band-slab-soc"])
     subp_inputs.add_argument("--kpath", type=int, default=None, help="KPOINTS file for band structure calculation")
-    subp_inputs.add_argument("--symprec", type=float, default=0.01, help="Symmetry precision for SeekPath algorithm")
+    subp_inputs.add_argument("--symprec", type=float, default=None, help="Symmetry precision for SeekPath algorithm")
     subp_inputs.add_argument("--sort", action="store_true", help="Sort atoms in POSCAR file")
     subp_inputs.add_argument("--freeze", type=str, default=None, help="Freeze atoms in POSCAR file")
     subp_inputs.add_argument("--mp-poscar", type=str, default=None, help="Get POSCAR file from Materials Project")
     subp_inputs.add_argument("--mp-primitive", type=str, default=None, help="Get primitive POSCAR file from Materials Project")
+    subp_inputs.add_argument("-o", "--output", type=str, default='vsh.ouput', help="Name of output file")
 
 def run(args):
 
@@ -161,7 +165,8 @@ def run(args):
         write_kpoints(args)
 
     if args.kpath:
-        write_kpath(args)
+        structure = Poscar.from_file(args.file).structure
+        write_kpath(structure, args.kpath, args.output)
 
     if args.sort:
         sort_poscar(args.file)
