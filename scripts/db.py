@@ -98,4 +98,4 @@ def setup_args(subparsers):
 
 def run(args):
     """Run the db command"""
-    update_ase_db(args.file, args.database)
+    update_ase_db(args.input, args.database)

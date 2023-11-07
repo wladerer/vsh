@@ -53,7 +53,7 @@ def freeze_slab(structure: Structure, min_z: float) -> Structure:
 
 def setup_args(subparsers):
     subp_slabgen = subparsers.add_parser(
-        "slab", help="Generate slabs from structure using pymatgen"
+        "slab ", help="Generate slabs from structure using pymatgen"
     )
 
     subp_slabgen.add_argument("-f", "--file", type=str, help="Structure file", required=True)
@@ -101,7 +101,7 @@ def run(args):
     if args.in_unit_planes:
         args.vacuum = 3
 
-    structure = structure_from_file(args.file)
+    structure = structure_from_file(args.input)
     slabs = slab_from_structure(
         structure=structure,
         miller_plane=args.miller_plane,

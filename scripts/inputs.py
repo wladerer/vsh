@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import argparse
+
 import os
 import json
 
@@ -14,7 +14,7 @@ from pymatgen.symmetry.bandstructure import HighSymmKpath
 def get_atoms(args):
     '''Creates ASE atoms object from a file'''
 
-    atoms = read(args.file)
+    atoms = read(args.input)
     
     return atoms
 
@@ -26,33 +26,54 @@ def write_potcar(args):
     symbols = atoms.get_chemical_symbols()
 
     potcar = Potcar(symbols, functional='PBE')
-    potcar.write_file(f'{args.output}')
 
-    return None
+    if not args.output:
+        print(potcar)
+
+    else:
+        potcar.write_file(f'{args.output}')
+
+    return potcar
 
 def write_kpoints(args):
     '''Writes a KPOINTS file'''
 
     kpoints = Kpoints.gamma_automatic(kpts=args.kpoints)
-    kpoints.write_file(f'{args.output}')
 
-    return None
+    if not args.output:
+        print(kpoints)
 
-
-def write_kpath(structure: Structure, divisions: int, filename: str = 'KPOINTS') -> Kpoints:
-    '''
-    Makes a linemode Kpoints object from a structure
-    '''
-    kpath = HighSymmKpath(structure)
-    kpoints = Kpoints.automatic_linemode(divisions, kpath)
-    kpoints.write_file(filename)
+    else:
+        kpoints.write_file(f'{args.output}')
 
     return kpoints
 
-def sort_poscar(poscar_file: str) -> Poscar:
-    structure = Poscar.from_file(poscar_file).structure
+
+def write_kpath(args) -> Kpoints:
+    '''
+    Makes a linemode Kpoints object from a structure
+    '''
+    structure = Structure.from_file(args.input)
+    kpath = HighSymmKpath(structure)
+    kpoints = Kpoints.automatic_linemode(args.kpath, kpath)
+    
+    if not args.output:
+        print(kpoints)
+    else:
+        kpoints.write_file(f'{args.output}')
+
+    return kpoints
+
+def sort_poscar(args) -> Poscar:
+    structure = Poscar.from_file(args.input).structure
     poscar = Poscar(structure, sort_structure=True)
-    poscar.write_file(poscar_file)
+    
+    if not args.output:
+        print(poscar.get_str())
+    else:
+        poscar.write_file(f'{args.output}')
+
+    return poscar
 
 
 def structure_from_mpi_code(mpcode: str, api_key: str, is_conventional: bool = True) -> Structure:
@@ -69,36 +90,26 @@ def structure_from_mpi_code(mpcode: str, api_key: str, is_conventional: bool = T
     return structure
 
 
-def to_poscar(structure: Structure, filename: str = "POSCAR") -> None:
-    '''
-    Creates a POSCAR file from a pymatgen structure
-    '''
-    poscar = Poscar(structure, sort_structure=True)
-    poscar.write_file(filename)
-
-def mp_poscar(mp_code: str, filename: str = "POSCAR"):
+def mp_poscar(args):
     '''Creates a POSCAR file from a Materials Project code'''
     #check if the MP_API_KEY is set in the environment
     if "MP_API_KEY" not in os.environ:
         raise ValueError("MP_API_KEY not set in environment variables")
         
     api_key = os.environ["MP_API_KEY"]
-    structure = structure_from_mpi_code(mp_code, api_key, is_conventional=True)
-    to_poscar(structure, filename)
+    structure = structure_from_mpi_code(args.mp_poscar, api_key, is_conventional=( not args.primitive) )
 
-    return None   
+    poscar = Poscar(structure, sort_structure=args.sort)
 
-def mp_primitive(mp_code: str):
-    '''Creates a primtive POSCAR file from a Materials Project code'''
-    #check if the MP_API_KEY is set in the environment
-    if "MP_API_KEY" not in os.environ:
-        raise ValueError("MP_API_KEY not set in environment variables")
-    
-    api_key = os.environ["MP_API_KEY"]
-    structure = structure_from_mpi_code(mp_code, api_key, is_conventional=False)
-    to_poscar(structure)
+    if not args.output:
+        print(poscar.get_str())    
+    else:
+        poscar.write_file(f'{args.output}')
 
-def write_incar(dict_key: str) -> dict:
+    return poscar   
+
+
+def write_incar(args) -> dict:
     '''Loads a dictionary from the incar.json file'''
     script_dir = os.path.dirname(__file__)
     docs_dir = os.path.join(script_dir, '..', 'docs')
@@ -107,38 +118,15 @@ def write_incar(dict_key: str) -> dict:
     with open(file_path, "r") as f:
         incar_dict = json.load(f)
 
-    incar = Incar.from_dict(incar_dict[dict_key])
-    incar.write_file("./INCAR")
+    incar = Incar.from_dict(incar_dict[args.incar])
 
-# def summarize(directory: str = './'):
-#     '''Summarizes the INCAR, POSCAR, and KPOINTS files in the directory'''
+    if not args.output:
+        print(incar.get_str())
+    else:
+        incar.write_file(f'{args.output}')
 
-#     #check if the directory exists
-#     if not os.path.isdir(directory):
-#         raise ValueError(f"{directory} does not exist")
-    
-#     #check if the INCAR, POSCAR, and KPOINTS files exist
 
-#     for file in ["INCAR", "POSCAR", "KPOINTS"]:
-#         if not os.path.isfile(f"{directory}/{file}"):
-#             raise ValueError(f"{directory}/{file} does not exist")
-        
-#     #load the input files
-#     incar = Incar.from_file(f"{directory}/INCAR")
-#     kpoints = Kpoints.from_file(f"{directory}/KPOINTS")
-#     poscar = Poscar.from_file(f"{directory}/POSCAR")
 
-#     #get the unit cell parameters and symmetry group from the POSCAR
-#     unit_cell = poscar.structure.lattice
-#     symmetry = poscar.structure.get_space_group_info()
-
-#     #get kpoints type
-#     kpoints_type = kpoints.style
-
-#     #get the INCAR parameters
-#     incar_dict = incar.as_dict()
-
-    
 
 def setup_args(subparsers):
     subp_inputs = subparsers.add_parser("inputs", help="Generate VASP inputs")
@@ -153,8 +141,8 @@ def setup_args(subparsers):
     subp_inputs.add_argument("--sort", action="store_true", help="Sort atoms in POSCAR file")
     subp_inputs.add_argument("--freeze", type=str, default=None, help="Freeze atoms in POSCAR file")
     subp_inputs.add_argument("--mp-poscar", type=str, default=None, help="Get POSCAR file from Materials Project")
-    subp_inputs.add_argument("--mp-primitive", type=str, default=None, help="Get primitive POSCAR file from Materials Project")
-    subp_inputs.add_argument("-o", "--output", type=str, default='vsh.ouput', help="Name of output file")
+    subp_inputs.add_argument("--primitive", type=bool, default=False, help="Get primitive POSCAR file from Materials Project")
+    subp_inputs.add_argument("-o", "--output", help="Name of output file")
 
 def run(args):
 
@@ -165,20 +153,16 @@ def run(args):
         write_kpoints(args)
 
     if args.kpath:
-        structure = Poscar.from_file(args.file).structure
-        write_kpath(structure, args.kpath, args.output)
+        write_kpath(args)
 
     if args.sort:
-        sort_poscar(args.file)
+        sort_poscar(args)
 
     if args.mp_poscar:
-        mp_poscar(args.mp_poscar)
-
-    if args.mp_primitive:
-        mp_primitive(args.mp_primitive)
+        mp_poscar(args)
 
     if args.incar:
-        write_incar(args.incar)
+        write_incar(args)
 
 
     return None

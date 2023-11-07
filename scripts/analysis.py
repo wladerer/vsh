@@ -166,16 +166,16 @@ def setup_args(subparsers):
 def run(args):
     # get conflicts
     if args.conflicts:
-        atoms = read(args.file)
+        atoms = read(args.input)
         conflicts = conflicting_atoms(atoms, args.conflicts)
         print_conflicts(conflicts)
 
     if args.volume:
-        atoms = read(args.file)
+        atoms = read(args.input)
         print(atoms.get_volume())
 
     if args.cell:
-        atoms = read(args.file)
+        atoms = read(args.input)
         cell = atoms.get_cell()
         # if anything is less than 0.01, set it to 0
         cell = np.where(np.abs(cell) < 0.01, 0, cell)
@@ -184,20 +184,20 @@ def run(args):
         print(f"{cell[2][0]:.5f} {cell[2][1]:.5f} {cell[2][2]:.5f}")
 
     if args.params:
-        atoms = read(args.file)
+        atoms = read(args.input)
         cell = atoms.cell.cellpar()
         print(f"a = {cell[0]:.5f}")
         print(f"b = {cell[1]:.5f}")
         print(f"c = {cell[2]:.5f}")
 
     if args.symmetry:
-        atoms = read(args.file)
+        atoms = read(args.input)
         spacegroup = get_spacegroup(atoms)
         print(f"Space group number: {spacegroup.no}")
         print(f"Space group symbol: {spacegroup.symbol}")
 
     if args.vacuum:
-        atoms = read(args.file)
+        atoms = read(args.input)
         z = atoms.cell.cellpar()[2]
         z_coords = atoms.get_positions()[:, 2]
         z_max = np.max(z_coords)
@@ -206,7 +206,7 @@ def run(args):
         print(f"Vacuum: {vacuum:.5f}")
 
     if args.energy:
-        atoms = read(args.file)
+        atoms = read(args.input)
         calculator = Vasp(atoms)
         energy = calculator.get_potential_energy()
         print(f"Energy: {energy:.5f}")
@@ -215,7 +215,7 @@ def run(args):
 
         #handle xml.elementree error. this means that the calculation is not finished or the file is corrupt
         try:
-            electronic, ionic = check_convergence(args.file)
+            electronic, ionic = check_convergence(args.input)
             print(f"Electronic convergence: {electronic}")
             print(f"Ionic convergence: {ionic}")
         except:
