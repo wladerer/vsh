@@ -2,5 +2,6 @@ ase
 matplotlib
 mp-api
 numpy
+pydantic
 pymatgen
 pyprocar
