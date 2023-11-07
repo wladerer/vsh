@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
-import argparse
+
 import os
-import sys
 import json
 
 from ase.io import read
@@ -126,35 +125,8 @@ def write_incar(args) -> dict:
     else:
         incar.write_file(f'{args.output}')
 
-# def summarize(directory: str = './'):
-#     '''Summarizes the INCAR, POSCAR, and KPOINTS files in the directory'''
 
-#     #check if the directory exists
-#     if not os.path.isdir(directory):
-#         raise ValueError(f"{directory} does not exist")
-    
-#     #check if the INCAR, POSCAR, and KPOINTS files exist
 
-#     for file in ["INCAR", "POSCAR", "KPOINTS"]:
-#         if not os.path.isfile(f"{directory}/{file}"):
-#             raise ValueError(f"{directory}/{file} does not exist")
-        
-#     #load the input files
-#     incar = Incar.from_file(f"{directory}/INCAR")
-#     kpoints = Kpoints.from_file(f"{directory}/KPOINTS")
-#     poscar = Poscar.from_file(f"{directory}/POSCAR")
-
-#     #get the unit cell parameters and symmetry group from the POSCAR
-#     unit_cell = poscar.structure.lattice
-#     symmetry = poscar.structure.get_space_group_info()
-
-#     #get kpoints type
-#     kpoints_type = kpoints.style
-
-#     #get the INCAR parameters
-#     incar_dict = incar.as_dict()
-
-    
 
 def setup_args(subparsers):
     subp_inputs = subparsers.add_parser("inputs", help="Generate VASP inputs")
