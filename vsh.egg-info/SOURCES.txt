@@ -9,6 +9,7 @@ scripts/freeze.py
 scripts/inputs.py
 scripts/slab.py
 test/test_analysis.py
+test/test_freeze.py
 test/test_vshband.py
 vsh.egg-info/PKG-INFO
 vsh.egg-info/SOURCES.txt

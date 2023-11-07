@@ -145,25 +145,18 @@ def setup_args(subparsers):
     subp_inputs.add_argument("-o", "--output", help="Name of output file")
 
 def run(args):
+    functions = {
+        "potcar": write_potcar,
+        "kpoints": write_kpoints,
+        "kpath": write_kpath,
+        "sort": sort_poscar,
+        "mp_poscar": mp_poscar,
+        "incar": write_incar,
+    }
 
-    if args.potcar:
-        write_potcar(args)
-
-    if args.kpoints:
-        write_kpoints(args)
-
-    if args.kpath:
-        write_kpath(args)
-
-    if args.sort:
-        sort_poscar(args)
-
-    if args.mp_poscar:
-        mp_poscar(args)
-
-    if args.incar:
-        write_incar(args)
-
+    for arg, func in functions.items():
+        if getattr(args, arg):
+            func(args)
 
     return None
 
