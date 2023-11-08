@@ -271,6 +271,20 @@ def manage(subparsers):
     subp_manage.add_argument("-w", "--rename-contcar", action="store_true", help="Rename CONTCAR to POSCAR when copied")
 
 
+def adsorb(subparsers):
+
+    subp_adsorb = subparsers.add_parser(
+        "adsorb", help="Generate adsorbed structures")
+
+    subp_adsorb.add_argument("-i", "--input", type=str, default=None, help="Input file")
+    subp_adsorb.add_argument("-a", "--adsorbate", type=str, default=None, help="Adsorbate file")
+    subp_adsorb.add_argument("-z", "--distance", type=float, default=1.0, help="Distance between adsorbate and surface")
+    subp_adsorb.add_argument("-m", "--min-z", type=float, default=5.0, help="Minimum z value for freezing")
+    subp_adsorb.add_argument("-c", "--coverage", type=int, nargs=3, default=[1, 1, 1], help="Adsorbate coverage")
+    subp_adsorb.add_argument("-o", "--output", type=str, default=None, help="Output basename")
+    
+
+
 def setup(subparsers):
-    for script in analysis, bands, db, freeze, inputs, slab, schedule, manage:
+    for script in analysis, bands, db, freeze, inputs, slab, schedule, manage, adsorb:
         script(subparsers)
