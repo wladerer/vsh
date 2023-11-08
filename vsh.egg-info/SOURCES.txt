@@ -2,6 +2,7 @@ LICENSE
 README.md
 setup.py
 scripts/__init__.py
+scripts/adsorb.py
 scripts/analysis.py
 scripts/bands.py
 scripts/db.py

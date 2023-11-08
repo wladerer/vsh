@@ -237,23 +237,20 @@ def slab(subparsers):
 
 def schedule(subparsers):
 
-    subp_schedule = subparsers.add_parser(
-        "schedule", help="Schedule jobs on a supercomputer"
-    )
+    subp_schedule = subparsers.add_parser("schedule", help="Schedule jobs on a supercomputer")
 
     subp_schedule.add_argument(
-        "-o", "--output", type=argparse.FileType('w', encoding='utf-8'), default=None, help="Output file name")
+        "-o", "--output", type=argparse.FileType('w', encoding='utf-8'), help="Submission script file name")
 
     subp_schedule.add_argument("-n", "--nodes", type=int, default=1, help="Number of nodes")
     subp_schedule.add_argument("-p", "--ppn", type=int, default=1, help="Processors per node")
-    subp_schedule.add_argument("-t", "--time", type=str, default="00:30:00", help="Walltime")
+    subp_schedule.add_argument("-t", "--walltime", type=str, default="00:30:00", help="Walltime")
     subp_schedule.add_argument("-q", "--queue", type=str, default="standard", help="Queue")
-    subp_schedule.add_argument("-a", "--account", type=str, default=None, help="Account")
-    subp_schedule.add_argument("-m", "--mail", type=str, default=None, help="Email address")
-    subp_schedule.add_argument("-e", "--email-type", type=str, default="FAIL", help="Email type")
-    subp_schedule.add_argument("-d", "--directives", type=str, default=None, help="Additional directives")
-    subp_schedule.add_argument("-c", "--command", type=str, default=None, help="Command to run")
-    subp_schedule.add_argument("-j", "--job-name", type=str, default="job", help="Job name")
+    subp_schedule.add_argument("-a", "--account", type=str, help="Account")
+    subp_schedule.add_argument("-m", "--mail", type=str, help="Email address")
+    subp_schedule.add_argument("-e", "--email-type", type=str, default='', help="Email type")
+    subp_schedule.add_argument("-d", "--directives", type=str, default='', nargs="+", help="Additional directives")
+    subp_schedule.add_argument("-j", "--job-name", type=str, default='', help="Job name")
     subp_schedule.add_argument("--pbs", action="store_true", help="Use PBS")
     subp_schedule.add_argument("--slurm", action="store_true", help="Use SLURM")
 

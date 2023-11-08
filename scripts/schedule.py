@@ -1,51 +1,41 @@
 from jinja2 import Template
 import os
-import sys
 import subprocess
 
 pbs_template = """
 #!/bin/bash
-#PBS -N {{ job_name }}
-#PBS -l nodes={{ num_nodes }}:ppn={{ ppn }}
+#PBS -l nodes={{ nodes }}:ppn={{ ppn }}
 #PBS -l walltime={{ walltime }}
-#PBS -o {{ output_file }}
-#PBS -e {{ error_file }}
 #PBS -q {{ queue }}
-#PBS -A {{ account }}
-#PBS -M {{ email }}
-#PBS -m {{ email_type }}
-{{ additional_directives }}
-{{ command }}
+{% if job_name %}#PBS -N {{ job_name }}{% endif %}
+{% if account %}#PBS -A {{ account }}{% endif %}
+{% if mail %}#PBS -M {{ mail }}{% endif %}
+{% if email_type %}#PBS -m {{ email_type }}{% endif %}
+{{ directives }}
 """
 
 slurm_template = """
 #!/bin/bash
-#SBATCH --job-name={{ job_name }}
-#SBATCH --nodes={{ num_nodes }}
+#SBATCH --nodes={{ nodes }}
 #SBATCH --ntasks-per-node={{ ppn }}
 #SBATCH --time={{ walltime }}
-#SBATCH --output={{ output_file }}
-#SBATCH --error={{ error_file }}
-#SBATCH -A {{ account }}
-#SBATCH --mail-user={{ email }}
-#SBATCH --mail-type={{ email_type }}
-{{ additional_directives }}
-{{ command }}
+{% if job_name %}#SBATCH --job-name={{ job_name }}{% endif %}
+{% if account %}#PBS -A {{ account }}{% endif %}
+{% if mail %}#SBATCH --mail-user={{ mail }}{% endif %}
+{% if email_type %}}#SBATCH --mail-type={{ email_type }}{% endif %}
+{{ directives }}
 """
 
 default_inputs: dict = {
-    "mail_user": "MAIL",
+    "mail": "MAIL",
     "account": "ACCOUNT",
     "queue": "QUEUE",
     "email_type": "EMAIL_TYPE",
     "walltime": "WALLTIME",
-    "num_nodes": "NODES",
+    "nodes": "NODES",
     "ppn": "PPN",
     "job_name": "JOB_NAME",
-    "output_file": "OUTPUT_FILE",
-    "error_file": "ERROR_FILE",
-    "command": "COMMAND",
-    "additional_directives": "ADDITIONAL_DIRECTIVES",
+    "directives": "DIRECTIVES",
 }
 
 
@@ -99,17 +89,14 @@ def create_submission_file(args):
     # Create a dictionary of template variables
     template_variables = {
         "job_name": args.job_name,
-        "num_nodes": args.num_nodes,
+        "nodes": args.nodes,
         "ppn": args.ppn,
         "walltime": args.walltime,
         "queue": args.queue,
         "account": args.account,
-        "email": args.email,
+        "email": args.mail,
         "email_type": args.email_type,
-        "output_file": args.output_file,
-        "error_file": args.error_file,
-        "command": args.command,
-        "additional_directives": args.additional_directives,
+        "directives": args.directives,
     }
 
     # Check if variables are missing - if so, use the default inputs
