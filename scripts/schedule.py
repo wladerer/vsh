@@ -91,3 +91,59 @@ def check_env_for_default_inputs() -> dict:
 
     return default_inputs_found
 
+
+def create_submission_file(args):
+    '''Creates a submission file with user supplied inputs'''
+    # Get the default inputs from the environment
+    default_inputs_found = check_env_for_default_inputs()
+
+    # Create a dictionary of template variables
+    template_variables = {
+        "job_name": args.job_name,
+        "num_nodes": args.num_nodes,
+        "ppn": args.ppn,
+        "walltime": args.walltime,
+        "queue": args.queue,
+        "account": args.account,
+        "email": args.email,
+        "email_type": args.email_type,
+        "output_file": args.output_file,
+        "error_file": args.error_file,
+        "command": args.command,
+        "additional_directives": args.additional_directives,
+    }
+
+    # Check if variables are missing - if so, use the default inputs
+    for key, value in template_variables.items():
+        if value is None:
+            if key in default_inputs_found:
+                template_variables[key] = default_inputs_found[key]
+
+    # Create the submission script
+    if args.pbs:
+        submission_script = create_template(pbs_template, template_variables)
+    elif args.slurm:
+        submission_script = create_template(slurm_template, template_variables)
+    else:
+        print("Error: No scheduler specified.")
+        return None
+
+    return submission_script
+
+def run(args):
+
+    # Create the submission script
+    submission_script = create_submission_file(args)
+
+    if not args.output:
+        print(submission_script)
+
+    else:
+        with open(args.output, "w") as f:
+            f.write(submission_script)
+
+    return None
+
+
+
+

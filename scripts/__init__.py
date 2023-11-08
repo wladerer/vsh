@@ -1,3 +1,5 @@
+import argparse
+
 def analysis(subparsers):
     subp_analysis = subparsers.add_parser(
         "analysis", help="Analyze structure using ASE and pymatgen utilities"
@@ -240,10 +242,34 @@ def schedule(subparsers):
     )
 
     subp_schedule.add_argument(
-        "-o", "--output", type=str, default=None, help="Output file name"
+        "-o", "--output", type=argparse.FileType('w', encoding='utf-8'), default=None, help="Output file name")
+
+    subp_schedule.add_argument("-n", "--nodes", type=int, default=1, help="Number of nodes")
+    subp_schedule.add_argument("-p", "--ppn", type=int, default=1, help="Processors per node")
+    subp_schedule.add_argument("-t", "--time", type=str, default="00:30:00", help="Walltime")
+    subp_schedule.add_argument("-q", "--queue", type=str, default="standard", help="Queue")
+    subp_schedule.add_argument("-a", "--account", type=str, default=None, help="Account")
+    subp_schedule.add_argument("-m", "--mail", type=str, default=None, help="Email address")
+    subp_schedule.add_argument("-e", "--email-type", type=str, default="FAIL", help="Email type")
+    subp_schedule.add_argument("-d", "--directives", type=str, default=None, help="Additional directives")
+    subp_schedule.add_argument("-c", "--command", type=str, default=None, help="Command to run")
+    subp_schedule.add_argument("-j", "--job-name", type=str, default="job", help="Job name")
+    subp_schedule.add_argument("--pbs", action="store_true", help="Use PBS")
+    subp_schedule.add_argument("--slurm", action="store_true", help="Use SLURM")
 
 
 def manage(subparsers):
+
+    subp_manage = subparsers.add_parser(
+        "manage", help="Manage VASP calculations")
+
+    subp_manage.add_argument("--archive", action="store_true", help="Archive output files")
+    subp_manage.add_argument("--copy", action="store_true", help="Copy output files")
+    subp_manage.add_argument("-e", "--exclude", type=list, nargs="+", default=[], help="Exclude files from archive or copy")
+    subp_manage.add_argument("-d", "--destination", type=str, default=None, help="Destination for copy")
+    subp_manage.add_argument("-o", "--output", type=str, default=None, help="Output file name")
+    subp_manage.add_argument("-w", "--rename-contcar", action="store_true", help="Rename CONTCAR to POSCAR when copied")
+
 
 def setup(subparsers):
     for script in analysis, bands, db, freeze, inputs, slab, schedule, manage:

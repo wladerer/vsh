@@ -7,6 +7,8 @@ scripts/bands.py
 scripts/db.py
 scripts/freeze.py
 scripts/inputs.py
+scripts/manage.py
+scripts/schedule.py
 scripts/slab.py
 test/test_analysis.py
 test/test_freeze.py
