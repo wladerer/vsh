@@ -45,6 +45,10 @@ def get_metadata(file: str) -> dict:
     converged_ionic = vasprun.converged_ionic
     converged_electronic = vasprun.converged_electronic
 
+    # get the path of the calculation
+    path = os.path.abspath(file)
+    path = os.path.dirname(path)
+
     metadata = {
         "spin": spin,
         "soc": soc,
@@ -52,6 +56,7 @@ def get_metadata(file: str) -> dict:
         "kpoints": kpoints,
         "ionic": converged_ionic,
         "electronic": converged_electronic,
+        "path": path,
     }
 
     return metadata
@@ -78,6 +83,7 @@ def update_ase_db(vasprun_file: str, database: str):
         kpoints=metadata["kpoints"],
         ionic=metadata["ionic"],
         electronic=metadata["electronic"],
+        path=metadata["path"],
     )
 
     return None

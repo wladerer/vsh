@@ -49,7 +49,7 @@ vsh contains a wrapper for the ASE database utility. There have been some adjust
 
 This is soon to be deprecated and moved into the `inputs` module. 
 
-##### slabgen
+##### slab
 
 slabgen is a module intended to simplify the process of making slabs of bulk materials. Many options are included in the specification of typical parameters such as vacuum, slab thickness, and miller plane. 
 
@@ -58,6 +58,11 @@ slabgen is a module intended to simplify the process of making slabs of bulk mat
 inputs currently handles the creation and manipulation of multiple kinds of VASP input files. 
 
 Note: Pseudopotentials must be configured using the `pmg config` command provided by pymatgen. 
+
+##### manage
+
+A simple utility to help archive job output or duplicate job inputs. 
+
 
 
 

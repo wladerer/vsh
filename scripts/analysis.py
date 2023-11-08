@@ -117,10 +117,12 @@ def print_conflicts(conflicts: dict):
 
     return None
 
-def check_convergence(file: str = './vasprun.xml') -> list[bool]:
-    '''Looks for vasprun.xml file and checks if converged'''
+
+def check_convergence(file: str = "./vasprun.xml") -> list[bool]:
+    """Looks for vasprun.xml file and checks if converged"""
     import os
-    #import Vasprun from pymatgen
+
+    # import Vasprun from pymatgen
     from pymatgen.io.vasp.outputs import Vasprun
 
     vasprun_object = Vasprun(file)
@@ -128,6 +130,7 @@ def check_convergence(file: str = './vasprun.xml') -> list[bool]:
     converged_ionic = vasprun_object.converged_ionic
 
     return [converged_electronic, converged_ionic]
+
 
 def run(args):
     # get conflicts
@@ -178,8 +181,7 @@ def run(args):
         print(f"Energy: {energy:.5f}")
 
     if args.converged:
-
-        #handle xml.elementree error. this means that the calculation is not finished or the file is corrupt
+        # handle xml.elementree error. this means that the calculation is not finished or the file is corrupt
         try:
             electronic, ionic = check_convergence(args.input)
             print(f"Electronic convergence: {electronic}")
@@ -187,6 +189,3 @@ def run(args):
         except:
             print("Calculation not finished or file is corrupt")
             exit()
-
-
-

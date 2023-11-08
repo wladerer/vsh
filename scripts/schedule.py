@@ -3,7 +3,6 @@ import os
 import sys
 import subprocess
 
-# Define a Jinja2 template for a PBS submission script
 pbs_template = """
 #!/bin/bash
 #PBS -N {{ job_name }}
@@ -93,7 +92,7 @@ def check_env_for_default_inputs() -> dict:
 
 
 def create_submission_file(args):
-    '''Creates a submission file with user supplied inputs'''
+    """Creates a submission file with user supplied inputs"""
     # Get the default inputs from the environment
     default_inputs_found = check_env_for_default_inputs()
 
@@ -130,8 +129,8 @@ def create_submission_file(args):
 
     return submission_script
 
-def run(args):
 
+def run(args):
     # Create the submission script
     submission_script = create_submission_file(args)
 
@@ -143,7 +142,3 @@ def run(args):
             f.write(submission_script)
 
     return None
-
-
-
-
