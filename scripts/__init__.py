@@ -266,6 +266,7 @@ def manage(subparsers):
     subp_manage.add_argument("-d", "--destination", type=str, default=None, help="Destination for copy")
     subp_manage.add_argument("-o", "--output", type=str, default=None, help="Output file name")
     subp_manage.add_argument("-w", "--rename-contcar", action="store_true", help="Rename CONTCAR to POSCAR when copied")
+    subp_manage.add_argument("-s", "--snapshot", type=str, help="Input file to snapshot")
 
 
 def adsorb(subparsers):
