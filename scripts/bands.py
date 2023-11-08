@@ -56,22 +56,6 @@ def handle_atoms(poscar: str = './POSCAR') -> dict:
 
     return atom_indices
 
-def setup_args(subparsers):
-    subp_band = subparsers.add_parser('bands', help='Plot band structure')
-
-    subp_band.add_argument('-e','--elimit', type=float, nargs='+', default=[-2,2], help='Range of energy to plot')
-    subp_band.add_argument('-m', '--mode', type=str, default='parametric', help='Plotting mode')
-    subp_band.add_argument('--orbitals', nargs='+', default=None, help='Orbitals to plot')
-    subp_band.add_argument('--spins', type=int, nargs='+', default=None, help='Spins to plot')
-    subp_band.add_argument('--atoms', type=int, nargs='+', default=None, help='Atoms to plot')
-    subp_band.add_argument('--cmap', type=str, default='cool', help='Color map')
-    subp_band.add_argument('--clim', type=float, nargs='+', default=[0,1], help='Color map limits')
-    subp_band.add_argument('--code', type=str, default='vasp', help='Code used to generate the data')
-    subp_band.add_argument('--dirname', type=str, default='.', help='Directory where the data is stored')
-    subp_band.add_argument('-o', '--output', type=str, default=None, help='Output file name')
-    subp_band.add_argument('--fermi', type=float, default=None, help='Fermi energy (eV)')
-    subp_band.add_argument('--dpi', type=int, default=800, help='DPI of the output file')
-
 
 def run(args):
 

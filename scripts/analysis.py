@@ -129,40 +129,6 @@ def check_convergence(file: str = './vasprun.xml') -> list[bool]:
 
     return [converged_electronic, converged_ionic]
 
-def setup_args(subparsers):
-    subp_analysis = subparsers.add_parser("analysis", help="Analyze structure using ASE and pymatgen utilities")
-
-    # Structure parameters from file -f or --file
-    subp_analysis.add_argument("-f", "--file", type=str, help="Specify structure file", default="vasprun.xml")
-    subp_analysis.add_argument(
-        "--volume", help="Prints the volume of the structure", action="store_true"
-    )
-    subp_analysis.add_argument("--conflicts", type=float, help="Prints the conflicting atoms")
-    subp_analysis.add_argument(
-        "--cell", help="Prints the unit cell dimensions", action="store_true"
-    )
-    subp_analysis.add_argument(
-        "--params",
-        help="Prints the unit cell parameters (a,b,c) of the structure",
-        action="store_true",
-    )
-    subp_analysis.add_argument(
-        "--symmetry",
-        help="Prints the space group number and symbol",
-        action="store_true",
-    )
-    subp_analysis.add_argument(
-        "--energy", help="Prints the energy of the structure", action="store_true"
-    )
-    subp_analysis.add_argument(
-        "--vacuum", help="Prints the vacuum of the structure", action="store_true"
-    )
-    subp_analysis.add_argument(
-        "--positions", help="Prints the positions of the atoms"
-    )
-    subp_analysis.add_argument(
-        "--converged", action="store_true", help="Prints if the structure is converged")
-
 def run(args):
     # get conflicts
     if args.conflicts:
