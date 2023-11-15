@@ -132,60 +132,80 @@ def check_convergence(file: str = "./vasprun.xml") -> list[bool]:
     return [converged_electronic, converged_ionic]
 
 
+def inspect_oszicar(file: str = "./OSZICAR") -> dict:
+    '''Reads an OSZICAR file and returns a dictionary of convergence information'''
+    from pymatgen.io.vasp.outputs import Oszicar
+
+    oszicar_object = Oszicar(file)
+    return oszicar_object.as_dict()
+
+def get_conflicts(args):
+    atoms = read(args.input)
+    conflicts = conflicting_atoms(atoms, args.conflicts)
+    print_conflicts(conflicts)
+
+def get_volume(args):
+    atoms = read(args.input)
+    print(atoms.get_volume())
+
+def get_cell(args):
+    atoms = read(args.input)
+    cell = atoms.get_cell()
+    # if anything is less than 0.01, set it to 0
+    cell = np.where(np.abs(cell) < 0.01, 0, cell)
+    print(f"{cell[0][0]:.5f} {cell[0][1]:.5f} {cell[0][2]:.5f}")
+    print(f"{cell[1][0]:.5f} {cell[1][1]:.5f} {cell[1][2]:.5f}")
+    print(f"{cell[2][0]:.5f} {cell[2][1]:.5f} {cell[2][2]:.5f}")
+
+def get_params(args):
+    atoms = read(args.input)
+    cell = atoms.cell.cellpar()
+    print(f"a = {cell[0]:.5f}")
+    print(f"b = {cell[1]:.5f}")
+    print(f"c = {cell[2]:.5f}")
+
+def get_symmetry(args):
+    atoms = read(args.input)
+    spacegroup = get_spacegroup(atoms)
+    print(f"Space group number: {spacegroup.no}")
+    print(f"Space group symbol: {spacegroup.symbol}")
+
+def get_vacuum(args):
+    atoms = read(args.input)
+    z = atoms.cell.cellpar()[2]
+    z_coords = atoms.get_positions()[:, 2]
+    z_max = np.max(z_coords)
+    z_min = np.min(z_coords)
+    vacuum = z - (z_max - z_min)
+    print(f"Vacuum: {vacuum:.5f}")
+
+def get_energy(args):
+    atoms = read(args.input)
+    calculator = Vasp(atoms)
+    energy = calculator.get_potential_energy()
+    print(f"Energy: {energy:.5f}")
+
+def get_converged(args):
+    # handle xml.elementree error. this means that the calculation is not finished or the file is corrupt
+    try:
+        electronic, ionic = check_convergence(args.input)
+        print(f"Electronic convergence: {electronic}")
+        print(f"Ionic convergence: {ionic}")
+    except:
+        print("Calculation not finished or file is corrupt")
+        exit()
+
+
 def run(args):
-    # get conflicts
-    if args.conflicts:
-        atoms = read(args.input)
-        conflicts = conflicting_atoms(atoms, args.conflicts)
-        print_conflicts(conflicts)
-
-    if args.volume:
-        atoms = read(args.input)
-        print(atoms.get_volume())
-
-    if args.cell:
-        atoms = read(args.input)
-        cell = atoms.get_cell()
-        # if anything is less than 0.01, set it to 0
-        cell = np.where(np.abs(cell) < 0.01, 0, cell)
-        print(f"{cell[0][0]:.5f} {cell[0][1]:.5f} {cell[0][2]:.5f}")
-        print(f"{cell[1][0]:.5f} {cell[1][1]:.5f} {cell[1][2]:.5f}")
-        print(f"{cell[2][0]:.5f} {cell[2][1]:.5f} {cell[2][2]:.5f}")
-
-    if args.params:
-        atoms = read(args.input)
-        cell = atoms.cell.cellpar()
-        print(f"a = {cell[0]:.5f}")
-        print(f"b = {cell[1]:.5f}")
-        print(f"c = {cell[2]:.5f}")
-
-    if args.symmetry:
-        atoms = read(args.input)
-        spacegroup = get_spacegroup(atoms)
-        print(f"Space group number: {spacegroup.no}")
-        print(f"Space group symbol: {spacegroup.symbol}")
-
-    if args.vacuum:
-        atoms = read(args.input)
-        z = atoms.cell.cellpar()[2]
-        z_coords = atoms.get_positions()[:, 2]
-        z_max = np.max(z_coords)
-        z_min = np.min(z_coords)
-        vacuum = z - (z_max - z_min)
-        print(f"Vacuum: {vacuum:.5f}")
-
-    if args.energy:
-        atoms = read(args.input)
-        calculator = Vasp(atoms)
-        energy = calculator.get_potential_energy()
-        print(f"Energy: {energy:.5f}")
-
-    if args.converged:
-        # handle xml.elementree error. this means that the calculation is not finished or the file is corrupt
-        try:
-            electronic, ionic = check_convergence(args.input)
-            print(f"Electronic convergence: {electronic}")
-            print(f"Ionic convergence: {ionic}")
-        except:
-            print("Calculation not finished or file is corrupt")
-            exit()
+    functions = {
+        "conflicts": get_conflicts,
+        "volume": get_volume,
+        "cell": get_cell,
+        "params": get_params,
+        "symmetry": get_symmetry,
+        "vacuum": get_vacuum,
+        "energy": get_energy,
+        "converged": get_converged
+    }
+    
+    functions[args.function](args)
