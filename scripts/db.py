@@ -95,11 +95,10 @@ def setup_args(subparsers):
         "db", help="Interact with ASE database using extended vsh logic"
     )
     subp_db.add_argument(
-        "-f", "--file", default="vasprun.xml", type=str, help="vasprun.xml file"
+        "-i", "--input", default="vasprun.xml", type=str, help="vasprun.xml file"
     )
     subp_db.add_argument(
-        "-d", "--database", type=str, help="Database file", required=True
-    )
+        "database", type=str, help="Database file", required=True)
 
 
 def run(args):
