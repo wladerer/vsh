@@ -96,7 +96,7 @@ def db(subparsers):
     subp_db.add_argument(
         "-i", "--input", default="vasprun.xml", type=str, help="vasprun.xml file"
     )
-    subp_db.add_argument("database", type=str, help="Database file", required=True)
+    subp_db.add_argument("database", type=str, help="Database file")
 
 
 def freeze(subparsers):
