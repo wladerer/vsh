@@ -1,6 +1,6 @@
 from ase.io import read
 from os.path import abspath, dirname, join
-from scripts.bands import *
+from scripts.band import *
 
 
 def test_handle_atoms():

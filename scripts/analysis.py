@@ -125,7 +125,7 @@ def check_convergence(file: str = "./vasprun.xml") -> list[bool]:
     # import Vasprun from pymatgen
     from pymatgen.io.vasp.outputs import Vasprun
 
-    vasprun_object = Vasprun(file)
+    vasprun_object = Vasprun(file, parse_dos=False, parse_eigen=False, parse_projected_eigen=False, parse_potcar_file=False)
     converged_electronic = vasprun_object.converged_electronic
     converged_ionic = vasprun_object.converged_ionic
 

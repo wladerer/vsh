@@ -16,7 +16,7 @@ def calculate_vacuum(atoms: Atoms) -> float:
     # get c vector
     c = atoms.cell[2][2]
 
-    vacuum = c - (zmax - zmin)
+    vacuum = c - zmax
 
     return vacuum
 
