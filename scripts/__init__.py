@@ -40,7 +40,7 @@ def analysis(subparsers):
     )
 
 
-def bands(subparsers):
+def band(subparsers):
     subp_band = subparsers.add_parser("bands", help="Plot band structure")
 
     subp_band.add_argument(
@@ -121,7 +121,7 @@ def freeze(subparsers):
     )
 
 
-def inputs(subparsers):
+def input(subparsers):
     subp_inputs = subparsers.add_parser("inputs", help="Generate VASP inputs")
 
     subp_inputs.add_argument("-i", "--input", type=str, default=None, help="Input file")
@@ -284,5 +284,5 @@ def adsorb(subparsers):
 
 
 def setup(subparsers):
-    for script in analysis, bands, db, freeze, inputs, slab, schedule, manage, adsorb:
+    for script in analysis, band, db, freeze, input, slab, schedule, manage, adsorb:
         script(subparsers)
