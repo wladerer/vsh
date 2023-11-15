@@ -10,15 +10,7 @@ def check_for_vasprun(file: str) -> bool:
     """Checks if a vasprun.xml file exists and is valid"""
     is_file = os.path.isfile(file)
 
-    if is_file:
-        try:
-            vasprun_object = Vasprun(file)
-        except:
-            raise ValueError(
-                "vasprun.xml file is invalid. Calculation may be running or corrupt"
-            )
-
-    else:
+    if not is_file:
         raise ValueError(f"{file} not found")
 
 
@@ -36,7 +28,7 @@ def get_metadata(file: str) -> dict:
     """Returns metadata from vasprun.xml file"""
     # check for vasprun.xml file
     check_for_vasprun(file)
-    vasprun = Vasprun(file)
+    vasprun = Vasprun(file, parse_dos=False, parse_eigen=False, parse_projected_eigen=False, parse_potcar_file=False)
 
     spin = vasprun.parameters["ISPIN"]
     soc = vasprun.parameters["LSORBIT"]
