@@ -36,7 +36,7 @@ def analysis(subparsers):
     )
     subp_analysis.add_argument("--positions", help="Prints the positions of the atoms")
     subp_analysis.add_argument(
-        "--converged", action="store_true", help="Prints if the structure is converged"
+        "-c", "--converged", action="store_true", help="Prints if the structure is converged"
     )
 
 
