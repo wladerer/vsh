@@ -1,5 +1,6 @@
 import argparse
 
+
 def analysis(subparsers):
     subp_analysis = subparsers.add_parser(
         "analysis", help="Analyze structure using ASE and pymatgen utilities"
@@ -36,7 +37,10 @@ def analysis(subparsers):
     )
     subp_analysis.add_argument("--positions", help="Prints the positions of the atoms")
     subp_analysis.add_argument(
-        "-c", "--converged", action="store_true", help="Prints if the structure is converged"
+        "-c",
+        "--converged",
+        action="store_true",
+        help="Prints if the structure is converged",
     )
 
 
@@ -92,9 +96,7 @@ def db(subparsers):
     subp_db.add_argument(
         "-i", "--input", default="vasprun.xml", type=str, help="vasprun.xml file"
     )
-    subp_db.add_argument(
-        "-d", "--database", type=str, help="Database file", required=True
-    )
+    subp_db.add_argument("database", type=str, help="Database file", required=True)
 
 
 def freeze(subparsers):
@@ -236,51 +238,109 @@ def slab(subparsers):
 
 
 def schedule(subparsers):
-
-    subp_schedule = subparsers.add_parser("schedule", help="Schedule jobs on a supercomputer")
+    subp_schedule = subparsers.add_parser(
+        "schedule", help="Schedule jobs on a supercomputer"
+    )
 
     subp_schedule.add_argument(
-        "-o", "--output", type=argparse.FileType('w', encoding='utf-8'), help="Submission script file name")
+        "-o",
+        "--output",
+        type=argparse.FileType("w", encoding="utf-8"),
+        help="Submission script file name",
+    )
 
-    subp_schedule.add_argument("-n", "--nodes", type=int, default=1, help="Number of nodes")
-    subp_schedule.add_argument("-p", "--ppn", type=int, default=1, help="Processors per node")
-    subp_schedule.add_argument("-t", "--walltime", type=str, default="00:30:00", help="Walltime")
-    subp_schedule.add_argument("-q", "--queue", type=str, default="standard", help="Queue")
+    subp_schedule.add_argument(
+        "-n", "--nodes", type=int, default=1, help="Number of nodes"
+    )
+    subp_schedule.add_argument(
+        "-p", "--ppn", type=int, default=1, help="Processors per node"
+    )
+    subp_schedule.add_argument(
+        "-t", "--walltime", type=str, default="00:30:00", help="Walltime"
+    )
+    subp_schedule.add_argument(
+        "-q", "--queue", type=str, default="standard", help="Queue"
+    )
     subp_schedule.add_argument("-a", "--account", type=str, help="Account")
     subp_schedule.add_argument("-m", "--mail", type=str, help="Email address")
-    subp_schedule.add_argument("-e", "--email-type", type=str, default='', help="Email type")
-    subp_schedule.add_argument("-d", "--directives", type=str, default='', nargs="+", help="Additional directives")
-    subp_schedule.add_argument("-j", "--job-name", type=str, default='', help="Job name")
+    subp_schedule.add_argument(
+        "-e", "--email-type", type=str, default="", help="Email type"
+    )
+    subp_schedule.add_argument(
+        "-d",
+        "--directives",
+        type=str,
+        default="",
+        nargs="+",
+        help="Additional directives",
+    )
+    subp_schedule.add_argument(
+        "-j", "--job-name", type=str, default="", help="Job name"
+    )
     subp_schedule.add_argument("--pbs", action="store_true", help="Use PBS")
     subp_schedule.add_argument("--slurm", action="store_true", help="Use SLURM")
 
 
 def manage(subparsers):
+    subp_manage = subparsers.add_parser("manage", help="Manage VASP calculations")
 
-    subp_manage = subparsers.add_parser(
-        "manage", help="Manage VASP calculations")
-
-    subp_manage.add_argument("--archive", action="store_true", help="Archive output files")
+    subp_manage.add_argument(
+        "--archive", action="store_true", help="Archive output files"
+    )
     subp_manage.add_argument("--copy", action="store_true", help="Copy output files")
-    subp_manage.add_argument("-e", "--exclude", type=list, nargs="+", default=[], help="Exclude files from archive or copy")
-    subp_manage.add_argument("-d", "--destination", type=str, default=None, help="Destination for copy")
-    subp_manage.add_argument("-o", "--output", type=str, default=None, help="Output file name")
-    subp_manage.add_argument("-w", "--rename-contcar", action="store_true", help="Rename CONTCAR to POSCAR when copied")
-    subp_manage.add_argument("-s", "--snapshot", type=str, help="Input file to snapshot")
+    subp_manage.add_argument(
+        "-e",
+        "--exclude",
+        type=list,
+        nargs="+",
+        default=[],
+        help="Exclude files from archive or copy",
+    )
+    subp_manage.add_argument(
+        "-d", "--destination", type=str, default=None, help="Destination for copy"
+    )
+    subp_manage.add_argument(
+        "-o", "--output", type=str, default=None, help="Output file name"
+    )
+    subp_manage.add_argument(
+        "-w",
+        "--rename-contcar",
+        action="store_true",
+        help="Rename CONTCAR to POSCAR when copied",
+    )
+    subp_manage.add_argument(
+        "-s", "--snapshot", type=str, help="Input file to snapshot"
+    )
 
 
 def adsorb(subparsers):
-
-    subp_adsorb = subparsers.add_parser(
-        "adsorb", help="Generate adsorbed structures")
+    subp_adsorb = subparsers.add_parser("adsorb", help="Generate adsorbed structures")
 
     subp_adsorb.add_argument("-i", "--input", type=str, default=None, help="Input file")
-    subp_adsorb.add_argument("-a", "--adsorbate", type=str, default=None, help="Adsorbate file")
-    subp_adsorb.add_argument("-z", "--distance", type=float, default=1.0, help="Distance between adsorbate and surface")
-    subp_adsorb.add_argument("-m", "--min-z", type=float, default=5.0, help="Minimum z value for freezing")
-    subp_adsorb.add_argument("-c", "--coverage", type=int, nargs=3, default=[1, 1, 1], help="Adsorbate coverage")
-    subp_adsorb.add_argument("-o", "--output", type=str, default=None, help="Output basename")
-    
+    subp_adsorb.add_argument(
+        "-a", "--adsorbate", type=str, default=None, help="Adsorbate file"
+    )
+    subp_adsorb.add_argument(
+        "-z",
+        "--distance",
+        type=float,
+        default=1.0,
+        help="Distance between adsorbate and surface",
+    )
+    subp_adsorb.add_argument(
+        "-m", "--min-z", type=float, default=5.0, help="Minimum z value for freezing"
+    )
+    subp_adsorb.add_argument(
+        "-c",
+        "--coverage",
+        type=int,
+        nargs=3,
+        default=[1, 1, 1],
+        help="Adsorbate coverage",
+    )
+    subp_adsorb.add_argument(
+        "-o", "--output", type=str, default=None, help="Output basename"
+    )
 
 
 def setup(subparsers):
