@@ -208,4 +208,6 @@ def run(args):
         "converged": get_converged
     }
     
-    functions[args.function](args)
+    for arg, func in functions.items():
+        if getattr(args, arg):
+            func(args)
