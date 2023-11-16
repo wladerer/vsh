@@ -31,9 +31,11 @@ def slab_from_structure(
     return slabgen.get_slabs()
 
 
-def write_slab_to_poscar(slab: Structure, filename: str) -> None:
+def slab_to_poscar(slab: Structure) -> None:
+    '''Generates a pymatgen Poscar object from a slab'''
     poscar = Poscar(slab, sort_structure=True)
-    poscar.write_file(filename, direct=False)
+    return poscar
+    
 
 
 def generate_filename(structure: Structure, miller_plane: list, zmin) -> str:
@@ -51,11 +53,10 @@ def freeze_slab(structure: Structure, min_z: float) -> Structure:
             site.properties["selective_dynamics"] = [True, True, True]
 
 
-def run(args):
 
+def run(args):
     # check if in unit planes was selected, if so, adjust the vacuum to 3
-    if args.in_unit_planes:
-        args.vacuum = 3
+    args.vacuum = 3 if args.in_unit_planes else args.vacuum
 
     structure = structure_from_file(args.structure)
     slabs = slab_from_structure(
@@ -72,10 +73,13 @@ def run(args):
         for slab in slabs:
             freeze_slab(slab, args.freeze)
 
-    for i, slab in enumerate(slabs):
-        write_slab_to_poscar(
-            slab,
-            f"{generate_filename(structure, args.miller_plane, args.thickness)}_{i}.vasp",
-        )
+    poscars = [slab_to_poscar(slab) for slab in slabs]
+    
+    if not args.output:
+        for poscar in poscars:
+            print(poscar.get_str()) 
+    else:
+        for i, poscar in enumerate(poscars):
+            poscar.write_file(f"{args.output}_{i}.vasp")
 
 
