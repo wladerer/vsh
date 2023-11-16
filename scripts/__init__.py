@@ -45,7 +45,7 @@ def analysis(subparsers):
 
 
 def band(subparsers):
-    subp_band = subparsers.add_parser("bands", help="Plot band structure")
+    subp_band = subparsers.add_parser("band", help="Plot band structure")
 
     subp_band.add_argument(
         "-e",
