@@ -190,7 +190,7 @@ def slab(subparsers):
         "slab", help="Generate slabs from structure using pymatgen"
     )
 
-    subp_slabgen.add_argument("structure file", type=str, help="Structure file", required=True
+    subp_slabgen.add_argument("structure file", type=str, help="Structure file"
     )
     subp_slabgen.add_argument(
         "-m",
