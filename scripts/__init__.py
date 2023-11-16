@@ -229,7 +229,6 @@ def slab(subparsers):
         "--in-unit-planes",
         action='store_true',
         default=False,
-        type=bool,
         help="Specify zmin in multiples of miller plane spacing",
     )
     subp_slabgen.add_argument(
