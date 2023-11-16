@@ -124,9 +124,9 @@ def freeze(subparsers):
 
 
 def input(subparsers):
-    subp_inputs = subparsers.add_parser("inputs", help="Generate VASP inputs")
+    subp_inputs = subparsers.add_parser("input", help="Generate VASP inputs")
 
-    subp_inputs.add_argument("-i", "--input", type=str, default=None, help="Input file")
+    subp_inputs.add_argument("-i", "--input", type=str, default=None, help="Structure input file")
     subp_inputs.add_argument(
         "-d",
         "--directory",
