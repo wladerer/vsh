@@ -201,7 +201,7 @@ def slab(subparsers):
         help="Miller plane",
     )
     subp_slabgen.add_argument("-o", "--output", type=str, help="Output file basename")
-    subp_slabgen.add_argument("--sort", help="Sort atoms")
+    subp_slabgen.add_argument("--sort", action='store_true', help="Sort atoms")
     subp_slabgen.add_argument(
         "-v", "--vacuum", type=float, default=15.0, help="Vacuum size"
     )
@@ -227,6 +227,7 @@ def slab(subparsers):
     subp_slabgen.add_argument(
         "-u",
         "--in-unit-planes",
+        action='store_true',
         default=False,
         type=bool,
         help="Specify zmin in multiples of miller plane spacing",

@@ -55,7 +55,7 @@ def freeze_slab(structure: Structure, min_z: float) -> Structure:
 
 
 def run(args):
-    # check if in unit planes was selected, if so, adjust the vacuum to 3
+    
     args.vacuum = 3 if args.in_unit_planes else args.vacuum
 
     structure = structure_from_file(args.structure)
