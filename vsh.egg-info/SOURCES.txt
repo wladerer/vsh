@@ -4,10 +4,10 @@ setup.py
 scripts/__init__.py
 scripts/adsorb.py
 scripts/analysis.py
-scripts/bands.py
+scripts/band.py
 scripts/db.py
 scripts/freeze.py
-scripts/inputs.py
+scripts/input.py
 scripts/manage.py
 scripts/schedule.py
 scripts/slab.py

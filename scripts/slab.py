@@ -51,51 +51,6 @@ def freeze_slab(structure: Structure, min_z: float) -> Structure:
             site.properties["selective_dynamics"] = [True, True, True]
 
 
-def setup_args(subparsers):
-    subp_slabgen = subparsers.add_parser(
-        "slab ", help="Generate slabs from structure using pymatgen"
-    )
-
-    subp_slabgen.add_argument("-f", "--file", type=str, help="Structure file", required=True)
-    subp_slabgen.add_argument(
-        "-m",
-        "--miller-plane",
-        type=int,
-        nargs=3,
-        default=[0, 0, 1],
-        help="Miller plane",
-    )
-    subp_slabgen.add_argument("-o", "--output", type=str, help="Output file basename")
-    subp_slabgen.add_argument("--sort", help="Sort atoms")
-    subp_slabgen.add_argument("-v", "--vacuum", type=float, default=15.0, help="Vacuum size")
-    subp_slabgen.add_argument(
-        "-s",
-        "--symmetric",
-        type=bool,
-        default=True,
-        help="Ensure that the faces of the slab are symmetric",
-    )
-    subp_slabgen.add_argument(
-        "-t",
-        "--thickness",
-        default=3.0,
-        help="Minimum slab thickness in Angstrom or multiples of miller plane spacing",
-    )
-    subp_slabgen.add_argument("--primitive", default=False, help="Create primitive cell")
-    subp_slabgen.add_argument("-c", "--center-slab", default=True, help="Center the slab")
-    subp_slabgen.add_argument(
-        "-u",
-        "--in-unit-planes",
-        action="store_true",
-        default=False,
-        type=bool,
-        help="Specify zmin in multiples of miller plane spacing",
-    )
-    subp_slabgen.add_argument(
-        "--freeze", default=5, type=float, help="Freeze the bottom layer of the slab"
-    )
-
-
 def run(args):
 
     # check if in unit planes was selected, if so, adjust the vacuum to 3
