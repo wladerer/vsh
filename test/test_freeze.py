@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 from ase import Atoms
-from scripts.freeze import calculate_vacuum
+from vsh.scripts.freeze import calculate_vacuum
 from ase.build import fcc111
 
 slab_10a = fcc111('Al', size=(2,2,3), vacuum=10.0)
