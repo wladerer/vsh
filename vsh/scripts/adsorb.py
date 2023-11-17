@@ -69,7 +69,7 @@ def create_adsorbed_structure(args):
     #get adsorption sites
     structure = structure_from_file(args.input)
     adsorbate = adsorbate_from_file(args.adsorbate)
-    ads_structs = add_adsorbate(structure, adsorbate, min_z=args.min_z, coverage=args.coverage, distance=args.distance)
+    ads_structs = add_adsorbate(structure, adsorbate, min_z=args.freeze, coverage=args.coverage, distance=args.distance)
 
     poscars = [ Poscar(ads_struct, sort_structure=True) for ads_struct in ads_structs ]
 

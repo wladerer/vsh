@@ -315,7 +315,7 @@ def manage(subparsers):
 def adsorb(subparsers):
     subp_adsorb = subparsers.add_parser("adsorb", help="Generate adsorbed structures")
 
-    subp_adsorb.add_argument("-i", "--input", type=str, default=None, help="Input file")
+    subp_adsorb.add_argument("input", type=str, help="Input file")
     subp_adsorb.add_argument(
         "-a", "--adsorbate", type=str, default=None, help="Adsorbate file"
     )
@@ -327,7 +327,7 @@ def adsorb(subparsers):
         help="Distance between adsorbate and surface",
     )
     subp_adsorb.add_argument(
-        "-m", "--min-z", type=float, default=5.0, help="Minimum z value for freezing"
+        "--freeze", type=float, default=5.0, help="Minimum z value for freezing"
     )
     subp_adsorb.add_argument(
         "-c",
