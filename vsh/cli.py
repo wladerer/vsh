@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import argparse
-import scripts
+from . import scripts
 import importlib.util
 import sys
 
@@ -24,7 +24,7 @@ def parse_app_args(args=None):
 
 def main():
     args = parse_app_args()
-    command = lazy_import('scripts.'+args.command)
+    command = lazy_import('vsh.scripts.'+args.command)
     command.run(args)
 
 if __name__ == "__main__":

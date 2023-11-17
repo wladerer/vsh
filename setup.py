@@ -15,7 +15,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'vsh = vsh:main'
+            'vsh = vsh.cli:main'
         ]
     }
 )
