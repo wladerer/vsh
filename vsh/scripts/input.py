@@ -64,7 +64,7 @@ def write_kpath(args) -> Kpoints:
     return kpoints
 
 def sort_poscar(args) -> Poscar:
-    structure = Poscar.from_file(args.input).structure
+    structure = Structure.from_file(args.input)
     poscar = Poscar(structure, sort_structure=True)
     
     if not args.output:
