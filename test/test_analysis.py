@@ -2,7 +2,7 @@ import pytest
 from vsh.scripts.analysis import *
 
 def test_check_convergence():
-    assert check_convergence(file='files/vasprun.xml') == [True, True]
+    assert check_convergence(file='test/files/vasprun.xml') == [True, True]
 
 
 

@@ -5,7 +5,7 @@ from vsh.scripts.band import *
 
 def test_handle_atoms():
     # read the test file
-    atom_indices = handle_atoms('files/wp2CO.vasp')
+    atom_indices = handle_atoms('test/files/wp2CO.vasp')
 
     # check if the atom types and counts match the expected values
     assert len(atom_indices) == 4
@@ -15,7 +15,7 @@ def test_handle_atoms():
     assert atom_indices['O'] == [73]
 
     # test with a different file
-    atom_indices = handle_atoms('files/Cu2O.vasp')
+    atom_indices = handle_atoms('test/files/Cu2O.vasp')
 
     # check if the atom types and counts match the expected values
     assert len(atom_indices) == 2
