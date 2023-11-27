@@ -1,7 +1,7 @@
 ase
-numpy
 matplotlib
-pymatgen
 mp-api
-pyprocar
+numpy
 pydantic
+pymatgen
+pyprocar
