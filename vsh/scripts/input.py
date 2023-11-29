@@ -20,11 +20,11 @@ def get_atoms(args):
 def write_potcar(args):
     '''Writes a POTCAR file'''
     
-    atoms = args.atoms
+    structure = args.input
     #get symbols
-    symbols = atoms.get_chemical_symbols()
+    symbols = structure.get_chemical_symbols()
 
-    potcar = Potcar(symbols, functional='PBE')
+    potcar = Potcar(symbols, functional='PBE_54')
 
     if not args.output:
         print(potcar)

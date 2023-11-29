@@ -56,8 +56,10 @@ def freeze_slab(structure: Structure, min_z: float) -> Structure:
 
 def run(args):
     
-    args.vacuum = 3 if args.in_unit_planes else args.vacuum
+    if args.vacuum != 0:
+        args.vacuum = 3 if args.in_unit_planes else args.vacuum
 
+    
     structure = structure_from_file(args.structure)
     slabs = slab_from_structure(
         structure=structure,

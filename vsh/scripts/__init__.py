@@ -135,7 +135,7 @@ def input(subparsers):
         help="Directory to write VASP inputs to",
     )
     subp_inputs.add_argument(
-        "--potcar", type=bool, default=False, help="Write POTCAR file"
+        "--potcar", action='store_true', help="Write POTCAR file"
     )
     subp_inputs.add_argument(
         "-k",
