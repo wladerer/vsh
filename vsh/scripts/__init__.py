@@ -159,6 +159,12 @@ def input(subparsers):
         help="KPOINTS file for band structure calculation",
     )
     subp_inputs.add_argument(
+        "--kplane",
+        type=int,
+        default=None,
+        help="KPOINTS file for 2D band structure calculation",
+    )
+    subp_inputs.add_argument(
         "--symprec",
         type=float,
         default=None,

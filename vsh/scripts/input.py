@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from jinja2 import Template
+
 import os
 import json
 
@@ -9,6 +11,23 @@ from mp_api.client import MPRester
 from pymatgen.core import Structure
 from pymatgen.io.vasp.inputs import Potcar, Kpoints, Poscar, Incar
 from pymatgen.symmetry.bandstructure import HighSymmKpath
+
+two_d_kpath_template = """
+Two dimensional Kpath 
+   {{kpath}}
+Line-Mode
+Reciprocal
+   0.5000000000   0.0000000000   0.0000000000     M
+   0.3333333333   0.3333333333   0.0000000000     K
+
+   0.3333333333   0.3333333333   0.0000000000     K
+   0.0000000000   0.0000000000   0.0000000000     GAMMA
+
+   0.0000000000   0.0000000000   0.0000000000     GAMMA
+   0.5000000000   0.0000000000   0.0000000000     M
+
+"""
+
 
 def get_atoms(args):
     '''Creates ASE atoms object from a file'''
@@ -62,6 +81,21 @@ def write_kpath(args) -> Kpoints:
         kpoints.write_file(f'{args.output}')
 
     return kpoints
+
+def write_kplane(args) -> str:
+    '''Creates a 2D kpath from a jinja 2 template'''
+    
+    template = Template(two_d_kpath_template)
+    kplane = template.render(kpath=args.kplane)
+    
+    if not args.output:
+        print(kplane)
+    else:
+        with open(args.output, "w") as f:
+            f.write(kplane)
+            
+    return kplane
+    
 
 def sort_poscar(args) -> Poscar:
     structure = Structure.from_file(args.input)
@@ -129,6 +163,7 @@ def run(args):
         "potcar": write_potcar,
         "kpoints": write_kpoints,
         "kpath": write_kpath,
+        "kplane": write_kplane,
         "sort": sort_poscar,
         "mp_poscar": mp_poscar,
         "incar": write_incar,
