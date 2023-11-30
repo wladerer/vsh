@@ -111,7 +111,7 @@ def mp_poscar(args):
 def write_incar(args) -> dict:
     '''Loads a dictionary from the incar.json file'''
     script_dir = os.path.dirname(__file__)
-    docs_dir = os.path.join(script_dir, '..', 'docs')
+    docs_dir = os.path.join(script_dir, '../..', 'docs') #watch
     file_path = os.path.join(docs_dir, 'incars.json')
 
     with open(file_path, "r") as f:
