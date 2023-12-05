@@ -8,9 +8,7 @@ import json
 from ase.io import read
 
 from mp_api.client import MPRester
-from pymatgen.core import Structure
-from pymatgen.io.vasp.inputs import Potcar, Kpoints, Poscar, Incar
-from pymatgen.symmetry.bandstructure import HighSymmKpath
+
 
 two_d_kpath_template = """
 Two dimensional Kpath 
@@ -38,7 +36,7 @@ def get_atoms(args):
 
 def write_potcar(args):
     '''Writes a POTCAR file'''
-    
+    from pymatgen.io.vasp.inputs import Potcar
     structure = args.input
     #get symbols
     symbols = structure.get_chemical_symbols()
@@ -55,6 +53,7 @@ def write_potcar(args):
 
 def write_kpoints(args):
     '''Writes a KPOINTS file'''
+    from pymatgen.io.vasp.inputs import Kpoints 
 
     kpoints = Kpoints.gamma_automatic(kpts=args.kpoints)
 
@@ -67,10 +66,14 @@ def write_kpoints(args):
     return kpoints
 
 
-def write_kpath(args) -> Kpoints:
+def write_kpath(args):
     '''
     Makes a linemode Kpoints object from a structure
     '''
+    from pymatgen.core import Structure
+    from pymatgen.io.vasp.inputs import Kpoints 
+    from pymatgen.symmetry.bandstructure import HighSymmKpath
+
     structure = Structure.from_file(args.input)
     kpath = HighSymmKpath(structure)
     kpoints = Kpoints.automatic_linemode(args.kpath, kpath)
@@ -97,7 +100,11 @@ def write_kplane(args) -> str:
     return kplane
     
 
-def sort_poscar(args) -> Poscar:
+def sort_poscar(args):
+    '''Sorts a POSCAR file'''
+    from pymatgen.core import Structure
+    from pymatgen.io.vasp.inputs import Poscar
+
     structure = Structure.from_file(args.input)
     poscar = Poscar(structure, sort_structure=True)
     
@@ -109,7 +116,7 @@ def sort_poscar(args) -> Poscar:
     return poscar
 
 
-def structure_from_mpi_code(mpcode: str, api_key: str, is_conventional: bool = True) -> Structure:
+def structure_from_mpi_code(mpcode: str, api_key: str, is_conventional: bool = True):
     '''
     Creates a pymatgen structure from a code
     '''
@@ -125,6 +132,8 @@ def structure_from_mpi_code(mpcode: str, api_key: str, is_conventional: bool = T
 
 def mp_poscar(args):
     '''Creates a POSCAR file from a Materials Project code'''
+    from pymatgen.io.vasp.inputs import Poscar 
+
     #check if the MP_API_KEY is set in the environment
     if "MP_API_KEY" not in os.environ:
         raise ValueError("MP_API_KEY not set in environment variables")
@@ -144,6 +153,8 @@ def mp_poscar(args):
 
 def write_incar(args) -> dict:
     '''Loads a dictionary from the incar.json file'''
+    from pymatgen.io.vasp.inputs import Incar
+    
     script_dir = os.path.dirname(__file__)
     docs_dir = os.path.join(script_dir, '../..', 'docs') #watch
     file_path = os.path.join(docs_dir, 'incars.json')

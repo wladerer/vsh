@@ -347,7 +347,18 @@ def adsorb(subparsers):
         "-o", "--output", type=str, default=None, help="Output basename"
     )
 
+def alchemy(subparsers):
+
+    subp_alchemy = subparsers.add_parser('alchemy', help='Manipulate structures and their atoms')
+    subp_alchemy = subp_alchemy.add_argument('input', help='Input file', required=True)
+    subp_alchemy = subp_alchemy.add_argument('-o', '--output', help='Output file')
+    subp_alchemy = subp_alchemy.add_argument('-i', '--index', help='Indices of atoms to select', nargs='+', type=int)
+    subp_alchemy = subp_alchemy.add_argument('-t', '--type', help='Type of atoms to select', nargs='+', type=str)
+    subp_alchemy = subp_alchemy.add_argument('-z', help='Z position of atoms to freeze', type=float)
+    subp_alchemy = subp_alchemy.add_argument('--direction', help='Direction of atoms to freeze', type=str, choices=['above', 'below'])
+    subp_alchemy = subp_alchemy.add_argument('--range', help='Range of atoms to freeze', nargs=2, type=float)
+
 
 def setup(subparsers):
-    for script in analysis, band, db, freeze, input, slab, schedule, manage, adsorb:
+    for script in alchemy, analysis, band, db, input, slab, schedule, manage, adsorb:
         script(subparsers)
