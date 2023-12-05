@@ -350,13 +350,16 @@ def adsorb(subparsers):
 def alchemy(subparsers):
 
     subp_alchemy = subparsers.add_parser('alchemy', help='Manipulate structures and their atoms')
-    subp_alchemy = subp_alchemy.add_argument('input', help='Input file', required=True)
-    subp_alchemy = subp_alchemy.add_argument('-o', '--output', help='Output file')
-    subp_alchemy = subp_alchemy.add_argument('-i', '--index', help='Indices of atoms to select', nargs='+', type=int)
-    subp_alchemy = subp_alchemy.add_argument('-t', '--type', help='Type of atoms to select', nargs='+', type=str)
-    subp_alchemy = subp_alchemy.add_argument('-z', help='Z position of atoms to freeze', type=float)
-    subp_alchemy = subp_alchemy.add_argument('--direction', help='Direction of atoms to freeze', type=str, choices=['above', 'below'])
-    subp_alchemy = subp_alchemy.add_argument('--range', help='Range of atoms to freeze', nargs=2, type=float)
+    subp_alchemy.add_argument('input', help='Input file')
+    subp_alchemy.add_argument('-d', '--delete', help='Delete atoms', action='store_true')
+    subp_alchemy.add_argument('--freeze', help='Freeze atoms', action='store_true')
+    subp_alchemy.add_argument('--swap', help='Swap atoms', action='store_true')
+    subp_alchemy.add_argument('-o', '--output', help='Output file')
+    subp_alchemy.add_argument('-i', '--index', help='Indices of atoms to select', nargs='+', type=int)
+    subp_alchemy.add_argument('-t', '--type', help='Type of atoms to select', nargs='+', type=str)
+    subp_alchemy.add_argument('-z', help='Z position of atoms to freeze', type=float)
+    subp_alchemy.add_argument('--direction', help='Direction of atoms to freeze', type=str, choices=['above', 'below'])
+    subp_alchemy.add_argument('--range', help='Range of atoms to freeze', nargs=2, type=float)
 
 
 def setup(subparsers):

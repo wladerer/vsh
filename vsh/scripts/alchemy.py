@@ -66,10 +66,12 @@ def delete_atoms(args):
     else:
         raise ValueError('Must specify index or type')
 
+    atoms[atoms.numbers.argsort()]
+
     if not args.output:
-        write('-', atoms, fmt='POSCAR', sorted=True)
+        write('-', atoms, format='vasp')
     else:
-        write(args.output, atoms, fmt='POSCAR', sorted=True)
+        write(args.output, atoms, format='vasp')
 
     return None
 
@@ -88,14 +90,16 @@ def freeze_atoms(args):
     else:
         raise ValueError('Must specify index, type, z, or range')
 
+    atoms[atoms.numbers.argsort()]
+
     if not args.output:
-        write('-', atoms, fmt='POSCAR', sorted=True)
+        write('-', atoms, format='vasp')
     else:
-        write(args.output, atoms, sorted=True)
+        write(args.output, atoms)
 
     return None
 
-def exchange_atoms(args):
+def swap_atoms(args):
     '''Exchanges atoms of one type into another'''
     atoms = read(args.input)
 
@@ -107,14 +111,17 @@ def exchange_atoms(args):
             if atom.symbol in args.type:
                 atom.symbol = args.type[0]
 
+    atoms[atoms.numbers.argsort()]
     if not args.output:
-        write('-', atoms, fmt='POSCAR', sorted=True)
+        write('-', atoms, format='vasp')
+    else:
+        write(args.output, atoms)
 
 def run(args):
     functions = {
         "delete" : delete_atoms,
         "freeze" : freeze_atoms,
-        "exchange" : exchange_atoms
+        "swap" : swap_atoms
     }
 
     for arg, func in functions.items():
