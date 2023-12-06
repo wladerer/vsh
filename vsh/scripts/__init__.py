@@ -354,6 +354,7 @@ def alchemy(subparsers):
     subp_alchemy.add_argument('-d', '--delete', help='Delete atoms', action='store_true')
     subp_alchemy.add_argument('--freeze', help='Freeze atoms', action='store_true')
     subp_alchemy.add_argument('--swap', help='Swap atoms', action='store_true')
+    subp_alchemy.add_argument('--rattle', help='Perturb the sites of a structure', action='store_true')
     subp_alchemy.add_argument('-o', '--output', help='Output file')
     subp_alchemy.add_argument('-i', '--index', help='Indices of atoms to select', nargs='+', type=int)
     subp_alchemy.add_argument('-t', '--type', help='Type of atoms to select', nargs='+', type=str)
@@ -362,6 +363,7 @@ def alchemy(subparsers):
     subp_alchemy.add_argument('--range', help='Range of atoms to freeze', nargs=2, type=float)
 
 
+
 def setup(subparsers):
-    for script in alchemy, analysis, band, db, input, slab, schedule, manage, adsorb:
+    for script in alchemy, analysis, band, db, input, slab, schedule, stm, manage, adsorb:
         script(subparsers)

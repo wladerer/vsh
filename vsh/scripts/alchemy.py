@@ -117,11 +117,30 @@ def swap_atoms(args):
     else:
         write(args.output, atoms)
 
+def rattle_atoms(args):
+    '''Rattles atoms using MonteCarloRattleTransformation'''
+    from pymatgen.transformations.advanced_transformations import MonteCarloRattleTransformation
+    from pymatgen.io.ase import AseAtomsAdaptor
+    from pymatgen.core.structure import Structure
+
+    atoms = read(args.input)
+    structure = AseAtomsAdaptor.get_structure(atoms)
+    rattle = MonteCarloRattleTransformation(0.1, 100)
+    structure = rattle.apply_transformation(structure)
+    atoms = AseAtomsAdaptor.get_atoms(structure)
+
+    atoms[atoms.numbers.argsort()]
+    if not args.output:
+        write('-', atoms, format='vasp')
+    else:
+        write(args.output, atoms)
+
 def run(args):
     functions = {
         "delete" : delete_atoms,
         "freeze" : freeze_atoms,
-        "swap" : swap_atoms
+        "swap" : swap_atoms,
+        "rattle" : rattle_atoms
     }
 
     for arg, func in functions.items():
