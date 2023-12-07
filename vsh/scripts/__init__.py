@@ -365,5 +365,5 @@ def alchemy(subparsers):
 
 
 def setup(subparsers):
-    for script in alchemy, analysis, band, db, input, slab, schedule, stm, manage, adsorb:
+    for script in alchemy, analysis, band, db, input, slab, schedule, manage, adsorb:
         script(subparsers)

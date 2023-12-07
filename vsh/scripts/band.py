@@ -62,7 +62,7 @@ def run(args):
     args.orbitals = handle_orbitals(args.orbitals)
 
 
-    plot = pyprocar.bandsplot(code=args.code,
+    fig, ax = pyprocar.bandsplot(code=args.code,
                            mode=args.mode,
                            dirname=args.dirname,
                            orbitals=args.orbitals,
@@ -75,5 +75,5 @@ def run(args):
                            show=args.output is None)
 
     if args.output:
-        plot.fig.savefig(args.output, dpi=args.dpi)
+        fig.savefig(args.output, dpi=args.dpi)
 
