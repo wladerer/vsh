@@ -37,11 +37,7 @@ def get_atoms(args):
 def write_potcar(args):
     '''Writes a POTCAR file'''
     from pymatgen.io.vasp.inputs import Potcar
-    structure = args.input
-    #get symbols
-    symbols = structure.get_chemical_symbols()
-
-    potcar = Potcar(symbols, functional='PBE_54')
+    potcar = Potcar.from_file(args.input)
 
     if not args.output:
         print(potcar)
