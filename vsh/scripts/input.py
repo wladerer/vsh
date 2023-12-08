@@ -38,7 +38,7 @@ def write_potcar(args):
     '''Writes a POTCAR file'''
     from pymatgen.io.vasp.inputs import PotcarSingle, Poscar, Potcar
     # Load POSCAR file
-    poscar = Poscar.from_file("path/to/your/POSCAR")
+    poscar = Poscar.from_file(args.input)
 
     # Extract unique elements from the POSCAR
     unique_elements = poscar.site_symbols
