@@ -43,11 +43,9 @@ def write_potcar(args):
     # Extract unique elements from the POSCAR
     unique_elements = poscar.site_symbols
 
-    # Set up a POTCARSingle for each element
-    potcar_entries = [PotcarSingle(symbol) for symbol in unique_elements]
 
     # Create a POTCAR file
-    potcar = Potcar(potcar_entries)
+    potcar = Potcar(symbols=unique_elements))
 
     if not args.output:
         print(potcar.__str__())
