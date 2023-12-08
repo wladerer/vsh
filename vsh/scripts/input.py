@@ -36,11 +36,21 @@ def get_atoms(args):
 
 def write_potcar(args):
     '''Writes a POTCAR file'''
-    from pymatgen.io.vasp.inputs import Potcar
-    potcar = Potcar.from_file(args.input)
+    from pymatgen.io.vasp.inputs import PotcarSingle, Poscar, Potcar
+    # Load POSCAR file
+    poscar = Poscar.from_file("path/to/your/POSCAR")
+
+    # Extract unique elements from the POSCAR
+    unique_elements = poscar.site_symbols
+
+    # Set up a POTCARSingle for each element
+    potcar_entries = [PotcarSingle(symbol) for symbol in unique_elements]
+
+    # Create a POTCAR file
+    potcar = Potcar(potcar_entries)
 
     if not args.output:
-        print(potcar)
+        print(potcar.__str__())
 
     else:
         potcar.write_file(f'{args.output}')
