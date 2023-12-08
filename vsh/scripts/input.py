@@ -45,7 +45,7 @@ def write_potcar(args):
 
 
     # Create a POTCAR file
-    potcar = Potcar(symbols=unique_elements))
+    potcar = Potcar(symbols=unique_elements)
 
     if not args.output:
         print(potcar.__str__())
