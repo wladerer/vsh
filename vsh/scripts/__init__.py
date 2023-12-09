@@ -99,98 +99,20 @@ def db(subparsers):
     subp_db.add_argument("database", type=str, help="Database file")
 
 
-def freeze(subparsers):
-    subp_freeze = subparsers.add_parser("freeze", help="Freeze atoms using ASE")
+def incar(subparsers):
+    subp_incar = subparsers.add_parser("incar", help="Generate and update INCAR files")
+    
+    subp_incar.add_argument("--write", choices=['bulk', 'slab', 'band', 'single-point'], help="Write an INCAR file from the defaults in incar.json")
+    subp_incar.add_argument("-i", "--input", type=str, help="INCAR file path")
+    subp_incar.add_argument("-u", "--update", help="Update an INCAR file with the specified tag value pair", nargs='2', type=str)
+    subp_incar.add_argument("-o", "--output", type=str, help="Output file name")
+    
 
-    subp_freeze.add_argument(
-        "-i", "--input", type=str, help="Structure file", required=True
-    )
-    subp_freeze.add_argument(
-        "--indices",
-        type=int,
-        nargs="+",
-        default=None,
-        help="Atom indices to freeze",
-    )
-    subp_freeze.add_argument("-t", "--type", type=str, help="Atom type to freeze")
-    subp_freeze.add_argument(
-        "-z", "--zmax", type=float, help="Freeze atoms with z < zmax"
-    )
-    subp_freeze.add_argument("-o", "--output", type=str, help="Output file name")
-    subp_freeze.add_argument("--sort", action="store_true", help="Sort atoms")
-    subp_freeze.add_argument(
-        "--zrange", type=float, nargs=2, help="Freeze atoms with zmin < z < zmax"
-    )
-
-
-def input(subparsers):
-    subp_inputs = subparsers.add_parser("input", help="Generate VASP inputs")
-
-    subp_inputs.add_argument("-i", "--input", type=str, default=None, help="Structure input file")
-    subp_inputs.add_argument(
-        "-d",
-        "--directory",
-        type=str,
-        default=".",
-        help="Directory to write VASP inputs to",
-    )
-    subp_inputs.add_argument(
-        "--potcar", action='store_true', help="Write POTCAR file"
-    )
-    subp_inputs.add_argument(
-        "-k",
-        "--kpoints",
-        type=int,
-        nargs=3,
-        default=None,
-        help="Writes gamma centered KPOINTS file",
-    )
-    subp_inputs.add_argument(
-        "--incar",
-        type=str,
-        default=None,
-        help="INCAR file type",
-        choices=["bulk", "slab", "band", "single-point", "band-soc", "band-slab-soc"],
-    )
-    subp_inputs.add_argument(
-        "--kpath",
-        type=int,
-        default=None,
-        help="KPOINTS file for band structure calculation",
-    )
-    subp_inputs.add_argument(
-        "--kplane",
-        type=int,
-        default=None,
-        help="KPOINTS file for 2D band structure calculation",
-    )
-    subp_inputs.add_argument(
-        "--symprec",
-        type=float,
-        default=None,
-        help="Symmetry precision for SeekPath algorithm",
-    )
-    subp_inputs.add_argument(
-        "--sort", action="store_true", help="Sort atoms in POSCAR file"
-    )
-    subp_inputs.add_argument(
-        "--freeze", type=str, default=None, help="Freeze atoms in POSCAR file"
-    )
-    subp_inputs.add_argument(
-        "--mp-poscar",
-        type=str,
-        default=None,
-        help="Get POSCAR file from Materials Project",
-    )
-    subp_inputs.add_argument(
-        "--primitive",
-        type=bool,
-        default=False,
-        help="Get primitive POSCAR file from Materials Project",
-    )
-    subp_inputs.add_argument("-o", "--output", help="Name of output file")
-
-
+def poscar(subparsers):
+    subp_poscar = subparsers.add_parser("poscar", help="Generate and update POSCAR files")
+    
+    #working    
+    
 def slab(subparsers):
     subp_slabgen = subparsers.add_parser(
         "slab", help="Generate slabs from structure using pymatgen"
