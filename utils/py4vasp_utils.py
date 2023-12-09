@@ -19,15 +19,22 @@ def band_to_df(file: str, selection: str | None = None):
     band_info = band_data.to_frame(selection=selection)
 
     return band_info
-file = '/home/wladerer/github/dev/vaspout.h5'
 
-def plot_band(file: str, selection: str | None = None):
+
+def get_band_plot(file: str, selection: str | None = None):
     '''Plots the band structure data.'''
     band_data = Band.from_file(file)
     plot = band_data.to_plotly(selection=selection)
     fig = go.Figure(data=plot)
-    return fig.show()
+    
+    return fig
+
+def plot_band(file: str, selection: str | None = None):
+    '''Plots the band structure data.'''
+    fig = get_band_plot(file, selection=selection)
+    fig.show()
+    
 
 
-plot_band(file, selection='d(4, 17)')
+
 
