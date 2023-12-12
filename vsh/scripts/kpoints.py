@@ -1,7 +1,6 @@
 from ase.io import read, write
 
-two_d_kpath_template = """
-Two dimensional Kpath 
+two_d_kpath_template = """Two dimensional Kpath 
    {{kpath}}
 Line-Mode
 Reciprocal
@@ -48,6 +47,11 @@ def write_path(args):
 
     structure = Structure.from_file(args.input)
     kpath = HighSymmKpath(structure)
+    
+    #make sure path is an int
+    if args.path:
+        args.path = int(args.path)
+        
     kpoints = Kpoints.automatic_linemode(args.path, kpath)
     
     if not args.output:
