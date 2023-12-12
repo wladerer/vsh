@@ -110,8 +110,23 @@ def incar(subparsers):
 
 def poscar(subparsers):
     subp_poscar = subparsers.add_parser("poscar", help="Generate and update POSCAR files")
+    subp_poscar.add_argument("-s", "--structure", type=str, help="Structure file")
+    subp_poscar.add_argument("--mp-poscar", type=str, help="Materials Project code")
+    subp_poscar.add_argument("-p", "--primitive", action='store_true', help="Use primitive cell")
     
-    #working    
+# def potcar(subparsers):
+#     subp_potcar = subparsers.add_parser("potcar", help="Generate and update POTCAR files")
+    
+#     #working    
+    
+def kpoints(subparsers):
+    subp_kpoints = subparsers.add_parser("kpoints", help="Generate and update KPOINTS files")
+    
+    subp_kpoints.add_argument("--line", nargs=1, type=int, help="Generate a KPOINTS file for a line mode calculation")
+    subp_kpoints.add_argument("--plane", nargs=1, type=int, help="Generate a KPOINTS file for a 2D plane mode calculation")
+    subp_kpoints.add_argument("--mesh", nargs=3, type=int, help="Generate a KPOINTS file for a mesh mode calculation")
+    subp_kpoints.add_argument("--mesh-type", choices=['gamma', 'monkhorst-pack'], default="gamma", help="Mesh type")
+    subp_kpoints.add_argument("-o", "--output", type=str, help="Output file name")
     
 def slab(subparsers):
     subp_slabgen = subparsers.add_parser(
@@ -162,50 +177,6 @@ def slab(subparsers):
     subp_slabgen.add_argument(
         "--freeze", default=5, type=float, help="Freeze the bottom layer of the slab"
     )
-
-
-def schedule(subparsers):
-    subp_schedule = subparsers.add_parser(
-        "schedule", help="Schedule jobs on a supercomputer"
-    )
-
-    subp_schedule.add_argument(
-        "-o",
-        "--output",
-        type=argparse.FileType("w", encoding="utf-8"),
-        help="Submission script file name",
-    )
-
-    subp_schedule.add_argument(
-        "-n", "--nodes", type=int, default=1, help="Number of nodes"
-    )
-    subp_schedule.add_argument(
-        "-p", "--ppn", type=int, default=1, help="Processors per node"
-    )
-    subp_schedule.add_argument(
-        "-t", "--walltime", type=str, default="00:30:00", help="Walltime"
-    )
-    subp_schedule.add_argument(
-        "-q", "--queue", type=str, default="standard", help="Queue"
-    )
-    subp_schedule.add_argument("-a", "--account", type=str, help="Account")
-    subp_schedule.add_argument("-m", "--mail", type=str, help="Email address")
-    subp_schedule.add_argument(
-        "-e", "--email-type", type=str, default="", help="Email type"
-    )
-    subp_schedule.add_argument(
-        "-d",
-        "--directives",
-        type=str,
-        default="",
-        nargs="+",
-        help="Additional directives",
-    )
-    subp_schedule.add_argument(
-        "-j", "--job-name", type=str, default="", help="Job name"
-    )
-    subp_schedule.add_argument("--pbs", action="store_true", help="Use PBS")
-    subp_schedule.add_argument("--slurm", action="store_true", help="Use SLURM")
 
 
 def manage(subparsers):
@@ -285,7 +256,6 @@ def alchemy(subparsers):
     subp_alchemy.add_argument('--range', help='Range of atoms to freeze', nargs=2, type=float)
 
 
-
 def setup(subparsers):
-    for script in alchemy, analysis, band, db, input, slab, schedule, manage, adsorb:
+    for script in adsorb, alchemy, analysis, band, db, incar, kpoints, manage, poscar, slab:
         script(subparsers)
