@@ -19,7 +19,9 @@ vsh/scripts/alchemy.py
 vsh/scripts/analysis.py
 vsh/scripts/band.py
 vsh/scripts/db.py
-vsh/scripts/input.py
+vsh/scripts/incar.py
+vsh/scripts/kpoints.py
 vsh/scripts/manage.py
-vsh/scripts/schedule.py
+vsh/scripts/poscar.py
+vsh/scripts/potcar.py
 vsh/scripts/slab.py

@@ -104,7 +104,7 @@ def incar(subparsers):
     
     subp_incar.add_argument("--write", choices=['bulk', 'slab', 'band', 'single-point'], help="Write an INCAR file from the defaults in incar.json")
     subp_incar.add_argument("-i", "--input", type=str, help="INCAR file path")
-    subp_incar.add_argument("-u", "--update", help="Update an INCAR file with the specified tag value pair", nargs='2', type=str)
+    subp_incar.add_argument("-u", "--update", help="Update an INCAR file with the specified tag value pair", nargs=2, type=str)
     subp_incar.add_argument("-o", "--output", type=str, help="Output file name")
     
 
