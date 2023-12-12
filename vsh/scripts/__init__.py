@@ -126,8 +126,9 @@ def potcar(subparsers):
 def kpoints(subparsers):
     subp_kpoints = subparsers.add_parser("kpoints", help="Generate and update KPOINTS files")
     
-    subp_kpoints.add_argument("--path", nargs=1, type=int, help="Generate a KPOINTS file for a line mode calculation")
-    subp_kpoints.add_argument("--plane", nargs=1, type=int, help="Generate a KPOINTS file for a 2D plane mode calculation")
+    subp_kpoints.add_argument("--path", type=int, help="Generate a KPOINTS file for a line mode calculation")
+    subp_kpoints.add_argument("-i", "--input", type=str, help="Structure file")
+    subp_kpoints.add_argument("--plane", type=int, help="Generate a KPOINTS file for a 2D plane mode calculation")
     subp_kpoints.add_argument("--mesh", nargs=3, type=int, help="Generate a KPOINTS file for a mesh mode calculation")
     subp_kpoints.add_argument("--mesh-type", choices=['gamma', 'monkhorst-pack'], default="gamma", help="Mesh type")
     subp_kpoints.add_argument("-o", "--output", type=str, help="Output file name")

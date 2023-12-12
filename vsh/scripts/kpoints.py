@@ -1,7 +1,7 @@
 from ase.io import read, write
 
 two_d_kpath_template = """Two dimensional Kpath 
-   {{kpath}}
+   {{ kpath }}
 Line-Mode
 Reciprocal
    0.5000000000   0.0000000000   0.0000000000     M
@@ -45,6 +45,9 @@ def write_path(args):
     from pymatgen.io.vasp.inputs import Kpoints 
     from pymatgen.symmetry.bandstructure import HighSymmKpath
 
+    if not args.input:
+        raise ValueError("No input structure file provided")
+    
     structure = Structure.from_file(args.input)
     kpath = HighSymmKpath(structure)
     
