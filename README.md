@@ -15,7 +15,7 @@ vsh -h
 
 ### Features
 
-vsh is currently equipped with a wide range of tools. Most notably, vsh has utilities to prepare band structure calculations, generate slabs, and handle detailed ASE databases. Invoke either `vsh inputs -h`, `vsh slabgen -h`, or `vsh db -h` to learn more about their functionality. 
+vsh is currently equipped with a wide range of tools. Most notably, vsh has utilities to prepare band structure calculations, generate slabs, and handle detailed ASE databases. Invoke either `vsh incar -h`, `vsh slab -h`, or `vsh db -h` to learn more about their functionality. 
 
 #### Modules
 
@@ -37,31 +37,23 @@ ___
 shopt -s globstar; for dir in /path/to/search/**/; do [ -f "$dir/vasprun.xml" ] && (cd "$dir" && vsh analysis --converged); done
  ```
 
-##### bands
+##### band
 
-bands is a glorified wrapper for [pyprocar](https://romerogroup.github.io/pyprocar/) with only an additional input parser to simplify plotting. Adjustments have been made to the default behavior - namely preference for the parametric plotting mode instead of the 'plain' mode. 
+band is a glorified wrapper for [pyprocar](https://romerogroup.github.io/pyprocar/) with only an additional input parser to simplify plotting. Adjustments have been made to the default behavior - namely preference for the parametric plotting mode instead of the 'plain' mode. Additional quality of life features have been included as well - such as specifying the orbitals by symbol rather than arbitrary number.
 
 ##### db
 
 vsh contains a wrapper for the ASE database utility. There have been some adjustments to the default ASE database behavior to include more information regarding the initial parameters and results of a VASP calculation. 
 
-##### freeze
-
-This is soon to be deprecated and moved into the `inputs` module. 
-
 ##### slab
 
 slabgen is a module intended to simplify the process of making slabs of bulk materials. Many options are included in the specification of typical parameters such as vacuum, slab thickness, and miller plane. 
 
-##### inputs
+##### incar, poscar, potcar, and kpoints
 
-inputs currently handles the creation and manipulation of multiple kinds of VASP input files. 
+These four modules handle the creation and modification of their respective files. Notably, `kpoints` can handle any type of KPOINTS file and can even produce high-symmetry k-paths from the SeekPath API. 
 
-Note: Pseudopotentials must be configured using the `pmg config` command provided by pymatgen. 
 
-##### manage
-
-A simple utility to help archive job output or duplicate job inputs. 
 
 
 
