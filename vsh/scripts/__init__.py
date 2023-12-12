@@ -113,6 +113,8 @@ def poscar(subparsers):
     subp_poscar.add_argument("-s", "--structure", type=str, help="Structure file")
     subp_poscar.add_argument("--mp-poscar", type=str, help="Materials Project code")
     subp_poscar.add_argument("-p", "--primitive", action='store_true', help="Use primitive cell")
+    subp_poscar.add_argument("-o", "--output", type=str, help="Output file name")
+    subp_poscar.add_argument("--sort", action='store_true', help="Sort atoms")
     
 def potcar(subparsers):
     subp_potcar = subparsers.add_parser("potcar", help="Generate and update POTCAR files")
@@ -124,7 +126,7 @@ def potcar(subparsers):
 def kpoints(subparsers):
     subp_kpoints = subparsers.add_parser("kpoints", help="Generate and update KPOINTS files")
     
-    subp_kpoints.add_argument("--line", nargs=1, type=int, help="Generate a KPOINTS file for a line mode calculation")
+    subp_kpoints.add_argument("--path", nargs=1, type=int, help="Generate a KPOINTS file for a line mode calculation")
     subp_kpoints.add_argument("--plane", nargs=1, type=int, help="Generate a KPOINTS file for a 2D plane mode calculation")
     subp_kpoints.add_argument("--mesh", nargs=3, type=int, help="Generate a KPOINTS file for a mesh mode calculation")
     subp_kpoints.add_argument("--mesh-type", choices=['gamma', 'monkhorst-pack'], default="gamma", help="Mesh type")

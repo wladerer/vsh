@@ -20,7 +20,7 @@ def write_incar(args) -> dict:
     with open(file_path, "r") as f:
         incar_dict = json.load(f)
 
-    incar = Incar.from_dict(incar_dict[args.incar])
+    incar = Incar.from_dict(incar_dict[args.write])
 
     if not args.output:
         print(incar.get_str())

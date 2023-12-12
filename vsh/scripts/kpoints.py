@@ -27,7 +27,7 @@ def write_kpoints(args):
     '''Writes a KPOINTS file'''
     from pymatgen.io.vasp.inputs import Kpoints 
 
-    kpoints = Kpoints.gamma_automatic(kpts=args.kpoints)
+    kpoints = Kpoints.gamma_automatic(kpts=args.mesh)
 
     if not args.output:
         print(kpoints)
@@ -38,7 +38,7 @@ def write_kpoints(args):
     return kpoints
 
 
-def write_kpath(args):
+def write_path(args):
     '''
     Makes a linemode Kpoints object from a structure
     '''
@@ -48,7 +48,7 @@ def write_kpath(args):
 
     structure = Structure.from_file(args.input)
     kpath = HighSymmKpath(structure)
-    kpoints = Kpoints.automatic_linemode(args.kpath, kpath)
+    kpoints = Kpoints.automatic_linemode(args.path, kpath)
     
     if not args.output:
         print(kpoints)
@@ -57,11 +57,11 @@ def write_kpath(args):
 
     return kpoints
 
-def write_kplane(args) -> str:
+def write_plane(args) -> str:
     '''Creates a 2D kpath from a jinja 2 template'''
     from jinja2 import Template
     template = Template(two_d_kpath_template)
-    kplane = template.render(kpath=args.kplane)
+    kplane = template.render(kpath=args.plane)
     
     if not args.output:
         print(kplane)
@@ -74,8 +74,8 @@ def write_kplane(args) -> str:
 def run(args):
     functions = {
         "mesh": write_kpoints,
-        "line": write_kpath,
-        "plane": write_kplane
+        "path": write_path,
+        "plane": write_plane
     }
     
     for arg, func in functions.items():
