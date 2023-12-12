@@ -114,10 +114,12 @@ def poscar(subparsers):
     subp_poscar.add_argument("--mp-poscar", type=str, help="Materials Project code")
     subp_poscar.add_argument("-p", "--primitive", action='store_true', help="Use primitive cell")
     
-# def potcar(subparsers):
-#     subp_potcar = subparsers.add_parser("potcar", help="Generate and update POTCAR files")
-    
-#     #working    
+def potcar(subparsers):
+    subp_potcar = subparsers.add_parser("potcar", help="Generate and update POTCAR files")
+    subp_potcar.add_argument("-s", "--structure", type=str, help="Structure file")
+    subp_potcar.add_argument("-e", "--elements", nargs='+', type=str, help="Elements")
+    subp_potcar.add_argument("-o", "--output", type=str, help="Output file name")
+        
     
 def kpoints(subparsers):
     subp_kpoints = subparsers.add_parser("kpoints", help="Generate and update KPOINTS files")

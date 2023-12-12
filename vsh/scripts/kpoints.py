@@ -70,3 +70,14 @@ def write_kplane(args) -> str:
             f.write(kplane)
             
     return kplane
+
+def run(args):
+    functions = {
+        "mesh": write_kpoints,
+        "line": write_kpath,
+        "plane": write_kplane
+    }
+    
+    for arg, func in functions.items():
+        if getattr(args, arg):
+            func(args)

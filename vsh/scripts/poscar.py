@@ -58,3 +58,13 @@ def mp_poscar(args):
         poscar.write_file(f'{args.output}')
 
     return poscar   
+
+def run(args):
+    functions = {
+        "sort": sort_poscar,
+        "mp_poscar": mp_poscar,
+    }
+    
+    for arg, func in functions.items():
+        if getattr(args, arg):
+            func(args)

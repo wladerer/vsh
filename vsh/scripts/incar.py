@@ -44,3 +44,13 @@ def update_incar_tag(args) -> None:
         
     return None
 
+def run(args):
+    functions = {
+        'write': write_incar,
+        'update': update_incar_tag
+    }
+    
+    for arg, func in functions.items():
+        if getattr(args, arg):
+            func(args)
+
