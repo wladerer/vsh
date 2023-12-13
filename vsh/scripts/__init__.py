@@ -261,6 +261,78 @@ def alchemy(subparsers):
     subp_alchemy.add_argument('--range', help='Range of atoms to freeze', nargs=2, type=float)
 
 
+def cohp(subparsers):
+    subp_cohp = subparsers.add_parser("cohp", help="Plot COHPs")
+
+    subp_cohp.add_argument(
+        "input",
+        type=str,
+        nargs="+",
+        help="Input file or directory containing COHP or COHP files",
+    )
+    subp_cohp.add_argument(
+        "-c",
+        "--cobi",
+        action="store_true",
+        help="Use COBIs instead of COHPs",
+    )
+    subp_cohp.add_argument(
+        "-l",
+        "--label",
+        type=str,
+        default="",
+        help="Label for the COHP or COBIs",
+    )
+    subp_cohp.add_argument(
+        "-t",
+        "--title",
+        type=str,
+        default="",
+        help="Title for the plot",
+    )
+    subp_cohp.add_argument(
+        "-o",
+        "--output",
+        type=str,
+        default=None,
+        help="Output file name",
+    )
+    subp_cohp.add_argument(
+        "-d",
+        "--dpi",
+        type=int,
+        default=800,
+        help="DPI of the output file",
+    )
+    subp_cohp.add_argument(
+        "-x",
+        "--xlim",
+        type=float,
+        nargs=2,
+        default=None,
+        help="X-axis limits",
+    )
+    subp_cohp.add_argument(
+        "-y",
+        "--ylim",
+        type=float,
+        nargs=2,
+        default=None,
+        help="Y-axis limits",
+    )
+    subp_cohp.add_argument(
+        "--integrated",
+        action="store_true",
+        help="Plot the integrated COHPs",
+    )
+    subp_cohp.add_argument(
+        "-p",
+        "--plot",
+        action="store_true",
+        help="Plot the COHPs",
+    )
+
+
 def setup(subparsers):
-    for script in adsorb, alchemy, analysis, band, db, incar, kpoints, manage, poscar, slab:
+    for script in adsorb, alchemy, analysis, band, cohp, db, incar, kpoints, manage, poscar, slab:
         script(subparsers)
