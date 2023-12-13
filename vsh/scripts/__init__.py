@@ -277,7 +277,6 @@ def cohp(subparsers):
         help="Use COBIs instead of COHPs",
     )
     subp_cohp.add_argument(
-        "-l",
         "--label",
         type=str,
         default="",
@@ -330,6 +329,11 @@ def cohp(subparsers):
         "--plot",
         action="store_true",
         help="Plot the COHPs",
+    )
+    subp_cohp.add_argument(
+        "-l",
+        "--list",
+        action="store_true",
     )
 
 
