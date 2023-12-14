@@ -115,6 +115,7 @@ def poscar(subparsers):
     subp_poscar.add_argument("-p", "--primitive", action='store_true', help="Use primitive cell")
     subp_poscar.add_argument("-o", "--output", type=str, help="Output file name")
     subp_poscar.add_argument("--sort", action='store_true', help="Sort atoms")
+    subp_poscar.add_argument("-c", "--convert", action='store_true', help="Convert any structure file to POSCAR")
     
 def potcar(subparsers):
     subp_potcar = subparsers.add_parser("potcar", help="Generate and update POTCAR files")
@@ -338,6 +339,10 @@ def cohp(subparsers):
     subp_cohp.add_argument(
         "--pickle",
         action="store_true",   
+    )
+    subp_cohp.add_argument(
+        "--graph",
+        action="store_true",
     )
 
 

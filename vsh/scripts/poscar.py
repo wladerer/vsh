@@ -57,12 +57,27 @@ def mp_poscar(args):
     else:
         poscar.write_file(f'{args.output}')
 
-    return poscar   
+    return poscar
+
+def convert_to_poscar(args):
+    '''Converts a file to a POSCAR file'''
+    from pymatgen.io.vasp.inputs import Poscar 
+
+    structure = read(args.input)
+    poscar = Poscar(structure, sort_structure=args.sort)
+
+    if not args.output:
+        print(poscar.get_str())    
+    else:
+        poscar.write_file(f'{args.output}')
+
+    return poscar
 
 def run(args):
     functions = {
         "sort": sort_poscar,
         "mp_poscar": mp_poscar,
+        "convert": convert_to_poscar
     }
     
     for arg, func in functions.items():

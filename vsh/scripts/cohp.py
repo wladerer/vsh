@@ -3,8 +3,9 @@ from pymatgen.electronic_structure.cohp import CompleteCohp
 from pymatgen.electronic_structure.plotter import CohpPlotter
 import matplotlib.pyplot as plt
 import pandas as pd
+import networkx as nx
+from mpl_toolkits import axes_grid1
 
-import pickle
 
 plt.style.use('seaborn-v0_8-colorblind')
 
@@ -94,11 +95,43 @@ def plot_cohps(args):
     
     return None
 
+def get_icohp_graph(args) -> list[nx.Graph]:
+    '''Plots a graph of the COHP or COBI files'''
+    graphs = []
+
+    for input_path in args.input:
+        input_path = os.path.abspath(input_path)
+        file_path = check_cohp_path(input_path)
+        df = ichop_list_to_dataframe(file_path)
+
+        G = nx.from_pandas_edgelist(df, 'atom_Mu', 'atom_Nu', 'ICOHP')
+        graphs.append(G)
+
+    return graphs
+
+def plot_icohp_graph(args):
+    '''Plots a graph of the COHP or COBI file'''
+
+    graphs = get_icohp_graph(args)
+
+    for G in graphs:
+        #color edges by weight using a colormap
+        pos = nx.spring_layout(G)
+        edges = G.edges()
+        weights = [G[u][v]['ICOHP'] for u,v in edges]
+        nx.draw(G, pos, edge_color=weights, width=2, edge_cmap=plt.cm.plasma)
+        pathcollection = nx.draw_networkx_nodes(G, pos, node_size=600, node_color='black')
+        nx.draw_networkx_labels(G, pos, font_size=12, font_family='sans-serif', font_color='white')
+        plt.axis('off')
+        
+        plt.show()
+
 def run(args):
     functions = {
         "plot": plot_cohps,
         "list": show_cohp_species,
-        "pickle": icohp_to_pickle
+        "pickle": icohp_to_pickle,
+        "graph": plot_icohp_graph
     }
 
     for arg, func in functions.items():
