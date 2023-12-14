@@ -54,7 +54,9 @@ slabgen is a module intended to simplify the process of making slabs of bulk mat
 These four modules handle the creation and modification of their respective files. Notably, `kpoints` can handle any type of KPOINTS file and can even produce high-symmetry k-paths from the SeekPath API. 
 
 
+##### cohp
 
+This module is inteded to plot COHPs produced by the [LOBSTER](http://www.cohp.de/) program. You are able to plot multiple directories at a time. 
 
 
 
