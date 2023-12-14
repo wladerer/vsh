@@ -19,24 +19,29 @@ def cohp_from_dir(directory: str):
     
     return cohp
 
-def show_cohp_species(args):
-    '''Prints a list of the species in the ICOHPCAR.lobster file'''
-    if os.path.isfile(args.input):
-        file_path = args.input
-    elif os.path.isdir(args.input):
-        file_path = os.path.join(args.input, 'ICOHPCAR.lobster')
+def show_cohp_species(input: str):
+    '''Prints a list of the species in the ICOHPLIST.lobster file'''
+    input = os.path.abspath(input)
+
+    if os.path.isfile(input):
+        file_path = input
+    elif os.path.isdir(input):
+        file_path = os.path.join(input, 'ICOHPLIST.lobster')
     else:
         raise ValueError("Invalid input. Please provide a valid file path or directory.")
-
-    try:
-        CompleteCohp.from_file(fmt='LOBSTER', filename=file_path)
-    except:
-        raise ValueError("Input file is not a COHP file")
 
     os.system('cat ' + file_path)
 
     return None
+
+def list_species(args):
+    '''Prints a list of the species in the ICOHPCAR.lobster file'''
     
+    for input in args.input:
+        show_cohp_species(input)
+
+    return None
+
 def collate_cohps(args):
     '''Collates a list of COHP or COBI files. Default format is LOBSTER'''
     plotter = CohpPlotter(are_cobis=args.cobi)
@@ -55,7 +60,7 @@ def plot_cohps(args):
     
     if args.output:
         #convert cohp_plot to an ax object
-        plot = cohp_plt.get_plot(args.integrated, args.xlim, args.ylim)
+        plot = cohp_plt.get_plot(args.integrated)
         plot.figure.savefig(args.output, dpi=args.dpi)
         
     else:
@@ -66,7 +71,7 @@ def plot_cohps(args):
 def run(args):
     functions = {
         "plot": plot_cohps,
-        "list": show_cohp_species
+        "list": list_species
     }
 
     for arg, func in functions.items():

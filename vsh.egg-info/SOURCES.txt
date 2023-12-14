@@ -18,6 +18,7 @@ vsh/scripts/adsorb.py
 vsh/scripts/alchemy.py
 vsh/scripts/analysis.py
 vsh/scripts/band.py
+vsh/scripts/cohp.py
 vsh/scripts/db.py
 vsh/scripts/incar.py
 vsh/scripts/kpoints.py

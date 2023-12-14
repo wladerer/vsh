@@ -1,11 +1,11 @@
 Metadata-Version: 2.1
 Name: vsh
 Version: 0.4
-Summary: UNKNOWN
-Home-page: UNKNOWN
-License: UNKNOWN
-Platform: UNKNOWN
 License-File: LICENSE
-
-UNKNOWN
-
+Requires-Dist: ase
+Requires-Dist: numpy
+Requires-Dist: matplotlib
+Requires-Dist: pymatgen
+Requires-Dist: mp-api
+Requires-Dist: pyprocar
+Requires-Dist: pydantic
