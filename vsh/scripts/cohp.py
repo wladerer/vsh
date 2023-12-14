@@ -39,18 +39,14 @@ def show_cohp_species(args):
     
 def collate_cohps(args):
     '''Collates a list of COHP or COBI files. Default format is LOBSTER'''
+    plotter = CohpPlotter(are_cobis=args.cobi)
+    
     cohp_list = [cohp_from_dir(directory) for directory in args.input ] 
-    plt = CohpPlotter(are_cobis=args.cobi)
     
     for cohp_object in cohp_list:
-        plt.add_cohp(label=args.label, cohp=cohp_object)
+        plotter.add_cohp(label=args.label, cohp=cohp_object.get_cohp_by_label(str(args.label)))
         
-    plt.get_plot(args.integrated, args.xlim, args.ylim)
-    
-    if args.title:
-        plt.set_title(args.title)
-        
-    return plt
+    return plotter
 
 def plot_cohps(args):
     '''Plots a list of COHP or COBI files. Default format is LOBSTER'''
