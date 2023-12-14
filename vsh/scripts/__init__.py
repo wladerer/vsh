@@ -293,8 +293,8 @@ def cohp(subparsers):
         "-o",
         "--output",
         type=str,
-        default=None,
-        help="Output file name",
+        nargs="+",
+        help="Output file name(s)",
     )
     subp_cohp.add_argument(
         "-d",
@@ -334,6 +334,10 @@ def cohp(subparsers):
         "-l",
         "--list",
         action="store_true",
+    )
+    subp_cohp.add_argument(
+        "--pickle",
+        action="store_true",   
     )
 
 
