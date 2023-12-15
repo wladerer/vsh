@@ -110,12 +110,13 @@ def incar(subparsers):
 
 def poscar(subparsers):
     subp_poscar = subparsers.add_parser("poscar", help="Generate and update POSCAR files")
-    subp_poscar.add_argument("-s", "--structure", type=str, help="Structure file")
+    subp_poscar.add_argument("-i", "--input", type=str, help="Structure file")
     subp_poscar.add_argument("--mp-poscar", type=str, help="Materials Project code")
     subp_poscar.add_argument("-p", "--primitive", action='store_true', help="Use primitive cell")
     subp_poscar.add_argument("-o", "--output", type=str, help="Output file name")
     subp_poscar.add_argument("--sort", action='store_true', help="Sort atoms")
     subp_poscar.add_argument("-c", "--convert", action='store_true', help="Convert any structure file to POSCAR")
+    subp_poscar.add_argument("--super", nargs=3, type=int, help="Generate a supercell")
     
 def potcar(subparsers):
     subp_potcar = subparsers.add_parser("potcar", help="Generate and update POTCAR files")

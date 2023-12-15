@@ -73,11 +73,30 @@ def convert_to_poscar(args):
 
     return poscar
 
+def make_supercell(args):
+    '''Make a supercell of a structure'''
+    from pymatgen.io.vasp.inputs import Poscar
+    from pymatgen.core import Structure
+    from pymatgen.transformations.standard_transformations import SupercellTransformation
+    
+    structure = Structure.from_file(args.input)
+    transformation = SupercellTransformation(args.super)
+    supercell = transformation.apply_transformation(structure)
+    
+    poscar = Poscar(supercell, sort_structure=args.sort)
+    
+    if not args.output:
+        print(poscar.get_str())
+    else:
+        poscar.write_file(f'{args.output}')
+    
+
 def run(args):
     functions = {
         "sort": sort_poscar,
         "mp_poscar": mp_poscar,
-        "convert": convert_to_poscar
+        "convert": convert_to_poscar,
+        "super": make_supercell
     }
     
     for arg, func in functions.items():
