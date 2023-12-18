@@ -139,12 +139,26 @@ def snapshot(args):
         os.remove('oblique_view.png')
         print("Error: Unable to save snapshot")
 
+def make_vasp_dir(args):
+    '''Takes a list of POSCARs and creates a directory for each one with the POSCAR inside'''
+    from pathlib import Path
+    from shutil import copyfile
+    
+    dir_names = [f"{args.output}_{i}" for i in range(len(args.input))]
+    
+    for dir_name, poscar in zip(dir_names, args.input):
+        Path(dir_name).mkdir(parents=True, exist_ok=True)
+        copyfile(poscar, f"{dir_name}/POSCAR")
+
+
+
 def run(args):
 
     functions = { 
         "archive": archive_job,
         "copy": copy_job,
-        "snapshot": snapshot
+        "snapshot": snapshot,
+        "mkvdir": make_vasp_dir
     }
 
     for arg, func in functions.items():

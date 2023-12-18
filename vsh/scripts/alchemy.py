@@ -121,7 +121,6 @@ def rattle_atoms(args):
     '''Rattles atoms using MonteCarloRattleTransformation'''
     from pymatgen.transformations.advanced_transformations import MonteCarloRattleTransformation
     from pymatgen.io.ase import AseAtomsAdaptor
-    from pymatgen.core.structure import Structure
 
     atoms = read(args.input)
     structure = AseAtomsAdaptor.get_structure(atoms)

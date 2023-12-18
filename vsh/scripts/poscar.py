@@ -1,4 +1,4 @@
-from ase.io import read, write
+from ase.io import read
 import os
 
 def get_atoms(args):

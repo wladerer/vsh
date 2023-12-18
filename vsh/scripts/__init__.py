@@ -217,6 +217,8 @@ def manage(subparsers):
     subp_manage.add_argument(
         "-s", "--snapshot", type=str, help="Input file to snapshot"
     )
+    subp_manage.add_argument("--mkvdir", action="store_true", help="Create a directory for each structure in the current directory")
+    subp_manage.add_argument("-i", "--input", nargs='+', type=str, help="Input file(s)")
 
 
 def adsorb(subparsers):
