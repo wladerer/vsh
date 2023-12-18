@@ -117,6 +117,7 @@ def poscar(subparsers):
     subp_poscar.add_argument("--sort", action='store_true', help="Sort atoms")
     subp_poscar.add_argument("-c", "--convert", action='store_true', help="Convert any structure file to POSCAR")
     subp_poscar.add_argument("--super", nargs=3, type=int, help="Generate a supercell")
+    subp_poscar.add_argument("-l", "--list", action='store_true', help="List the positions of the atoms")
     
 def potcar(subparsers):
     subp_potcar = subparsers.add_parser("potcar", help="Generate and update POTCAR files")

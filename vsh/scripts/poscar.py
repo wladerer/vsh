@@ -89,6 +89,34 @@ def make_supercell(args):
         print(poscar.get_str())
     else:
         poscar.write_file(f'{args.output}')
+        
+        
+def list_poscar(args):
+    '''Lists the atoms by height file'''
+    import pandas as pd
+    atoms = read(args.input)
+
+    heights = atoms.get_positions()[:, 2]
+    atom_tuples = [ (atom, index, height) for atom, index, height in zip(atoms.get_chemical_symbols(), range(1, len(atoms)+1), heights) ]
+    #create a dataframe
+    df = pd.DataFrame(atom_tuples, columns=['atom', 'index', 'height'])
+    
+    #sort by height
+    df = df.sort_values(by=['height'])
+    df = df.reset_index(drop=True)
+    
+    
+    if not args.output:
+        
+        #print without index and print the whole dataframe
+        with pd.option_context('display.max_rows', None, 'display.max_columns', None):
+            print(df.to_string(index=False))
+
+    else:
+        df.to_csv(args.output, index=False)
+
+    
+
     
 
 def run(args):
@@ -96,7 +124,8 @@ def run(args):
         "sort": sort_poscar,
         "mp_poscar": mp_poscar,
         "convert": convert_to_poscar,
-        "super": make_supercell
+        "super": make_supercell,
+        "list": list_poscar
     }
     
     for arg, func in functions.items():
