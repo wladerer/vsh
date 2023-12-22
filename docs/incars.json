@@ -81,6 +81,62 @@
     "LORBIT": 12,
     "LWAVE": false
   },
+  "single-point-soc": {
+    "PREC": "Accurate",
+    "GGA": "PE",
+    "ENCUT": "600 eV",
+    "ALGO": "Fast",
+    "NELM": 100,
+    "EDIFF": 1E-6,
+    "ISMEAR": 0,
+    "SIGMA": 0.05,
+    "MAGMOM": "100*0",
+    "LASPH": true,
+    "LSORBIT": true,
+    "LMAXMIX": 4,
+    "LDAU": false,
+    "LREAL": "Auto",
+    "LORBIT": 12,
+    "LWAVE": false
+  },
+  "single-point-slab": {
+    "PREC": "Accurate",
+    "GGA": "PE",
+    "ENCUT": "600 eV",
+    "ALGO": "Fast",
+    "AMIN": 0.01,
+    "NELM": 100,
+    "EDIFF": 1E-6,
+    "ISMEAR": 0,
+    "SIGMA": 0.05,
+    "MAGMOM": "100*0",
+    "LASPH": true,
+    "LSORBIT": true,
+    "LMAXMIX": 4,
+    "LDAU": false,
+    "LREAL": "Auto",
+    "LORBIT": 12,
+    "LWAVE": false
+  },
+  "single-point-slab-soc": {
+    "PREC": "Accurate",
+    "GGA": "PE",
+    "ENCUT": "600 eV",
+    "ALGO": "Fast",
+    "AMIN": 0.01,
+    "NELM": 100,
+    "EDIFF": 1E-6,
+    "ISMEAR": 0,
+    "SIGMA": 0.05,
+    "MAGMOM": "100*0",
+    "LASPH": true,
+    "LSORBIT": true,
+    "LMAXMIX": 4,
+    "LDAU": false,
+    "LREAL": "Auto",
+    "LORBIT": 12,
+    "LWAVE": false
+  },
   "band-soc": {
     "PREC": "Accurate",
     "GGA": "PE",
@@ -100,10 +156,11 @@
     "LWAVE": false,
     "ISYM": -1
   },
-  "band-slab-soc": {
+  "band-slab": {
     "PREC": "Accurate",
     "GGA": "PE",
     "ENCUT": "600 eV",
+    "AMIN": 0.01,
     "ALGO": "Fast",
     "NELM": 100,
     "EDIFF": 1E-6,
@@ -115,7 +172,6 @@
     "LDAU": false,
     "LREAL": "Auto",
     "LORBIT": 12,
-    "LSORBIT": true,
     "LWAVE": false,
     "ISYM": -1
   }
