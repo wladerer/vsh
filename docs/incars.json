@@ -21,6 +21,28 @@
     "LORBIT": 12,
     "LWAVE": false
   },
+  "bader": {
+    "PREC": "Accurate",
+    "GGA": "PE",
+    "ENCUT": "600 eV",
+    "IBRION": 2,
+    "EDIFFG": -0.01,
+    "IDVW": 4,
+    "ALGO": "Fast",
+    "NELM": 100,
+    "NSW": 0,
+    "EDIFF": 1E-6,
+    "ISMEAR": 0,
+    "SIGMA": 0.05,
+    "MAGMOM": "100*0",
+    "LASPH": true,
+    "LMAXMIX": 4,
+    "LDAU": false,
+    "LREAL": "Auto",
+    "LORBIT": 11,
+    "LWAVE": false,
+    "LAECHG": true
+  },
   "slab": {
     "PREC": "Accurate",
     "GGA": "PE",
