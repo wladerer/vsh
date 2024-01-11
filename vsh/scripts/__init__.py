@@ -352,7 +352,17 @@ def cohp(subparsers):
         action="store_true",
     )
 
+def procar(subparsers):
+    '''Parser for procar files'''
+
+    subp_procar = subparsers.add_parser('procar', help='Reads projected eigenvalue information from vasprun.xml or procar.vsh pickle files')
+    subp_procar.add_argument('input', help='Either vasprun.xml or vsh pickle file')
+    subp_procar.add_argument('-p', '--pickle', help='Write projected eigenvalues from a vasprun.xml file to a pickle file')
+    subp_procar.add_argument('-k', '--kpoint', help='Kpoint of interest')
+    subp_procar.add_argument('-b', '--band', help='Band of interest')
+    subp_procar.add_argument('-o', '--output', help='Output filename (either pickle file or queried results)')
+
 
 def setup(subparsers):
-    for script in adsorb, alchemy, analysis, band, cohp, db, incar, kpoints, manage, poscar, slab:
+    for script in adsorb, alchemy, analysis, band, cohp, db, incar, kpoints, manage, poscar, procar, slab:
         script(subparsers)
