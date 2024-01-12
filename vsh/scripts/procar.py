@@ -1,10 +1,11 @@
 import pandas as pd
+import numpy as np
 import pickle
+import itertools
 
 def read_procar_with_pyprocar(procar_path: str, efermi: float = None, outcar_path: str = None):
     '''Reads PROCAR and possibly OUTCAR if fermi level is not given. Uses PyProcar Implementation'''
     from pyprocar.io.vasp import Procar
-    from pyprocar.core import ElectronicBandStructure
 
     if not efermi and outcar_path:
         raise Exception('Fermi Energy or Outcar not supplied, cannot continue')
@@ -15,17 +16,25 @@ def read_procar_with_pyprocar(procar_path: str, efermi: float = None, outcar_pat
 
     return Procar(procar_path, efermi=efermi)
 
-# def dict_to_dataframe(projected_eigenvalues: dict) -> pd.DataFrame:
-#     '''Creates a pandas dataframe from the projected eigenvalues dict'''
+def dict_to_dataframe(projected_eigenvalues: dict) -> pd.DataFrame:
+    '''Creates a pandas dataframe from the projected eigenvalues dict'''
 
-#     #spin
-#     #kpoint
-#     #band
-#     #atom 
-#     #orbital
-        
+    columns = ['Spin', 'Kpoint', 'Band', 'Ion', 'Orbital', 'Value']
+    data = projected_eigenvalues
+    # Get all possible entries using itertools
+    value_dictionaries = []
+    for spin_index,spin in enumerate(data.values()):
+        nkpoints, nbands, nions, norbitals = np.shape(spin)
+        all_entries = list(itertools.product(*[range(nkpoints), range(nbands), range(nions), range(norbitals)]))
+        for entry in all_entries:
+            kpoint_index, band_index, ion_index, orbital_index = entry
+            value = spin[kpoint_index][band_index][ion_index][orbital_index]
+            value_dict = dict(zip(columns, [spin_index, kpoint_index, band_index, ion_index, orbital_index, value]))
+            value_dictionaries.append(value_dict)
 
-#     return pd.DataFrame(formatted_values)
+    df = pd.DataFrame(value_dictionaries)
+
+    return df
 
 
 def projected_eigenvals_from_vasprun(file: str) -> pd.DataFrame:
@@ -53,33 +62,64 @@ def save_eigenvals(projected_eigenvalues: pd.DataFrame, filename: str) -> None:
 
     return None
 
+def parse_query_input(query: dict):
+    '''Formats query to be compatible with Pandas'''
+
+    query_dict = {key: value for key, value in query.items() if value is not None}
+    query_string = ' and '.join([f'{k} == {v}' for k, v in query_dict.items()])
+
+    return query_string
 
 
-# data = projected_eigenvals_from_vasprun('/Users/wladerer/research/pt3sn/slabs/001/al8/sod/band/vasprun.xml')
-# save_eigenvals(data, 'test.pkl')
-from pymatgen.electronic_structure.core import Spin
+def query_data(data: pd.DataFrame, query_dict: dict):
+    '''Allows querying the data from the command line'''
+    query = parse_query_input(query_dict)
+
+    result = data.query(query)
+    return result
 
 
 
-data = projected_eigenvalues_from_pickle('test.pkl')
+# data = projected_eigenvalues_from_pickle('data.pkl')
+# print(data.loc[(data['Kpoint'] == 1) & (data['Band'] == 0)  & (data['Ion'] == 12)])
+
+def run(args):
+    # load in the data, check if it is either xml or pkl
+    if args.input.endswith('.xml'):
+        data = projected_eigenvals_from_vasprun(args.input)
+    elif args.input.endswith('.pkl'):
+        data = projected_eigenvalues_from_pickle(args.input)
+    else:
+        print("Unrecognized file extension. Please provide either an XML or a pickle file.")
+
+    query_dict = {
+    'Spin': args.spin if args.spin is not None else None,
+    'Kpoint': int(args.kpoint) if args.kpoint is not None else None, 
+    'Band': int(args.band) if args.band is not None else None,
+    'Ion': int(args.ion) if args.ion is not None else None,
+    'Orbital': args.orbital if args.orbital is not None else None
+    }
+    
+    result = query_data(data, query_dict)
+
+    if not args.output:
+        print(result)
+    else:
+        result.to_csv(args.output, index=False)
+        
+    
 
 
-# Create an empty DataFrame
-df = pd.DataFrame(columns=['Spin', 'Kpoint', 'Band', 'Ion'])
-
-# Iterate over each value in data
 
 
 
-# Print the resulting DataFrame
-df = pd.DataFrame(columns=['Spin', 'Kpoint', 'Band', 'Ion'])
 
-for spin, kpoints in data.items():
-    for kpoint, bands in kpoints.items():
-        for ions in bands:
-            for values in ions.item():
-                df = df.append({'Spin': spin, 'Kpoint': kpoint, 'Band': band, 'Ion': ion}, ignore_index=True)
 
-print(df)
+
+                
+
+                
+
+
 
 
