@@ -357,7 +357,7 @@ def procar(subparsers):
 
     subp_procar = subparsers.add_parser('procar', help='Reads projected eigenvalue information from vasprun.xml or procar.vsh pickle files (0 based index btw)')
     subp_procar.add_argument('input', help='Either vasprun.xml or vsh pickle file')
-    subp_procar.add_argument('-p', '--pickle', help='Write projected eigenvalues from a vasprun.xml file to a pickle file')
+    subp_procar.add_argument('-p', '--pickle', action='store_true', help='Write projected eigenvalues from a vasprun.xml file to a pickle file')
     subp_procar.add_argument('-k', '--kpoint', help='Kpoint of interest')
     subp_procar.add_argument('-b', '--band', help='Band of interest')
     subp_procar.add_argument('-i', '--ion', help='Ion of interest')
