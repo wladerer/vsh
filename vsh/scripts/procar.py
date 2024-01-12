@@ -78,14 +78,20 @@ def query_data(data: pd.DataFrame, query_dict: dict):
     result = data.query(query)
     return result
 
-def query(args):
+def load_dataframe_from_file(file: str):
     # load in the data, check if it is either xml or pkl
-    if args.input.endswith('.xml'):
-        data = projected_eigenvals_from_vasprun(args.input)
-    elif args.input.endswith('.pkl'):
-        data = projected_eigenvalues_from_pickle(args.input)
+    if file.endswith('.xml'):
+        data = projected_eigenvals_from_vasprun(file)
+    elif file.endswith('.pkl'):
+        data = projected_eigenvalues_from_pickle(file)
     else:
-        print("Unrecognized file extension. Please provide either an XML or a pickle file.")
+        raise Exception("Unrecognized file extension. Please provide either an XML or a pickle file.")
+
+    return data
+
+def run_query(args):
+
+    data = load_dataframe_from_file(args.input)
 
     query_dict = {
     'Spin': args.spin if args.spin is not None else None,
@@ -102,18 +108,40 @@ def query(args):
     else:
         result.to_csv(args.output, index=False)
 
-
 def run(args):
 
-    if args.pickle:
-       df = projected_eigenvals_from_vasprun(args.input) 
-       if not args.output:
-           raise Exception('Output filename not provided')
-       else:
-        save_eigenvals(df, args.output)
+    if args.pickle: 
+
+        if args.input.endswith('.pkl'):
+            raise Exception('Cannot pickle a pickle')
+
+
+        projected_eigenvals_dict = projected_eigenvals_from_vasprun(args.input)
+        dataframe = dict_to_dataframe(projected_eigenvals_dict)
+        if args.output:
+            save_eigenvals(dataframe, args.output)
+        else:
+            print(dataframe.describe())
+
+    elif args.describe:
+         
+        dataframe = load_dataframe_from_file(args.input)
+        unique_spins = dataframe['Spin'].nunique()
+        unique_kpoints = dataframe['Kpoint'].nunique()
+        unique_bands = dataframe['Band'].nunique()
+        unique_ions = dataframe['Ion'].nunique()
+        unique_orbitals = dataframe['Orbital'].nunique()
+
+        print(f"Number of unique Spins: {unique_spins}")
+        print(f"Number of unique Kpoints: {unique_kpoints}")
+        print(f"Number of unique Bands: {unique_bands}")
+        print(f"Number of unique Ions: {unique_ions}")
+        print(f"Number of unique Orbitals: {unique_orbitals}")
 
     else:
-        query(args)
+
+        run_query(args)
+
 
         
     

@@ -364,7 +364,7 @@ def procar(subparsers):
     subp_procar.add_argument('--orbital', help='Orbital of interest')
     subp_procar.add_argument('-s', '--spin', help='Spin channel of interest')
     subp_procar.add_argument('-o', '--output', help='Output filename (either pickle file or queried results)')
-    
+    subp_procar.add_argument('-d', '--describe', action='store_true', help='Provides a brief description of the projected eigenvalues data')
 
 def setup(subparsers):
     for script in adsorb, alchemy, analysis, band, cohp, db, incar, kpoints, manage, poscar, procar, slab:
