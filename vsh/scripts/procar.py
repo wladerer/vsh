@@ -78,12 +78,7 @@ def query_data(data: pd.DataFrame, query_dict: dict):
     result = data.query(query)
     return result
 
-
-
-# data = projected_eigenvalues_from_pickle('data.pkl')
-# print(data.loc[(data['Kpoint'] == 1) & (data['Band'] == 0)  & (data['Ion'] == 12)])
-
-def run(args):
+def query(args):
     # load in the data, check if it is either xml or pkl
     if args.input.endswith('.xml'):
         data = projected_eigenvals_from_vasprun(args.input)
@@ -106,6 +101,20 @@ def run(args):
         print(result)
     else:
         result.to_csv(args.output, index=False)
+
+
+def run(args):
+
+    if args.pickle:
+       df = projected_eigenvals_from_vasprun(args.input) 
+       if not args.output:
+           raise Exception('Output filename not provided')
+       else:
+        save_eigenvals(df, args.output)
+
+    else:
+        query(args)
+
         
     
 
