@@ -34,6 +34,32 @@ def dict_to_dataframe(projected_eigenvalues: dict) -> pd.DataFrame:
 
     df = pd.DataFrame(value_dictionaries)
 
+
+    return df
+
+def eigenvalues_from_vasprun(file: str) -> pd.DataFrame:
+    '''Gets eigenvalues and fermi energy from vasprun.xml file'''
+    from pymatgen.io.vasp import Vasprun
+    
+    vasprun = Vasprun(filename=file, parse_potcar_file=False, parse_projected_eigen=False, parse_dos=False, parse_eigen=True)
+    eigenvalues = vasprun.eigenvalues
+    
+    eigenvalues_list = [spin for spin in eigenvalues.values()]
+    
+    #create a dataframe with the kpoints, bands and eigenvalues
+    value_dictionaries = []
+    for spin_index, spin in enumerate(eigenvalues_list):
+        nkpoints, nbands, _ = np.shape(spin)
+        all_entries = list(itertools.product(*[range(nkpoints), range(nbands)]))
+        for entry in all_entries:
+            kpoint_index, band_index = entry
+            energy = spin[kpoint_index][band_index][0]
+            occupation = spin[kpoint_index][band_index][1]
+            value_dict = dict(zip(['Spin', 'Kpoint', 'Band', 'Energy', 'Occupation'], [spin_index, kpoint_index, band_index, energy, occupation]))
+            value_dictionaries.append(value_dict)
+    
+    df = pd.DataFrame(value_dictionaries)
+    
     return df
 
 
@@ -42,9 +68,15 @@ def projected_eigenvals_from_vasprun(file: str) -> pd.DataFrame:
     '''Creates a band structure object from vasprun.xml file'''
     #format is [spin][kpoint index][band index][atom index][orbital_index]. The kpoint, band and atom indices are 0-based (unlike the 1-based indexing in VASP).
     vasprun = Vasprun(filename=file, parse_potcar_file=False, parse_projected_eigen=True)
-    projected_values = vasprun.projected_eigenvalues
-
+    projected_values = dict_to_dataframe(vasprun.projected_eigenvalues)
+    
     return projected_values
+
+def merge_eigenvalues(eigenvalues: pd.DataFrame, projected_eigenvalues: pd.DataFrame) -> pd.DataFrame:
+    '''Merges eigenvalues and projected eigenvalues'''
+    merged = pd.merge(eigenvalues, projected_eigenvalues, on=['Spin', 'Kpoint', 'Band'])
+    return merged
+
 
 def projected_eigenvalues_from_pickle(file: str) -> pd.DataFrame:
     '''Loads eigenvalues from pickle file'''
@@ -107,6 +139,8 @@ def run_query(args):
         print(result)
     else:
         result.to_csv(args.output, index=False)
+        
+
 
 def run(args):
 
@@ -116,8 +150,10 @@ def run(args):
             raise Exception('Cannot pickle a pickle')
 
 
-        projected_eigenvals_dict = projected_eigenvals_from_vasprun(args.input)
-        dataframe = dict_to_dataframe(projected_eigenvals_dict)
+        projected_eigenvals = projected_eigenvals_from_vasprun(args.input)
+        eigenvals = eigenvalues_from_vasprun(args.input)
+        dataframe = merge_eigenvalues(eigenvals, projected_eigenvals)
+
         if args.output:
             save_eigenvals(dataframe, args.output)
         else:
