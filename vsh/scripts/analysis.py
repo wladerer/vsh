@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import argparse
 from ase.calculators.vasp import Vasp
 from ase.spacegroup import get_spacegroup
 from ase import Atoms
