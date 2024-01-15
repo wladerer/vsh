@@ -218,7 +218,6 @@ def run(args):
         "vacuum": get_vacuum,
         "energy": get_energy,
         "converged": get_converged,
-        "sites": get_equivalent_positions
     }
     
     for arg, func in functions.items():
