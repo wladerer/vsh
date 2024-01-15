@@ -141,6 +141,55 @@ def filter_bands_by_index(dataframe: pd.DataFrame, index_min: int, index_max: in
     filtered_dataframe = dataframe[(dataframe['Band'] >= index_min) & (dataframe['Band'] <= index_max)]
     return filtered_dataframe
 
+def get_kpoint_data(file: str, kpoint: int, band: int):
+    '''Summarizes the data for a specific kpoint'''
+    dataframe = load_dataframe_from_file(file)
+
+    kpoint_data = dataframe[(dataframe['Kpoint'] == int(kpoint)) & (dataframe['Band'] == int(band))]
+    kpoint_data = kpoint_data.groupby(['Spin', 'Kpoint', 'Band', 'Orbital']).sum().reset_index()
+    
+    #convert "value" to "percent" wrt to orbitals
+    kpoint_data['Percent'] = kpoint_data['Value'] / kpoint_data['Value'].sum() * 100
+
+    return kpoint_data
+
+def plot_kpoint_orbital_variation(file: str, band: int):
+    '''Plots the orbital variation within a band'''
+
+    dataframe = load_dataframe_from_file(file)
+    dataframe = dataframe[dataframe['Band'] == band]
+    dataframe = dataframe.groupby(['Spin', 'Kpoint', 'Band', 'Orbital']).sum().reset_index()
+    dataframe['Percent'] = dataframe['Value'] / dataframe['Value'].sum() * 100
+
+    import plotly.graph_objects as go
+    fig = go.Figure()
+    
+    #plot orbital percent for each kpoint as a line plot
+    for orbital in dataframe['Orbital'].unique():
+        orbital_data = dataframe[dataframe['Orbital'] == orbital]
+        fig.add_trace(go.Scatter(x=orbital_data['Kpoint'], y=orbital_data['Percent'], mode='lines', name=f'Orbital {orbital}'))
+
+    fig.update_layout(title=f'Band {band} Orbital Variation', xaxis_title='Kpoint', yaxis_title='Percent')
+    fig.show()
+
+
+def analyze_kpoint(args):
+    '''Summarizes the data for a specific kpoint'''
+    dataframe = load_dataframe_from_file(args.input)
+    kpoint = args.kpoint
+    band = args.band
+
+    kpoint_data = get_kpoint_data(args.input, kpoint, band)
+
+    print(f"Kpoint: {kpoint}")
+    print(f"Band: {band}")
+    #print the percent of each orbital
+    for orbital in range(kpoint_data['Orbital'].nunique()):
+        orbital_data = kpoint_data[kpoint_data['Orbital'] == orbital]
+        percent = orbital_data['Percent'].iloc[0]
+        print(f"Orbital {orbital}: {percent:.3f}%")
+
+
 
 def plot_bands(args):
     import plotly.graph_objects as go
@@ -234,7 +283,9 @@ def run(args):
     functions = {
         "pickle": pickle_procar,
         "describe": describe_procar,
-        "plot": plot_bands
+        "plot": plot_bands,
+        "kplot": plot_kpoint_orbital_variation,
+        "analyze": analyze_kpoint
     }
     
     selected = False
