@@ -362,9 +362,13 @@ def procar(subparsers):
     subp_procar.add_argument('-b', '--band', help='Band of interest')
     subp_procar.add_argument('-i', '--ion', help='Ion of interest')
     subp_procar.add_argument('--orbital', help='Orbital of interest')
+    subp_procar.add_argument('--occupation', help='Occupation of interest')
+    subp_procar.add_argument('-e', '--energy', help='Energy of interest')
     subp_procar.add_argument('-s', '--spin', help='Spin channel of interest')
     subp_procar.add_argument('-o', '--output', help='Output filename (either pickle file or queried results)')
     subp_procar.add_argument('-d', '--describe', action='store_true', help='Provides a brief description of the projected eigenvalues data')
+    subp_procar.add_argument('--efermi', help='Reference Fermi Energy', type=float)
+    subp_procar.add_argument('--plot', action='store_true')
 
 def setup(subparsers):
     for script in adsorb, alchemy, analysis, band, cohp, db, incar, kpoints, manage, poscar, procar, slab:

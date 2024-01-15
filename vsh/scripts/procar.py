@@ -113,13 +113,57 @@ def query_data(data: pd.DataFrame, query_dict: dict):
 def load_dataframe_from_file(file: str):
     # load in the data, check if it is either xml or pkl
     if file.endswith('.xml'):
-        data = projected_eigenvals_from_vasprun(file)
+        projected_eigenvals = projected_eigenvals_from_vasprun(file)
+        eigenvals = eigenvalues_from_vasprun(file)
+        data = merge_eigenvalues(eigenvals, projected_eigenvals)
+
     elif file.endswith('.pkl'):
         data = projected_eigenvalues_from_pickle(file)
     else:
         raise Exception("Unrecognized file extension. Please provide either an XML or a pickle file.")
 
     return data
+
+
+def filter_bands_by_energy(dataframe: pd.DataFrame, emin: float, emax: float):
+    '''Filter bands by energy'''
+    filtered_dataframe = dataframe[(dataframe['Energy'] >= emin) & (dataframe['Energy'] <= emax)]
+    return filtered_dataframe
+
+
+def filter_bands_by_index(dataframe: pd.DataFrame, index_min: int, index_max: int):
+    '''Filter bands by index'''
+    filtered_dataframe = dataframe[(dataframe['Band'] >= index_min) & (dataframe['Band'] <= index_max)]
+    return filtered_dataframe
+
+
+
+
+def plot_bands(file: str, efermi: float = 0.0):
+    import plotly.graph_objects as go
+
+    data = load_dataframe_from_file(file)
+    data = data[['Band', 'Kpoint', 'Energy']]
+    data['Energy'] = data['Energy'] - efermi
+
+    bands = data['Band'].unique()
+    fig = go.Figure()
+    for band in bands:
+        band_data = data[data['Band'] == band]
+        kpoints = band_data['Kpoint']
+        energies = band_data['Energy']
+        fig.add_trace(go.Scatter(x=kpoints, y=energies, mode='lines', name=f'Band {band}'))
+
+    # color each kpoint according to the largest orbital value
+    
+    for kpoint in data['Kpoint'].unique():
+        kpoint_data = data[data['Kpoint'] == kpoint]
+        max_orbital = kpoint_data['Energy'].idxmax()
+        max_orbital_value = kpoint_data.loc[max_orbital, 'Energy']
+        fig.add_trace(go.Scatter(x=[kpoint], y=[max_orbital_value], mode='markers', marker=dict(color='black', size=3)))
+
+    fig.update_layout(xaxis_title='Kpoint', yaxis_title='Energy', showlegend=False)
+    fig.show()
 
 def run_query(args):
 
@@ -130,9 +174,14 @@ def run_query(args):
     'Kpoint': int(args.kpoint) if args.kpoint is not None else None, 
     'Band': int(args.band) if args.band is not None else None,
     'Ion': int(args.ion) if args.ion is not None else None,
-    'Orbital': args.orbital if args.orbital is not None else None
+    'Orbital': args.orbital if args.orbital is not None else None,
+    'Occupation': args.occupation if args.occupation is not None else None,
+    'Energy': args.energy if args.energy is not None else None
     }
     
+    if args.efermi:
+        data['Energy'] = data['Energy'] - args.efermi
+
     result = query_data(data, query_dict)
 
     if not args.output:
@@ -154,6 +203,7 @@ def run(args):
         eigenvals = eigenvalues_from_vasprun(args.input)
         dataframe = merge_eigenvalues(eigenvals, projected_eigenvals)
 
+
         if args.output:
             save_eigenvals(dataframe, args.output)
         else:
@@ -173,6 +223,10 @@ def run(args):
         print(f"Number of unique Bands: {unique_bands}")
         print(f"Number of unique Ions: {unique_ions}")
         print(f"Number of unique Orbitals: {unique_orbitals}")
+
+    elif args.plot:
+
+        plot_bands(args.input, args.efermi)
 
     else:
 
