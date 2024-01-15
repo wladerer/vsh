@@ -157,10 +157,9 @@ def get_kpoint_data(file: str, kpoint: int, band: int):
 
     return kpoint_data
 
-def plot_kpoint_orbital_variation(args):
+def get_kpoint_orbital_variation(file: str, band: int):
     '''Plots the orbital variation within a band'''
-    band = args.band
-    dataframe = load_dataframe_from_file(args.input)
+    dataframe = load_dataframe_from_file(file)
     dataframe = dataframe[dataframe['Band'] == int(band)]
     dataframe = dataframe.groupby(['Spin', 'Kpoint', 'Band', 'Orbital']).sum().reset_index()
     
@@ -171,17 +170,35 @@ def plot_kpoint_orbital_variation(args):
 
         #update dataframe with percent values
         dataframe.loc[dataframe['Kpoint'] == int(kpoint), 'Percent'] = kpoint_data['Percent']
+    
+    return dataframe
 
+
+def plot_kpoint_orbital_variation(args):
     #plot each orbital percentage against kpoints
+    dataframe = load_dataframe_from_file(args.input)
+    dataframe = get_kpoint_orbital_variation(args.input, args.band)
     import plotly.graph_objects as go
     fig = go.Figure()
     for orbital in dataframe['Orbital'].unique():
         orbital_data = dataframe[dataframe['Orbital'] == orbital]
-        fig.add_trace(go.Scatter(x=orbital_data['Kpoint'], y=orbital_data['Percent'], mode='lines', name=f'Orbital {orbital_dict[orbital]}'))
+        fig.add_trace(go.Scatter(x=orbital_data['Kpoint'], y=orbital_data['Percent'], mode='lines', name=f'{orbital_dict[orbital]}'))
 
     #update legend according to orbital_dict 
 
-    fig.update_layout(title=f'Band {band} Orbital Variation', xaxis_title='Kpoint', yaxis_title='Percent')
+    fig.update_layout(title=f'Band {args.band} Orbital Variation', xaxis_title='Kpoint', yaxis_title='Orbital Contribution (%)')
+
+    # add axis tick labels if --labels is given
+    if args.labels:
+        nkpoints = dataframe['Kpoint'].nunique()
+        #evenly space the labels across the x-axis
+        xtickvals = np.linspace(0, nkpoints, len(args.labels))
+        xticktext = args.labels
+        fig.update_layout(xaxis=dict(tickmode='array', tickvals=xtickvals, ticktext=xticktext))
+        
+
+
+
     fig.show()
 
 

@@ -378,6 +378,7 @@ def procar(subparsers):
     plotting.add_argument('--kplot', help='Plot orbital variation of a single band',action='store_true')
     plotting.add_argument('--erange', nargs=2, type=float, help='Energy range to plot')
     plotting.add_argument('--irange', nargs=2, type=int, help='Index range to plot')
+    plotting.add_argument('--labels', nargs='+', type=str, help='Labels for the plot')
 
     #add argument group for kpoint analysis and plotting
     kpoint_analysis = subp_procar.add_argument_group('kpoint analysis')
