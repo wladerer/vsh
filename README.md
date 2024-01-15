@@ -53,6 +53,9 @@ slabgen is a module intended to simplify the process of making slabs of bulk mat
 
 These four modules handle the creation and modification of their respective files. Notably, `kpoints` can handle any type of KPOINTS file and can even produce high-symmetry k-paths from the SeekPath API. 
 
+##### procar
+
+procar is quite a built out utility with many options, so please refer to the -h output. Procar does orbital and compositonal analyses on a band and kpoint basis. You can also plot and query these properties. It is recommended that you pickle your vasprun.xml file prior to using the utility to save time. Additionally, the procar module is able to plot interactive band structures for quick reference (not publication ready figures)
 
 ##### cohp
 
