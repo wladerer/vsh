@@ -194,6 +194,19 @@ def get_converged(args):
         print("Calculation not finished or file is corrupt")
         exit()
 
+def get_equivalent_positions(pmg_structure):
+    """Get the equivalent positions of a structure"""
+    from pymatgen.core.structure import Structure
+    from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
+
+    spacegroup = SpacegroupAnalyzer(pmg_structure)
+    sym_structure = spacegroup.get_symmetrized_structure()
+    sites = sym_structure.equivalent_sites
+
+    for site in sites:
+        print(site[0].species_string, site[0].frac_coords)
+    
+    return None
 
 def run(args):
     functions = {
@@ -204,7 +217,8 @@ def run(args):
         "symmetry": get_symmetry,
         "vacuum": get_vacuum,
         "energy": get_energy,
-        "converged": get_converged
+        "converged": get_converged,
+        "sites": get_equivalent_positions
     }
     
     for arg, func in functions.items():
