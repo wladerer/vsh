@@ -128,6 +128,11 @@ def load_dataframe_from_file(file: str):
 def filter_bands_by_energy(dataframe: pd.DataFrame, emin: float, emax: float):
     '''Filter bands by energy'''
     filtered_dataframe = dataframe[(dataframe['Energy'] >= emin) & (dataframe['Energy'] <= emax)]
+    nkpoints = filtered_dataframe['Kpoint'].nunique()
+
+    #keep only bands that have a complete set of kpoints
+    filtered_dataframe = filtered_dataframe.groupby('Band').filter(lambda x: x['Kpoint'].nunique() == nkpoints)
+
     return filtered_dataframe
 
 
@@ -137,16 +142,26 @@ def filter_bands_by_index(dataframe: pd.DataFrame, index_min: int, index_max: in
     return filtered_dataframe
 
 
-
-
-def plot_bands(file: str, efermi: float = 0.0):
+def plot_bands(args):
     import plotly.graph_objects as go
 
-    data = load_dataframe_from_file(file)
+    data = load_dataframe_from_file(args.input)
     data = data[['Band', 'Kpoint', 'Energy']]
-    data['Energy'] = data['Energy'] - efermi
+    data['Energy'] = data['Energy'] - args.efermi
 
     bands = data['Band'].unique()
+
+    #filter bands by energy or index if irange or erange is given
+    if args.irange:
+        index_min, index_max = args.irange
+        data = filter_bands_by_index(data, index_min, index_max)
+        bands = data['Band'].unique()
+
+    if args.erange:
+        emin, emax = args.erange
+        data = filter_bands_by_energy(data, emin, emax)
+        bands = data['Band'].unique()
+
     fig = go.Figure()
     for band in bands:
         band_data = data[data['Band'] == band]
@@ -154,15 +169,9 @@ def plot_bands(file: str, efermi: float = 0.0):
         energies = band_data['Energy']
         fig.add_trace(go.Scatter(x=kpoints, y=energies, mode='lines', name=f'Band {band}'))
 
-    # color each kpoint according to the largest orbital value
-    
-    for kpoint in data['Kpoint'].unique():
-        kpoint_data = data[data['Kpoint'] == kpoint]
-        max_orbital = kpoint_data['Energy'].idxmax()
-        max_orbital_value = kpoint_data.loc[max_orbital, 'Energy']
-        fig.add_trace(go.Scatter(x=[kpoint], y=[max_orbital_value], mode='markers', marker=dict(color='black', size=3)))
 
-    fig.update_layout(xaxis_title='Kpoint', yaxis_title='Energy', showlegend=False)
+
+    fig.update_layout(title='Band Structure', xaxis_title='Kpoint', yaxis_title='Energy (eV)')
     fig.show()
 
 def run_query(args):
@@ -189,47 +198,52 @@ def run_query(args):
     else:
         result.to_csv(args.output, index=False)
         
+def describe_procar(args):
+    '''Briefly describes the PROCAR file'''
+    dataframe = load_dataframe_from_file(args.input)
+    unique_spins = dataframe['Spin'].nunique()
+    unique_kpoints = dataframe['Kpoint'].nunique()
+    unique_bands = dataframe['Band'].nunique()
+    unique_ions = dataframe['Ion'].nunique()
+    unique_orbitals = dataframe['Orbital'].nunique()
 
+    print(f"Number of unique Spins: {unique_spins}")
+    print(f"Number of unique Kpoints: {unique_kpoints}")
+    print(f"Number of unique Bands: {unique_bands}")
+    print(f"Number of unique Ions: {unique_ions}")
+    print(f"Number of unique Orbitals: {unique_orbitals}")
+
+    return None
+
+def pickle_procar(args):
+    if args.input.endswith('.pkl'):
+        raise Exception('Cannot pickle a pickle')
+
+    projected_eigenvals = projected_eigenvals_from_vasprun(args.input)
+    eigenvals = eigenvalues_from_vasprun(args.input)
+    dataframe = merge_eigenvalues(eigenvals, projected_eigenvals)
+
+
+    if args.output:
+        save_eigenvals(dataframe, args.output)
+    else:
+        print(dataframe.describe())
 
 def run(args):
 
-    if args.pickle: 
-
-        if args.input.endswith('.pkl'):
-            raise Exception('Cannot pickle a pickle')
-
-
-        projected_eigenvals = projected_eigenvals_from_vasprun(args.input)
-        eigenvals = eigenvalues_from_vasprun(args.input)
-        dataframe = merge_eigenvalues(eigenvals, projected_eigenvals)
-
-
-        if args.output:
-            save_eigenvals(dataframe, args.output)
-        else:
-            print(dataframe.describe())
-
-    elif args.describe:
-         
-        dataframe = load_dataframe_from_file(args.input)
-        unique_spins = dataframe['Spin'].nunique()
-        unique_kpoints = dataframe['Kpoint'].nunique()
-        unique_bands = dataframe['Band'].nunique()
-        unique_ions = dataframe['Ion'].nunique()
-        unique_orbitals = dataframe['Orbital'].nunique()
-
-        print(f"Number of unique Spins: {unique_spins}")
-        print(f"Number of unique Kpoints: {unique_kpoints}")
-        print(f"Number of unique Bands: {unique_bands}")
-        print(f"Number of unique Ions: {unique_ions}")
-        print(f"Number of unique Orbitals: {unique_orbitals}")
-
-    elif args.plot:
-
-        plot_bands(args.input, args.efermi)
-
-    else:
-
+    functions = {
+        "pickle": pickle_procar,
+        "describe": describe_procar,
+        "plot": plot_bands
+    }
+    
+    selected = False
+    for arg, func in functions.items():
+        if getattr(args, arg):
+            func(args)
+            selected = True
+    
+    if not selected:
         run_query(args)
 
 
