@@ -3,6 +3,9 @@ import numpy as np
 import pickle
 import itertools
 
+orbital_dict = {'s': 0, 'p_y': 1, 'p_z': 2, 'p_x': 3, 'd_xy': 4, 'd_yz': 5, 'd_z2': 6, 'd_xz': 7, 'd_x2-y2': 8, 'f_y(3x2 -y2)': 9, 'f_xyz': 10, 'f_yz2':11, 'f_z3':12, 'f_xz2':13, 'f_z(x2 -y2)':14, 'f_x(x2 -3y2)':15}
+orbital_dict = {value: key for key, value in orbital_dict.items()} #this is so stupid, i'm sorry
+
 def read_procar_with_pyprocar(procar_path: str, efermi: float = None, outcar_path: str = None):
     '''Reads PROCAR and possibly OUTCAR if fermi level is not given. Uses PyProcar Implementation'''
     from pyprocar.io.vasp import Procar
@@ -103,6 +106,7 @@ def parse_query_input(query: dict):
     return query_string
 
 
+
 def query_data(data: pd.DataFrame, query_dict: dict):
     '''Allows querying the data from the command line'''
     query = parse_query_input(query_dict)
@@ -153,24 +157,33 @@ def get_kpoint_data(file: str, kpoint: int, band: int):
 
     return kpoint_data
 
-def plot_kpoint_orbital_variation(file: str, band: int):
+def plot_kpoint_orbital_variation(args):
     '''Plots the orbital variation within a band'''
-
-    dataframe = load_dataframe_from_file(file)
-    dataframe = dataframe[dataframe['Band'] == band]
+    band = args.band
+    dataframe = load_dataframe_from_file(args.input)
+    dataframe = dataframe[dataframe['Band'] == int(band)]
     dataframe = dataframe.groupby(['Spin', 'Kpoint', 'Band', 'Orbital']).sum().reset_index()
-    dataframe['Percent'] = dataframe['Value'] / dataframe['Value'].sum() * 100
+    
+    #iterate over each Kpoint
+    for kpoint in dataframe['Kpoint'].unique():
+        kpoint_data = dataframe[dataframe['Kpoint'] == int(kpoint)]
+        kpoint_data['Percent'] = kpoint_data['Value'] / kpoint_data['Value'].sum() * 100
 
+        #update dataframe with percent values
+        dataframe.loc[dataframe['Kpoint'] == int(kpoint), 'Percent'] = kpoint_data['Percent']
+
+    #plot each orbital percentage against kpoints
     import plotly.graph_objects as go
     fig = go.Figure()
-    
-    #plot orbital percent for each kpoint as a line plot
     for orbital in dataframe['Orbital'].unique():
         orbital_data = dataframe[dataframe['Orbital'] == orbital]
-        fig.add_trace(go.Scatter(x=orbital_data['Kpoint'], y=orbital_data['Percent'], mode='lines', name=f'Orbital {orbital}'))
+        fig.add_trace(go.Scatter(x=orbital_data['Kpoint'], y=orbital_data['Percent'], mode='lines', name=f'Orbital {orbital_dict[orbital]}'))
+
+    #update legend according to orbital_dict 
 
     fig.update_layout(title=f'Band {band} Orbital Variation', xaxis_title='Kpoint', yaxis_title='Percent')
     fig.show()
+
 
 
 def analyze_kpoint(args):

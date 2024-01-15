@@ -357,7 +357,6 @@ def procar(subparsers):
 
     subp_procar = subparsers.add_parser('procar', help='Reads projected eigenvalue information from vasprun.xml or procar.vsh pickle files (0 based index btw)')
     subp_procar.add_argument('input', help='Either vasprun.xml or vsh pickle file')
-    subp_procar.add_argument('-p', '--pickle', action='store_true', help='Write projected eigenvalues from a vasprun.xml file to a pickle file')
     subp_procar.add_argument('-k', '--kpoint', help='Kpoint of interest')
     subp_procar.add_argument('-b', '--band', help='Band of interest')
     subp_procar.add_argument('-i', '--ion', help='Ion of interest')
@@ -367,8 +366,23 @@ def procar(subparsers):
     subp_procar.add_argument('-s', '--spin', help='Spin channel of interest')
     subp_procar.add_argument('-o', '--output', help='Output filename (either pickle file or queried results)')
     subp_procar.add_argument('-d', '--describe', action='store_true', help='Provides a brief description of the projected eigenvalues data')
-    subp_procar.add_argument('--efermi', help='Reference Fermi Energy', type=float)
-    subp_procar.add_argument('--plot', action='store_true')
+    subp_procar.add_argument('--efermi', help='Reference Fermi Energy', type=float, default=0.0)
+
+    #add argument group for file handling 
+    file_handling = subp_procar.add_argument_group('file handling')
+    file_handling.add_argument('-p', '--pickle', action='store_true', help='Write projected eigenvalues from a vasprun.xml file to a pickle file')
+
+    #add argument group for plotting
+    plotting = subp_procar.add_argument_group('Band Plotting')
+    plotting.add_argument('--plot', action='store_true')
+    plotting.add_argument('--kplot', help='Plot orbital variation of a single band',action='store_true')
+    plotting.add_argument('--erange', nargs=2, type=float, help='Energy range to plot')
+    plotting.add_argument('--irange', nargs=2, type=int, help='Index range to plot')
+
+    #add argument group for kpoint analysis and plotting
+    kpoint_analysis = subp_procar.add_argument_group('kpoint analysis')
+    kpoint_analysis.add_argument('-a', '--analyze', help='Kpoint analysis of a specific kpoint and band', action='store_true')
+
 
 def setup(subparsers):
     for script in adsorb, alchemy, analysis, band, cohp, db, incar, kpoints, manage, poscar, procar, slab:
