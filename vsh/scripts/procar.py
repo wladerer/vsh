@@ -300,10 +300,7 @@ def get_compositional_variation(file: str, band: int):
 
     for kpoint in dataframe["Kpoint"].unique():
         kpoint_data = dataframe[dataframe["Kpoint"] == int(kpoint)]
-        kpoint_data["Percent"] = kpoint_data["Value"] / kpoint_data["Value"].sum() * 100
-        dataframe.loc[dataframe["Kpoint"] == int(kpoint), "Percent"] = kpoint_data[
-            "Percent"
-        ]
+        dataframe.loc[dataframe["Kpoint"] == int(kpoint), "Percent"] = kpoint_data["Value"] / kpoint_data["Value"].sum() * 100
 
     return dataframe
 
