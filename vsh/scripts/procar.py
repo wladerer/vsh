@@ -20,6 +20,8 @@ orbital_dict = {
     "f_xz2": 13,
     "f_z(x2 -y2)": 14,
     "f_x(x2 -3y2)": 15,
+    "p_x + p_y": 'Psum',
+    "d_xz + d_yz": 'Dsum'
 }
 orbital_dict = {
     value: key for key, value in orbital_dict.items()
@@ -237,52 +239,92 @@ def get_kpoint_data(file: str, kpoint: int, band: int):
 
     return kpoint_data
 
+def add_orbital_sum(dataframe: pd.DataFrame, orbitals: list[int], label: str):
+    '''Adds a new entry that is the sum of the Percent of entries with the same Kpoint, Band, and Spin, but only if Orbital is 1 or 3'''
+    # Filter the DataFrame
+    filtered_dataframe = dataframe[dataframe['Orbital'].isin(orbitals)]
+
+    # Group by 'Kpoint', 'Band', and 'Spin' and sum the 'Value' column
+    orbital_sum = filtered_dataframe.groupby(['Kpoint', 'Band', 'Spin'])['Value'].sum().reset_index()
+
+    # Add a new column 'Orbital' with a value indicating that this row is a sum
+    orbital_sum['Orbital'] = label
+
+    # Append the result to the original DataFrame
+    dataframe = pd.concat([dataframe, orbital_sum], ignore_index=True)
+
+    return dataframe
 
 def get_kpoint_orbital_variation(file: str, band: int):
     """Plots the orbital variation within a band"""
     dataframe = load_dataframe_from_file(file)
     dataframe = dataframe[dataframe["Band"] == int(band)]
-    dataframe = (
-        dataframe.groupby(["Spin", "Kpoint", "Band", "Orbital"]).sum().reset_index()
-    )
+    dataframe = (dataframe.groupby(["Spin", "Kpoint", "Band", "Orbital"]).sum().reset_index())
 
-    # iterate over each Kpoint
-    for kpoint in dataframe["Kpoint"].unique():
-        kpoint_data = dataframe[dataframe["Kpoint"] == int(kpoint)].copy()
-        kpoint_data["Percent"] = kpoint_data["Value"] / kpoint_data["Value"].sum() * 100
-
-        # update dataframe with percent values
-        dataframe.loc[dataframe["Kpoint"] == int(kpoint), "Percent"] = kpoint_data[
-            "Percent"
-        ]
 
     return dataframe
 
 
+def calculate_absolute_charge_spilling(dataframe: pd.DataFrame):
+    #finds the charge spilling for each kpoint
+    kpoints = dataframe["Kpoint"].unique()
+    sum_values = []
+    for kpoint in kpoints:
+        kpoint_data = dataframe[dataframe["Kpoint"] == int(kpoint)]
+        sum_values.append(kpoint_data["Value"].sum())
+
+    # sum values should be 1 - the sum of the absolute charge spilling
+    sum_values = [ 1 - value for value in sum_values]  
+    
+    return kpoints, sum_values
+
 def plot_kpoint_orbital_variation(args):
     # plot each orbital percentage against kpoints
     dataframe = load_dataframe_from_file(args.input)
+
     dataframe = get_kpoint_orbital_variation(args.input, args.band)
+
+    # calculate the charge spilling
+    kpoints, sum_values = calculate_absolute_charge_spilling(dataframe)
+
+    # summation of symmetry equivalent orbitals
+    dataframe = add_orbital_sum(dataframe, [1, 3], label='Psum')
+    dataframe = add_orbital_sum(dataframe, [5, 7], label='Dsum')
+    
     import plotly.graph_objects as go
 
     fig = go.Figure()
     for orbital in dataframe["Orbital"].unique():
         orbital_data = dataframe[dataframe["Orbital"] == orbital]
+
         fig.add_trace(
             go.Scatter(
                 x=orbital_data["Kpoint"],
-                y=orbital_data["Percent"],
+                y=orbital_data["Value"],
                 mode="lines",
                 name=f"{orbital_dict[orbital]}",
             )
         )
+    # add a line for charge spilling
+    fig.add_trace(
+        go.Scatter(
+            x=kpoints,
+            y=sum_values,
+            mode="lines",
+            name=f"Charge Spilling",
+            line=dict(color='grey', dash='dash', width=1)
+        )
+    )
+
+    # Remove px, py, dxz, and dyz from the plot
+    fig.for_each_trace( lambda trace: trace.update(visible='legendonly') if trace.name in ['p_x', 'p_y', 'd_xz', 'd_yz'] else ())
 
     # update legend according to orbital_dict
 
     fig.update_layout(
         title=f"Band {args.band} Orbital Variation",
         xaxis_title="Kpoint",
-        yaxis_title="Orbital Contribution (%)",
+        yaxis_title="Orbital Contribution Coefficient",
     )
 
     # add axis tick labels if --labels is given
