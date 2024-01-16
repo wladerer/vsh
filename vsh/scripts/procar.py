@@ -248,7 +248,7 @@ def get_kpoint_orbital_variation(file: str, band: int):
 
     # iterate over each Kpoint
     for kpoint in dataframe["Kpoint"].unique():
-        kpoint_data = dataframe[dataframe["Kpoint"] == int(kpoint)]
+        kpoint_data = dataframe[dataframe["Kpoint"] == int(kpoint)].copy()
         kpoint_data["Percent"] = kpoint_data["Value"] / kpoint_data["Value"].sum() * 100
 
         # update dataframe with percent values
