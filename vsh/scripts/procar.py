@@ -324,7 +324,7 @@ def plot_kpoint_orbital_variation(args):
     fig.update_layout(
         title=f"Band {args.band} Orbital Variation",
         xaxis_title="Kpoint",
-        yaxis_title="Orbital Contribution Coefficient",
+        yaxis_title="Orbital Projection Coefficient",
     )
 
     # add axis tick labels if --labels is given
