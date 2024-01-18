@@ -101,7 +101,7 @@ def eigenvalues_from_vasprun(file: str) -> pd.DataFrame:
     eigenvalues = vasprun.eigenvalues
 
     eigenvalues_list = [spin for spin in eigenvalues.values()]
-    # create a dataframe with the kpoints, bands and eigenvalues
+
     value_dictionaries = []
     for spin_index, spin in enumerate(eigenvalues_list):
         logging.info(f"Processing spin {spin_index}")
@@ -263,22 +263,17 @@ def get_kpoint_data(file: str, kpoint: int, band: int):
 
 def add_orbital_sum(dataframe: pd.DataFrame, orbitals: list[int], label: str):
     '''Adds a new entry that is the sum of the Percent of entries with the same Kpoint, Band, and Spin, but only if Orbital is 1 or 3'''
-    # Filter the DataFrame
+
     filtered_dataframe = dataframe[dataframe['Orbital'].isin(orbitals)]
-
-    # Group by 'Kpoint', 'Band', and 'Spin' and sum the 'Value' column
     orbital_sum = filtered_dataframe.groupby(['Kpoint', 'Band', 'Spin'])['Value'].sum().reset_index()
-
-    # Add a new column 'Orbital' with a value indicating that this row is a sum
     orbital_sum['Orbital'] = label
-
-    # Append the result to the original DataFrame
     dataframe = pd.concat([dataframe, orbital_sum], ignore_index=True)
 
     return dataframe
 
 def get_kpoint_orbital_variation(file: str, band: int, ions: list[int] = None):
     """Plots the orbital variation within a band"""
+    
     dataframe = load_dataframe_from_file(file)
     dataframe = dataframe[dataframe["Band"] == int(band)]
     
@@ -304,15 +299,10 @@ def calculate_absolute_charge_spilling(dataframe: pd.DataFrame):
     return kpoints, sum_values
 
 def plot_kpoint_orbital_variation(args):
-    # plot each orbital percentage against kpoints
+
     dataframe = load_dataframe_from_file(args.input)
-
     dataframe = get_kpoint_orbital_variation(args.input, args.band, args.ions)
-
-    # calculate the charge spilling (this might need to be done within get_kpoint_orbital_variation)
     kpoints, sum_values = calculate_absolute_charge_spilling(dataframe)
-
-    # summation of symmetry equivalent orbitals
     dataframe = add_orbital_sum(dataframe, [1, 3], label='Psum')
     dataframe = add_orbital_sum(dataframe, [5, 7], label='Dsum')
     
@@ -343,7 +333,6 @@ def plot_kpoint_orbital_variation(args):
 
     # Remove px, py, dxz, and dyz from the plot
     fig.data = [trace for trace in fig.data if trace.name not in ['p_x', 'p_y', 'd_xz', 'd_yz']]
-    # update legend according to orbital_dict
 
     title = f"Band {args.band} Orbital Variation"
     if args.ions:
@@ -356,11 +345,9 @@ def plot_kpoint_orbital_variation(args):
         yaxis_title="Orbital Projection Coefficient",
     )
 
-    # add axis tick labels if --labels is given
     if args.labels:
         add_kpoint_labels(fig, dataframe, args.labels)
 
-    # use simple_white template
     fig.update_layout(template='simple_white')
 
     fig.show()
@@ -386,7 +373,6 @@ def plot_compositional_variation(args):
     if args.ions:
         dataframe = dataframe[dataframe["Ion"].isin(args.ions)]
         
-    # plot each ion percentage against kpoints
     import plotly.graph_objects as go
 
     fig = go.Figure()
