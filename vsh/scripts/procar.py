@@ -159,6 +159,7 @@ def save_eigenvals(projected_eigenvalues: pd.DataFrame, filename: str) -> None:
 
 def parse_query_input(query: dict):
     """Formats query to be compatible with Pandas"""
+    
 
     query_dict = {key: value for key, value in query.items() if value is not None}
     query_string = " and ".join([f"{k} == {v}" for k, v in query_dict.items()])
@@ -254,12 +255,15 @@ def add_orbital_sum(dataframe: pd.DataFrame, orbitals: list[int], label: str):
 
     return dataframe
 
-def get_kpoint_orbital_variation(file: str, band: int):
+def get_kpoint_orbital_variation(file: str, band: int, ions: list[int] = None):
     """Plots the orbital variation within a band"""
     dataframe = load_dataframe_from_file(file)
     dataframe = dataframe[dataframe["Band"] == int(band)]
+    
+    if ions:
+        dataframe = dataframe[dataframe["Ion"].isin(ions)]
+    
     dataframe = (dataframe.groupby(["Spin", "Kpoint", "Band", "Orbital"]).sum().reset_index())
-
 
     return dataframe
 
@@ -281,9 +285,9 @@ def plot_kpoint_orbital_variation(args):
     # plot each orbital percentage against kpoints
     dataframe = load_dataframe_from_file(args.input)
 
-    dataframe = get_kpoint_orbital_variation(args.input, args.band)
+    dataframe = get_kpoint_orbital_variation(args.input, args.band, args.ion)
 
-    # calculate the charge spilling
+    # calculate the charge spilling (this might need to be done within get_kpoint_orbital_variation)
     kpoints, sum_values = calculate_absolute_charge_spilling(dataframe)
 
     # summation of symmetry equivalent orbitals
@@ -316,12 +320,16 @@ def plot_kpoint_orbital_variation(args):
     )
 
     # Remove px, py, dxz, and dyz from the plot
-    fig.for_each_trace( lambda trace: trace.update(visible='legendonly') if trace.name in ['p_x', 'p_y', 'd_xz', 'd_yz'] else ())
-
+    fig.data = [trace for trace in fig.data if trace.name not in ['p_x', 'p_y', 'd_xz', 'd_yz']]
     # update legend according to orbital_dict
 
+    title = f"Band {args.band} Orbital Variation"
+    if args.ions:
+        
+        title += f" for Ions {args.ions}"
+
     fig.update_layout(
-        title=f"Band {args.band} Orbital Variation",
+        title=title,
         xaxis_title="Kpoint",
         yaxis_title="Orbital Projection Coefficient",
     )

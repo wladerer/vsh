@@ -359,7 +359,7 @@ def procar(subparsers):
     subp_procar.add_argument('input', help='Either vasprun.xml or vsh pickle file')
     subp_procar.add_argument('-k', '--kpoint', help='Kpoint of interest')
     subp_procar.add_argument('-b', '--band', help='Band of interest')
-    subp_procar.add_argument('-i', '--ion', help='Ion of interest')
+    subp_procar.add_argument('-i', '--ion', help='Ion of interest', type=int)
     subp_procar.add_argument('--orbital', help='Orbital of interest')
     subp_procar.add_argument('--occupation', help='Occupation of interest')
     subp_procar.add_argument('-e', '--energy', help='Energy of interest')
