@@ -2,6 +2,9 @@ import pandas as pd
 import numpy as np
 import pickle
 import itertools
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 orbital_dict = {
     "s": 0,
@@ -53,7 +56,9 @@ def dict_to_dataframe(projected_eigenvalues: dict) -> pd.DataFrame:
     # Get all possible entries using itertools
     value_dictionaries = []
     for spin_index, spin in enumerate(data.values()):
+        logging.info(f"Processing spin {spin_index}")
         nkpoints, nbands, nions, norbitals = np.shape(spin)
+        logging.info(f"nkpoints: {nkpoints}, nbands: {nbands}, nions: {nions}, norbitals: {norbitals}")
         all_entries = list(
             itertools.product(
                 *[range(nkpoints), range(nbands), range(nions), range(norbitals)]
@@ -99,8 +104,11 @@ def eigenvalues_from_vasprun(file: str) -> pd.DataFrame:
     # create a dataframe with the kpoints, bands and eigenvalues
     value_dictionaries = []
     for spin_index, spin in enumerate(eigenvalues_list):
+        logging.info(f"Processing spin {spin_index}")
         nkpoints, nbands, _ = np.shape(spin)
+        logging.info(f"nkpoints: {nkpoints}, nbands: {nbands}")
         all_entries = list(itertools.product(*[range(nkpoints), range(nbands)]))
+        logging.info(f"Dim of all_entries: {np.shape(all_entries)}")
         for entry in all_entries:
             kpoint_index, band_index = entry
             energy = spin[kpoint_index][band_index][0]
@@ -160,9 +168,23 @@ def save_eigenvals(projected_eigenvalues: pd.DataFrame, filename: str) -> None:
 def parse_query_input(query: dict):
     """Formats query to be compatible with Pandas"""
     
-
     query_dict = {key: value for key, value in query.items() if value is not None}
+    
+    # remove ions if it is an empty list
+    if "Ion" in query_dict and len(query_dict["Ion"]) == 0:
+        del query_dict["Ion"]
+        
+    # pop ions to avoid duplicate entries in the dictionary
+    if "Ion" in query_dict:
+        ions = query_dict.pop("Ion")
+
     query_string = " and ".join([f"{k} == {v}" for k, v in query_dict.items()])
+    
+    # add ions back to query string
+    if "Ion" in query_dict:
+        
+        for ion in ions:
+            query_string += f" and Ion == {ion}"
 
     return query_string
 
@@ -285,7 +307,7 @@ def plot_kpoint_orbital_variation(args):
     # plot each orbital percentage against kpoints
     dataframe = load_dataframe_from_file(args.input)
 
-    dataframe = get_kpoint_orbital_variation(args.input, args.band, args.ion)
+    dataframe = get_kpoint_orbital_variation(args.input, args.band, args.ions)
 
     # calculate the charge spilling (this might need to be done within get_kpoint_orbital_variation)
     kpoints, sum_values = calculate_absolute_charge_spilling(dataframe)
@@ -360,6 +382,10 @@ def get_compositional_variation(file: str, band: int):
 def plot_compositional_variation(args):
     """Plots the compositional variation of a band"""
     dataframe = get_compositional_variation(args.input, args.band)
+    
+    if args.ions:
+        dataframe = dataframe[dataframe["Ion"].isin(args.ions)]
+        
     # plot each ion percentage against kpoints
     import plotly.graph_objects as go
 
@@ -448,7 +474,7 @@ def run_query(args):
         "Spin": args.spin if args.spin is not None else None,
         "Kpoint": int(args.kpoint) if args.kpoint is not None else None,
         "Band": int(args.band) if args.band is not None else None,
-        "Ion": int(args.ion) if args.ion is not None else None,
+        "Ion": [ int(ion) for ion in args.ions] if args.ions is not None else None,
         "Orbital": args.orbital if args.orbital is not None else None,
         "Occupation": args.occupation if args.occupation is not None else None,
         "Energy": args.energy if args.energy is not None else None,
