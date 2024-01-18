@@ -96,7 +96,6 @@ def eigenvalues_from_vasprun(file: str) -> pd.DataFrame:
     eigenvalues = vasprun.eigenvalues
 
     eigenvalues_list = [spin for spin in eigenvalues.values()]
-
     # create a dataframe with the kpoints, bands and eigenvalues
     value_dictionaries = []
     for spin_index, spin in enumerate(eigenvalues_list):
@@ -331,6 +330,9 @@ def plot_kpoint_orbital_variation(args):
     if args.labels:
         add_kpoint_labels(fig, dataframe, args.labels)
 
+    # use simple_white template
+    fig.update_layout(template='simple_white')
+
     fig.show()
 
 
@@ -373,6 +375,8 @@ def plot_compositional_variation(args):
 
     if args.labels:
         add_kpoint_labels(fig, dataframe, args.labels)
+
+    fig.update_layout(template='simple_white')
 
     fig.show()
 
