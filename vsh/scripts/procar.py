@@ -4,7 +4,7 @@ import pickle
 import itertools
 import logging
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 orbital_dict = {
     "s": 0,

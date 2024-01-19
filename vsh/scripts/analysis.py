@@ -126,7 +126,7 @@ def check_convergence(file: str = "./vasprun.xml") -> list[bool]:
 
     vasprun_object = Vasprun(file, parse_dos=False, parse_eigen=False, parse_projected_eigen=False, parse_potcar_file=False)
     converged_electronic = vasprun_object.converged_electronic
-    converged_ionic = vasprun_object.converged_ionic
+    converged_ionic = vasprun_object.converged_ionic 
 
     return [converged_electronic, converged_ionic]
 
