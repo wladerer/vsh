@@ -387,7 +387,31 @@ def procar(subparsers):
     kpoint_analysis = subp_procar.add_argument_group('kpoint analysis')
     kpoint_analysis.add_argument('-a', '--analyze', help='Kpoint analysis of a specific kpoint and band', action='store_true')
 
+def wavecar(subparsers):
+
+    subp_wavecar = subparsers.add_parser('wavecar', help='Reads, analyses, and converts wavefunction information from WAVECAR and cube files')
+
+    # Argument group for standard specifications
+    standard_specs = subp_wavecar.add_argument_group('Standard Specifications')
+    standard_specs.add_argument('-k', '--kpoint', help='Kpoint of interest', type=int)
+    standard_specs.add_argument('-b', '--band', help='Band of interest', type=int)
+    standard_specs.add_argument('-s', '--spin', help='Spin channel of interest', type=int)
+    standard_specs.add_argument('--spinor', help='Spinor channel of interest', type=int)
+    standard_specs.add_argument('-P', '--phase', help='Phase of interest', type=int)
+    standard_specs.add_argument('--shift', help='Shift value of periodic part of wavefunction', type=int)
+    standard_specs.add_argument('--scale', help='Scaling factor for PARCHG mesh density', type=int, default=2)
+
+    # Argument group for functional choices
+    functional_choices = subp_wavecar.add_argument_group('Functional Choices')
+    functional_choices.add_argument('-p', '--parchg', help='Generate a PARCHG file from a WAVECAR file', action='store_true')
+    functional_choices.add_argument('-c', '--cube', help='Save WAVECAR partial charge density as a cube file', action='store_true')
+    functional_choices.add_argument('-m', '--mesh', help='Extract wavefunction coefficients projected onto a 3D mesh', action='store_true')
+
+    subp_wavecar.add_argument('input', help='WAVECAR or cube file')
+    subp_wavecar.add_argument('-S', '--structure', help='Structure file')
+    subp_wavecar.add_argument('-o', '--output', help='Output filename', type=str)
+    
 
 def setup(subparsers):
-    for script in adsorb, alchemy, analysis, band, cohp, db, incar, kpoints, manage, poscar, procar, slab:
+    for script in adsorb, alchemy, analysis, band, cohp, db, incar, kpoints, manage, poscar, procar, slab, wavecar:
         script(subparsers)
