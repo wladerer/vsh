@@ -350,7 +350,10 @@ def plot_kpoint_orbital_variation(args):
 
     fig.update_layout(template='simple_white')
 
-    fig.show()
+    if not args.output:
+        fig.show()
+    else:
+        fig.write_image(args.output)
 
 
 def get_compositional_variation(file: str, band: int):
