@@ -355,6 +355,25 @@ def plot_kpoint_orbital_variation(args):
     else:
         fig.write_image(args.output)
 
+    
+def parse_structure_file(file: str):
+    '''Reads a structure file and returns an atom dataframe'''
+    try:
+        from ase.io import read
+
+        atoms = read(file)
+
+        heights = atoms.get_positions()[:, 2]
+        atom_tuples = [ (label, ion, height) for label, ion, height in zip(atoms.get_chemical_symbols(), range(0, len(atoms)), heights) ]
+        #create an df for the atoms
+        atom_df = pd.DataFrame(atom_tuples, columns=['Label', 'Ion', 'Height'])
+
+        return atom_df
+        
+    except:
+        
+        raise Exception("Could not read structure file. Please provide a valid structure file.")
+    
 
 def get_compositional_variation(file: str, band: int):
     """Get compositional variation of a band"""
@@ -371,37 +390,58 @@ def get_compositional_variation(file: str, band: int):
 
 def plot_compositional_variation(args):
     """Plots the compositional variation of a band"""
-    dataframe = get_compositional_variation(args.input, args.band)
     
-    if args.ions:
-        dataframe = dataframe[dataframe["Ion"].isin(args.ions)]
-        
+    dataframe = get_compositional_variation(args.input, args.band)
+
+    atom_df = parse_structure_file(args.structure)
+    # merge the atom dataframe with the dataframe
+    dataframe = pd.merge(dataframe, atom_df, on="Ion")
+
+    #create color mask for Height
+    height_mask = dataframe["Height"].unique()
+    height_mask.sort()
+    height_mask = dict(zip(height_mask, range(len(height_mask))))
+
+    # plot Percent vs Kpoint for each Ion as a line
     import plotly.graph_objects as go
 
     fig = go.Figure()
     for ion in dataframe["Ion"].unique():
-        ion_data = dataframe[dataframe["Ion"] == ion]
+        ion_data = dataframe[dataframe["Ion"] == int(ion)]
         fig.add_trace(
             go.Scatter(
                 x=ion_data["Kpoint"],
                 y=ion_data["Percent"],
                 mode="lines",
-                name=f"Ion {ion}",
+                name=f"{ion_data['Label'].iloc[0]} {ion_data['Ion'].iloc[0]} ( z = {ion_data['Height'].iloc[0]:.2f} )",
+                line=dict(color=f'rgb(0,{height_mask[ion_data["Height"].iloc[0]]*30}, 0)')
             )
         )
 
+    title = f"Band {args.band} Compositional Variation"
     fig.update_layout(
-        title=f"Band {args.band} Ion Variation",
+        title=title,
         xaxis_title="Kpoint",
-        yaxis_title="Ion Contribution (%)",
+        yaxis_title="Percent (%)",
     )
+
 
     if args.labels:
         add_kpoint_labels(fig, dataframe, args.labels)
 
     fig.update_layout(template='simple_white')
 
-    fig.show()
+    if not args.output:
+        fig.show()
+    else:
+        fig.write_image(args.output)
+
+
+
+
+
+
+    
 
 
 def analyze_kpoint(args):
