@@ -367,6 +367,7 @@ def procar(subparsers):
     subp_procar.add_argument('-o', '--output', help='Output filename (either pickle file or queried results)')
     subp_procar.add_argument('-d', '--describe', action='store_true', help='Provides a brief description of the projected eigenvalues data')
     subp_procar.add_argument('--efermi', help='Reference Fermi Energy', type=float, default=0.0)
+    subp_procar.add_argument('-S', '--structure', help='Structure file')
 
     #add argument group for file handling 
     file_handling = subp_procar.add_argument_group('file handling')
