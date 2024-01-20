@@ -406,6 +406,7 @@ def wavecar(subparsers):
     functional_choices.add_argument('-p', '--parchg', help='Generate a PARCHG file from a WAVECAR file', action='store_true')
     functional_choices.add_argument('-c', '--cube', help='Save WAVECAR partial charge density as a cube file', action='store_true')
     functional_choices.add_argument('-m', '--mesh', help='Extract wavefunction coefficients projected onto a 3D mesh', action='store_true')
+    functional_choices.add_argument('-u', '--unk', help='Generate UNK files from a WAVECAR file', action='store_true')
 
     subp_wavecar.add_argument('input', help='WAVECAR or cube file')
     subp_wavecar.add_argument('-S', '--structure', help='Structure file')
