@@ -27,3 +27,5 @@ nosetests.xml
 *.mo
 conda-env
 vsh.egg-info
+
+.DS_Store
