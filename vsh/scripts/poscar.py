@@ -90,7 +90,32 @@ def make_supercell(args):
     else:
         poscar.write_file(f'{args.output}')
         
+def list_selective_dynamics(args):
+    '''Lists atoms and their selective dynamics'''
+    import pandas as pd
+    from pymatgen.io.vasp.inputs import Poscar
+    poscar = Poscar.from_file(args.input)
+
+    atoms = read(args.input).get_chemical_symbols()
+    dynamics = poscar.selective_dynamics
+    heights = poscar.structure.cart_coords[:, 2]
+
+    if dynamics is None:
+        dynamics = [[True, True, True]]*len(atoms)
+
+    atom_tuples = [ (atom, index, sd, height) for atom, index, sd, height in zip(atoms, range(0, len(atoms)), dynamics, heights) ]
+    #create a dataframe
+    df = pd.DataFrame(atom_tuples, columns=['atom', 'index', 'selective_dynamics', 'height'])
+
+    if not args.output:
         
+        #print without index and print the whole dataframe
+        with pd.option_context('display.max_rows', None, 'display.max_columns', None):
+            print(df.to_string(index=False))
+
+    else:
+        df.to_csv(args.output, index=False)
+
 def list_poscar(args):
     '''Lists the atoms by height file'''
     import pandas as pd
@@ -115,9 +140,6 @@ def list_poscar(args):
     else:
         df.to_csv(args.output, index=False)
 
-    
-
-    
 
 def run(args):
     functions = {
@@ -125,7 +147,8 @@ def run(args):
         "mp_poscar": mp_poscar,
         "convert": convert_to_poscar,
         "super": make_supercell,
-        "list": list_poscar
+        "list": list_poscar,
+        "dynamics": list_selective_dynamics,
     }
     
     for arg, func in functions.items():
