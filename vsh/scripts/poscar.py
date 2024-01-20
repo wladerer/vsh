@@ -97,7 +97,7 @@ def list_poscar(args):
     atoms = read(args.input)
 
     heights = atoms.get_positions()[:, 2]
-    atom_tuples = [ (atom, index, height) for atom, index, height in zip(atoms.get_chemical_symbols(), range(1, len(atoms)+1), heights) ]
+    atom_tuples = [ (atom, index, height) for atom, index, height in zip(atoms.get_chemical_symbols(), range(0, len(atoms)), heights) ]
     #create a dataframe
     df = pd.DataFrame(atom_tuples, columns=['atom', 'index', 'height'])
     
