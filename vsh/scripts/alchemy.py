@@ -17,7 +17,6 @@ def delete_atoms_by_type(atoms: Atoms, types: list[str]) -> None:
     del atoms[[atom.index for atom in atoms if atom.symbol in types]]
 
 
-
 def calculate_vacuum(atoms: Atoms) -> float:
     """Subtracts vacuum from a structure"""
     # get z positions
@@ -75,7 +74,7 @@ def delete_atoms(args):
 
     return None
 
-def freeze_atoms(args):
+def freeze(args):
     """Freezes atoms in a structure"""
     atoms = read(args.input)
 
@@ -137,7 +136,7 @@ def rattle_atoms(args):
 def run(args):
     functions = {
         "delete" : delete_atoms,
-        "freeze" : freeze_atoms,
+        "freeze" : freeze,
         "swap" : swap_atoms,
         "rattle" : rattle_atoms
     }
