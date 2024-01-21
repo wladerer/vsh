@@ -68,17 +68,18 @@ def generate_unk(args):
                 Unk(ik + 1, data).write_file(f"{args.output}_{fname}{ispin+1}")
 
 def run(args):
-    if args.parchg:
-        generate_parchg(args)
-    
-    if args.mesh:
-        generate_fft_mesh(args)
 
-    if args.unk:
-        generate_unk(args)
+    functions = {
+        'parchg': generate_parchg,
+        'mesh': generate_fft_mesh,
+        'unk': generate_unk
+    }
+
+    for arg, func in functions.items():
+        if getattr(args, arg):
+            func(args)
 
 
-        
 
 
 
