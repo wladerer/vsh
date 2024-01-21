@@ -1,92 +1,10 @@
-import subprocess
+import pickle
+import uuid
 from ase.io import read, write
 from PIL import Image
 import os
 
-def archive(files: list, archive_name: str):
-    """Archives a list of files into a tarball"""
-    try:
-        # Create a tarball of the output files
-        
-        result = subprocess.run(
-            ["tar", "-czvf", archive_name] + files,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            check=True,
-        )
 
-        # Print the output of the tar command
-        print(result.stdout)
-        print(f"Created archive: {archive_name}")
-
-    except subprocess.CalledProcessError:
-        print("Error: Unable to archive output files.")
-
-
-def copy(file: str, destination: str):
-    """Copies a file to a destination"""
-    try:
-        # Copy the file to the destination
-        result = subprocess.run(
-            ["cp", file, destination],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            check=True,
-        )
-
-        # Print the output of the cp command
-        print(result.stdout)
-
-    except subprocess.CalledProcessError:
-        print("Error: Unable to copy output file.")
-
-    except FileNotFoundError:
-        print("Error: Unable to find output file.")
-
-    except IsADirectoryError:
-        print("Error: Destination is a directory.")
-
-
-def copy_job(args):
-    """Copies all relevant job files to a destination"""
-    try:
-        files = ["POSCAR", "INCAR", "POTCAR", "KPOINTS", "CONTCAR"]
-        # Get only the output files that exist
-        files = [file for file in files if os.path.exists(file)]
-
-        # Remove any excluded files
-        files = [file for file in files if file not in args.exclude]
-
-        # Copy the output files, renaming CONTCAR to POSCAR if requested
-        for file in files:
-            if file == "CONTCAR" and args.rename_contcar:
-                copy(file, os.path.join(args.destination, "POSCAR"))
-                print(f"Renamed CONTCAR to POSCAR and copied to {args.destination}")
-            else:
-                copy(file, args.destination)
-
-        print(f"Copied files: {files} to {args.destination}")
-
-    except subprocess.CalledProcessError:
-        print("Error: Unable to copy output files.")
-
-def archive_job(args):
-    """Archives all relevant job files into a tarball"""
-    try:
-        files = ["OUTCAR", "POSCAR", "INCAR", "vasprun.xml", "KPOINTS", "CONTCAR", "vaspout.h5", "PROCAR"]
-        # Get only the output files that exist
-        files = [file for file in files if os.path.exists(file)]
-
-        # Remove any excluded files
-        files = [file for file in files if file not in args.exclude]
-
-        # Archive the output files
-        archive(files, args.output)
-
-    except subprocess.CalledProcessError:
-        print(f"Error: Unable to archive output files: {files}")
 
 def snapshot(args):
 
@@ -139,26 +57,147 @@ def snapshot(args):
         os.remove('oblique_view.png')
         print("Error: Unable to save snapshot")
 
-def make_vasp_dir(args):
-    '''Takes a list of POSCARs and creates a directory for each one with the POSCAR inside'''
-    from pathlib import Path
-    from shutil import copyfile
-    
-    dir_names = [f"{args.output}_{i}" for i in range(len(args.input))]
-    
-    for dir_name, poscar in zip(dir_names, args.input):
-        Path(dir_name).mkdir(parents=True, exist_ok=True)
-        copyfile(poscar, f"{dir_name}/POSCAR")
 
+def parse_general_vasprun(file: str) -> dict:
+    '''Parses the general vasprun.xml file for structure, kpoint info, and energy'''
+    from pymatgen.io.vasp import Vasprun
+    vasprun = Vasprun(file, parse_potcar_file=False, parse_dos=False, parse_eigen=False, parse_projected_eigen=False)
+
+    # Get INCAR parameters
+    incar = vasprun.incar
+    incar_dict = incar.as_dict()
+
+    # Get KPOINTS parameters
+    # kpoints = vasprun.kpoints
+    # kpoints_dict = kpoints.as_dict()
+    # # if kpoints.labels is None, add a blank label
+    # if kpoints_dict['labels'] is None:
+    #     kpoints_dict['labels'] = ['']
+
+    # Get initial and final structures
+    initial_structure = vasprun.initial_structure
+    final_structure = vasprun.final_structure
+
+    # Get energy
+    energy = vasprun.final_energy
+
+    # Check if the calculation is converged
+    converged = vasprun.converged
+
+    # compile dictionary
+    output = {
+        "incar": incar_dict,
+        # "kpoints": kpoints_dict,
+        "initial_structure": initial_structure,
+        "final_structure": final_structure,
+        "energy": energy,
+        "converged": converged
+    }
+
+    return output
+
+def note_to_string(file: str) -> str:
+    '''Converts a note file to a string'''
+    with open(file, 'r') as f:
+        note = f.read()
+    return note
+
+def unique_serial_number():
+    '''Generates a unique serial number for each simulation'''
+    return uuid.uuid4()
+
+def write_data_pickle(args):
+    '''Stores a snapshot of the simulation in a pickle file. '''
+    
+    # Get the data dictionary
+    data = parse_general_vasprun(args.input)
+
+    if args.note:
+        note = note_to_string(args.note)
+        data['note'] = note
+
+    if args.electronic_structure:
+        from procar import load_dataframe_from_file
+        df = load_dataframe_from_file(args.input)
+        data['electronic_structure'] = df
+
+    # Generate a unique serial number
+    serial_number = unique_serial_number()
+    data['serial_number'] = serial_number
+
+    if args.output:
+        # Save the data dictionary
+        with open(args.output, 'wb') as f:
+            pickle.dump(data, f)
+
+    else:
+        print(data)
+
+
+def unpack_pickle(args):
+    '''Unpacks POSCAR, INCAR, CONTCAR, and KPOINTS from a pickle file'''
+    from pymatgen.io.vasp import Poscar, Incar, Kpoints
+    import pandas as pd
+
+    try:
+        with open(args.input, 'rb') as f:
+            data = pickle.load(f)
+    except Exception as e:
+        print(f"Error loading pickle file: {e}")
+        return
+    
+    # Unpack the data
+    incar = Incar.from_dict(data['incar'])
+    # kpoints = Kpoints.from_dict(data['kpoints'])
+    poscar = Poscar(data['initial_structure'])
+    contcar = Poscar(data['final_structure'])
+    energy = data['energy']
+    converged = data['converged']
+    serial_number = data['serial_number']
+
+    # Save the data
+    if args.output:
+        incar.write_file(args.output + "/INCAR")
+        # kpoints.write_file(args.output + "/KPOINTS")
+        poscar.write_file(args.output + "/POSCAR")
+        contcar.write_file(args.output + "/CONTCAR")
+
+        with open(f"{args.output}/note.vsh", 'w') as f:
+            f.write(f"Energy: {energy}\n")
+            f.write(f"Converged: {converged}\n")
+            f.write(f"Serial Number: {serial_number}\n")
+            if 'note' in data.keys():
+                f.write(f"Note: {data['note']}\n")
+
+
+        if 'electronic_structure' in data.keys():
+            df = data['electronic_structure']
+            pd.to_pickle(df, args.output + "/electronic_structure.pkl")
+
+
+    else:
+
+        print("INCAR:")
+        print(incar)
+        # print("KPOINTS:")
+        # print(kpoints.kpts)
+        print("POSCAR:")
+        print(poscar)
+        print("CONTCAR:")
+        print(contcar)
+        print(f"Energy: {energy}")
+        print(f"Converged: {converged}")
+        print(f"Serial Number: {serial_number}")
+        if 'note' in data.keys():
+            print(f"Note: {data['note']}")
 
 
 def run(args):
 
     functions = { 
-        "archive": archive_job,
-        "copy": copy_job,
         "snapshot": snapshot,
-        "mkvdir": make_vasp_dir
+        "archive": write_data_pickle,
+        "unarchive": unpack_pickle
     }
 
     for arg, func in functions.items():

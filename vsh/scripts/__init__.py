@@ -194,35 +194,15 @@ def slab(subparsers):
 def manage(subparsers):
     subp_manage = subparsers.add_parser("manage", help="Manage VASP calculations")
 
-    subp_manage.add_argument(
-        "--archive", action="store_true", help="Archive output files"
-    )
-    subp_manage.add_argument("--copy", action="store_true", help="Copy output files")
-    subp_manage.add_argument(
-        "-e",
-        "--exclude",
-        type=list,
-        nargs="+",
-        default=[],
-        help="Exclude files from archive or copy",
-    )
-    subp_manage.add_argument(
-        "-d", "--destination", type=str, default=None, help="Destination for copy"
-    )
-    subp_manage.add_argument(
-        "-o", "--output", type=str, default=None, help="Output file name"
-    )
-    subp_manage.add_argument(
-        "-w",
-        "--rename-contcar",
-        action="store_true",
-        help="Rename CONTCAR to POSCAR when copied",
-    )
-    subp_manage.add_argument(
-        "-s", "--snapshot", type=str, help="Input file to snapshot"
-    )
-    subp_manage.add_argument("--mkvdir", action="store_true", help="Create a directory for each structure in the current directory")
-    subp_manage.add_argument("-i", "--input", nargs='+', type=str, help="Input file(s)")
+    subp_manage.add_argument("input", type=str, help="Input vasprun.xml or pickle file")
+
+    subp_manage.add_argument("-a", "--archive", action="store_true", help="Archive output files in a pickle file")
+    subp_manage.add_argument("-u", "--unarchive", action="store_true", help="Unarchive output files from a pickle file")
+    subp_manage.add_argument("-o", "--output", type=str, default=None, help="Output file name")
+    subp_manage.add_argument("-s", "--snapshot", type=str, help="Take perspective view images of a structure file")
+    subp_manage.add_argument("-n", "--note", type=str, help="Add a note to the pickle file")
+    subp_manage.add_argument("-e", "--electronic-structure", action="store_true", help="Add projected electronic structure to the pickle file")
+    
 
 
 def adsorb(subparsers):
