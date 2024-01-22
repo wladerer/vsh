@@ -27,8 +27,6 @@ def plot_linear_slice(file: str, point1: list[float, float, float], point2: list
     plt.title('Charge density along slice')
     plt.show()
 
-plot_linear_slice('/Users/wladerer/Downloads/carbon/band2_parchg.vasp', [0.0, 0.0, 0.0], [0.0, 0.0, 0.5], 100)
-
 def run(args):
     try:
         chgcar1 = Chgcar.from_file(args.input[0])
