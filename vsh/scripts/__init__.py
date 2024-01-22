@@ -202,7 +202,7 @@ def manage(subparsers):
     subp_manage.add_argument("-s", "--snapshot", type=str, help="Take perspective view images of a structure file")
     subp_manage.add_argument("-n", "--note", type=str, help="Add a note to the pickle file")
     subp_manage.add_argument("-e", "--electronic-structure", action="store_true", help="Add projected electronic structure to the pickle file")
-    
+
 
 
 def adsorb(subparsers):
@@ -393,7 +393,16 @@ def wavecar(subparsers):
     subp_wavecar.add_argument('-S', '--structure', help='Structure file')
     subp_wavecar.add_argument('-o', '--output', help='Output filename', type=str)
     
+def chgcar(subparsers):
+
+    subp_chgcar = subparsers.add_parser('chgcar', help='Reads, analyses, and converts charge density information from PARCHG and CHGCAR files')
+    subp_chgcar.add_argument('input', help='PARCHG or CHGCAR file(s)', nargs='+')
+    subp_chgcar.add_argument('-c', '--cube', help='Save CHGCAR or PARCHG as a cube file', action='store_true')
+    subp_chgcar.add_argument('-s', '--sum', help='Add multiple PARCHG or CHGCAR files', action='store_true')
+    subp_chgcar.add_argument('-d', '--diff', help='Subtract two PARCHG or CHGCAR files', action='store_true')
+    subp_chgcar.add_argument('-o', '--output', help='Save a PARCHG or CHGCAR file', type=str)
+
 
 def setup(subparsers):
-    for script in adsorb, alchemy, analysis, band, cohp, db, incar, kpoints, manage, poscar, procar, slab, wavecar:
+    for script in adsorb, alchemy, analysis, band, chgcar, cohp, db, incar, kpoints, manage, poscar, procar, slab, wavecar:
         script(subparsers)
