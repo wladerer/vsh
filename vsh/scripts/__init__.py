@@ -167,7 +167,7 @@ def slab(subparsers):
 def manage(subparsers):
     subp_manage = subparsers.add_parser("manage", help="Manage VASP calculations")
 
-    subp_manage.add_argument("input", type=str, help="Input vasprun.xml or pickle file")
+    subp_manage.add_argument("input", type=str, help="Input vasprun.xml, pickle file, or VASP directory")
 
     subp_manage.add_argument("-a", "--archive", action="store_true", help="Archive output files in a pickle file")
     subp_manage.add_argument("-u", "--unarchive", action="store_true", help="Unarchive output files from a pickle file")
@@ -176,7 +176,6 @@ def manage(subparsers):
     subp_manage.add_argument("-s", "--snapshot", type=str, help="Take perspective view images of a structure file")
     subp_manage.add_argument("-n", "--note", type=str, help="Add a note to the pickle file")
     subp_manage.add_argument("-e", "--electronic-structure", action="store_true", help="Add projected electronic structure to the pickle file")
-    subp_manage.add_argument("-d", "--directory", type=str, default=".", help="Directory where the data is stored")
 
 def adsorb(subparsers):
     subp_adsorb = subparsers.add_parser("adsorb", help="Generate adsorbed structures")

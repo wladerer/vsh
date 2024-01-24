@@ -10,7 +10,7 @@ def validate_input(args):
     import os
 
     # check that each file exists
-    directory = args.directory
+    directory = args.input
     incar_file = os.path.join(directory, 'INCAR')
     poscar_file = os.path.join(directory, 'POSCAR')
     kpoints_file = os.path.join(directory, 'KPOINTS')
