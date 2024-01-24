@@ -118,7 +118,7 @@ def poscar(subparsers):
     
     molecule = subp_poscar.add_argument_group('Molecular Tools')
     molecule.add_argument("-b", "--box", action='store_true', help="Create a POSCAR for a molecule surrounded by vacuum")
-    molecule.add_argument("-v", "--vacuum", type=float, default=10.0, help="Vacuum size")
+    molecule.add_argument("-v", "--vacuum", type=float, default=12.0, help="Vacuum size")
     molecule.add_argument("-N", "--no-cross", action='store_true', help="Do not cross the periodic boundary", default=False)
 
 
