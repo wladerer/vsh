@@ -38,6 +38,20 @@ def structure_from_mpi_code(mpcode: str, api_key: str, is_conventional: bool = T
 
     return structure
 
+def boxed_molecule(args):
+    '''Creates a boxed molecule from an input file'''
+    from pymatgen.core import Structure, Molecule
+    from pymatgen.io.vasp.inputs import Poscar
+
+    #read the molecule
+    box_molecule: Structure = Molecule.from_file(args.input).get_boxed_structure(a=args.vacuum, b=args.vacuum, c=args.vacuum, no_cross=args.no_cross)
+    poscar = Poscar(box_molecule, sort_structure=True)
+
+    if not args.output:
+        print(poscar.get_str())
+    else:
+        poscar.write_file(f'{args.output}')
+
 
 def mp_poscar(args):
     '''Creates a POSCAR file from a Materials Project code'''
@@ -149,6 +163,7 @@ def run(args):
         "super": make_supercell,
         "list": list_poscar,
         "dynamics": list_selective_dynamics,
+        "box": boxed_molecule,
     }
     
     for arg, func in functions.items():

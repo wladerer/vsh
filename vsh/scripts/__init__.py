@@ -115,6 +115,12 @@ def poscar(subparsers):
     subp_poscar.add_argument("--super", nargs=3, type=int, help="Generate a supercell")
     subp_poscar.add_argument("-l", "--list", action='store_true', help="List the positions of the atoms")
     subp_poscar.add_argument("-d", "--dynamics", action='store_true', help="List atoms and their degrees of freedom")
+    
+    molecule = subp_poscar.add_argument_group('Molecular Tools')
+    molecule.add_argument("-b", "--box", action='store_true', help="Create a POSCAR for a molecule surrounded by vacuum")
+    molecule.add_argument("-v", "--vacuum", type=float, default=10.0, help="Vacuum size")
+    molecule.add_argument("-N", "--no-cross", action='store_true', help="Do not cross the periodic boundary", default=False)
+
 
 def potcar(subparsers):
     subp_potcar = subparsers.add_parser("potcar", help="Generate and update POTCAR files")
