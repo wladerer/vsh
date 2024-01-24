@@ -226,7 +226,7 @@ def run(args):
         "snapshot": snapshot,
         "archive": write_data_pickle,
         "unarchive": unpack_pickle,
-        "validate": validate_input
+        "validate": validate_input,
     }
 
     for arg, func in functions.items():
