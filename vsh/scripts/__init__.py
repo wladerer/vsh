@@ -90,12 +90,8 @@ def band(subparsers):
 
 def db(subparsers):
     """Parse command line arguments"""
-    subp_db = subparsers.add_parser(
-        "db", help="Interact with ASE database using extended vsh logic"
-    )
-    subp_db.add_argument(
-        "-i", "--input", default="vasprun.xml", type=str, help="vasprun.xml file"
-    )
+    subp_db = subparsers.add_parser( "db", help="Interact with ASE database using extended vsh logic")
+    subp_db.add_argument("-i", "--input", default="vasprun.xml", type=str, help="vasprun.xml file")
     subp_db.add_argument("database", type=str, help="Database file")
 
 
@@ -141,54 +137,25 @@ def kpoints(subparsers):
     # subp_kpoints.add_argument("--weight", type=int, default=0, help="Weight for hybrid mesh")
 
 def slab(subparsers):
-    subp_slabgen = subparsers.add_parser(
-        "slab", help="Generate slabs from structure using pymatgen"
-    )
+    subp_slabgen = subparsers.add_parser("slab", help="Generate slabs from structure using pymatgen")
 
-    subp_slabgen.add_argument("structure", type=str, help="Structure file"
-    )
-    subp_slabgen.add_argument(
-        "-m",
-        "--miller-plane",
-        type=int,
-        nargs=3,
-        default=[0, 0, 1],
-        help="Miller plane",
-    )
+    subp_slabgen.add_argument("input", type=str, help="Structure file")
+    subp_slabgen.add_argument("-m","--miller-plane",type=int,nargs=3,default=[0, 0, 1],help="Miller plane",)
     subp_slabgen.add_argument("-o", "--output", type=str, help="Output file basename")
     subp_slabgen.add_argument("--sort", action='store_true', help="Sort atoms")
-    subp_slabgen.add_argument(
-        "-v", "--vacuum", type=float, default=15.0, help="Vacuum size"
-    )
-    subp_slabgen.add_argument(
-        "-s",
-        "--symmetric",
-        type=bool,
-        default=True,
-        help="Ensure that the faces of the slab are symmetric",
-    )
-    subp_slabgen.add_argument(
-        "-t",
-        "--thickness",
-        default=3.0,
-        help="Minimum slab thickness in Angstrom or multiples of miller plane spacing",
-    )
-    subp_slabgen.add_argument(
-        "--primitive", default=False, help="Create primitive cell"
-    )
-    subp_slabgen.add_argument(
-        "-c", "--center-slab", default=True, help="Center the slab"
-    )
-    subp_slabgen.add_argument(
-        "-u",
-        "--in-unit-planes",
-        action='store_true',
-        default=False,
-        help="Specify zmin in multiples of miller plane spacing",
-    )
-    subp_slabgen.add_argument(
-        "--freeze", default=5, type=float, help="Freeze the bottom layer of the slab"
-    )
+    subp_slabgen.add_argument("-v", "--vacuum", type=float, default=15.0, help="Vacuum size")
+    subp_slabgen.add_argument("-s","--symmetric",type=bool,default=True,help="Ensure that the faces of the slab are symmetric")
+    subp_slabgen.add_argument("-t","--thickness",default=3.0,help="Minimum slab thickness in Angstrom or multiples of miller plane spacing")
+    subp_slabgen.add_argument("--primitive", default=False, help="Create primitive cell")
+    subp_slabgen.add_argument("-c", "--center-slab", default=True, help="Center the slab")
+    subp_slabgen.add_argument("-u", "--in-unit-planes", action='store_true', default=False, help="Specify zmin in multiples of miller plane spacing")
+    subp_slabgen.add_argument("--freeze", default=5, type=float, help="Freeze the bottom layer of the slab")
+    subp_slabgen.add_argument("-r", "--reorient-lattice", action='store_true', help="Reorient the lattice", default=True)
+    subp_slabgen.add_argument("-O", "--orthogonalize", action='store_true', help="Orthogonalize the a surface")
+    subp_slabgen.add_argument("-a", "--alpha", type=float, help="Alpha angle")
+    subp_slabgen.add_argument("-b", "--beta", type=float, help="Beta angle")
+    subp_slabgen.add_argument("-g", "--gamma", type=float, help="Gamma angle")
+    subp_slabgen.add_argument("-V", "--verbose", action='store_true', help="Verbose output")
 
 
 def manage(subparsers):
