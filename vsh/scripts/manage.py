@@ -4,6 +4,34 @@ from ase.io import read, write
 from PIL import Image
 import os
 
+def validate_input(args):
+    '''Validates that INCAR, POSCAR, KPOINTS, and POTCAR files are present and formatted correctly'''
+    from pymatgen.io.vasp import Incar, Poscar, Kpoints, Potcar
+    import os
+
+    # check that each file exists
+    directory = args.directory
+    incar_file = os.path.join(directory, 'INCAR')
+    poscar_file = os.path.join(directory, 'POSCAR')
+    kpoints_file = os.path.join(directory, 'KPOINTS')
+    potcar_file = os.path.join(directory, 'POTCAR')
+
+    for file in [incar_file, poscar_file, kpoints_file, potcar_file]:
+        if not os.path.isfile(file):
+            raise FileNotFoundError(f"File not found: {file}")
+        
+    # check that each file is formatted correctly
+    incar = Incar.from_file(incar_file)
+    poscar = Poscar.from_file(poscar_file)
+    kpoints = Kpoints.from_file(kpoints_file)
+    potcar = Potcar.from_file(potcar_file)
+
+    #check that incar has valid tags
+    incar.check_params() #stdout is empty if no errors
+
+
+    print("Input files validated successfully")
+
 
 
 def snapshot(args):
@@ -197,7 +225,8 @@ def run(args):
     functions = { 
         "snapshot": snapshot,
         "archive": write_data_pickle,
-        "unarchive": unpack_pickle
+        "unarchive": unpack_pickle,
+        "validate": validate_input
     }
 
     for arg, func in functions.items():

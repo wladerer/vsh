@@ -171,11 +171,12 @@ def manage(subparsers):
 
     subp_manage.add_argument("-a", "--archive", action="store_true", help="Archive output files in a pickle file")
     subp_manage.add_argument("-u", "--unarchive", action="store_true", help="Unarchive output files from a pickle file")
+    subp_manage.add_argument("-v", "--validate", action="store_true", help="Validate input files")
     subp_manage.add_argument("-o", "--output", type=str, default=None, help="Output file name")
     subp_manage.add_argument("-s", "--snapshot", type=str, help="Take perspective view images of a structure file")
     subp_manage.add_argument("-n", "--note", type=str, help="Add a note to the pickle file")
     subp_manage.add_argument("-e", "--electronic-structure", action="store_true", help="Add projected electronic structure to the pickle file")
-
+    
 
 
 def adsorb(subparsers):
