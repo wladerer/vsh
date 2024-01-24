@@ -176,8 +176,7 @@ def manage(subparsers):
     subp_manage.add_argument("-s", "--snapshot", type=str, help="Take perspective view images of a structure file")
     subp_manage.add_argument("-n", "--note", type=str, help="Add a note to the pickle file")
     subp_manage.add_argument("-e", "--electronic-structure", action="store_true", help="Add projected electronic structure to the pickle file")
-    
-
+    subp_manage.add_argument("-d", "--directory", type=str, default=".", help="Directory where the data is stored")
 
 def adsorb(subparsers):
     subp_adsorb = subparsers.add_parser("adsorb", help="Generate adsorbed structures")
