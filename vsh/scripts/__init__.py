@@ -108,6 +108,7 @@ def poscar(subparsers):
     subp_poscar = subparsers.add_parser("poscar", help="Generate and update POSCAR files")
     subp_poscar.add_argument("-i", "--input", type=str, help="Structure file")
     subp_poscar.add_argument("--mp-poscar", type=str, help="Materials Project code")
+    subp_poscar.add_argument("--rdf", action='store_true', help="Plot the radial distribution function of a structure")
     subp_poscar.add_argument("-p", "--primitive", action='store_true', help="Use primitive cell")
     subp_poscar.add_argument("-o", "--output", type=str, help="Output file name")
     subp_poscar.add_argument("--sort", action='store_true', help="Sort atoms")
