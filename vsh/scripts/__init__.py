@@ -98,7 +98,7 @@ def db(subparsers):
 def incar(subparsers):
     subp_incar = subparsers.add_parser("incar", help="Generate and update INCAR files")
     
-    subp_incar.add_argument("--write", choices=['bulk', 'bader', 'slab', 'band-slab', 'band', 'single-point', 'single-point-slab', 'single-point-slab-soc'], help="Write an INCAR file from the defaults in incar.json")
+    subp_incar.add_argument("--write", choices=['bulk', 'bader', 'slab', 'band-slab','band-slab-soc','band', 'single-point', 'single-point-slab', 'single-point-slab-soc'], help="Write an INCAR file from the defaults in incar.json")
     subp_incar.add_argument("-i", "--input", type=str, help="INCAR file path")
     subp_incar.add_argument("-u", "--update", help="Update an INCAR file with the specified tag value pair", nargs=2, type=str)
     subp_incar.add_argument("-o", "--output", type=str, help="Output file name")
