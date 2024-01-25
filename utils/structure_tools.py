@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from scipy.spatial import distance_matrix
 from ase.io import read
 
@@ -52,4 +53,68 @@ def vasp_to_distance_matrix(file: str, n: int = 12):
 
     return dist
 
+def calculate_rdf(coordinates, bins=1000, r_max=15):
+    """
+    Calculate the radial distribution function (RDF) from a set of XYZ coordinates.
 
+    Parameters:
+    - coordinates: numpy array of shape (n_particles, 3) representing XYZ coordinates.
+    - bins: number of bins for histogram.
+    - r_max: maximum distance to consider.
+
+    Returns:
+    - bin_centers: centers of the bins.
+    - rdf: radial distribution function.
+    """
+    n_particles = len(coordinates)
+    if r_max is None:
+        r_max = np.max(np.linalg.norm(coordinates - coordinates[0], axis=1))
+
+    # Calculate pairwise distances
+    distances = np.sqrt(np.sum((coordinates[:, np.newaxis] - coordinates)**2, axis=-1))
+
+    # Create histogram
+    hist, bin_edges = np.histogram(distances, bins=bins, range=(0, r_max))
+
+    # Calculate bin centers and RDF
+    bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
+    rdf = hist / (4 * np.pi * bin_centers**2 * (r_max / bins))
+
+    # Remove the first bin because it is always 0
+    bin_centers = bin_centers[1:]
+    rdf = rdf[1:]
+
+    # Normalize RDF
+    rdf /= np.sum(rdf)
+
+    return bin_centers, rdf
+
+
+def plot_radial_distribution_function(input_files: list[str], labels: list[str], output_file: str = None):
+    '''Plots the radial distribution function of a structure'''
+    import plotly.graph_objects as go
+    from pymatgen.core import Structure
+
+    fig = go.Figure()
+
+    for input_file, label in zip(input_files, labels):
+        coords = Structure.from_file(input_file).cart_coords
+        bin_centers, rdf = calculate_rdf(coords)
+
+        # Add trace for each input file
+        fig.add_trace(go.Scatter(x=bin_centers, y=rdf, mode='lines', name=label))
+
+    fig.update_layout(
+        title='Radial distribution function',
+        xaxis_title='Distance (Å)',
+        yaxis_title='RDF',
+        template='plotly_white'
+    )
+
+    if not output_file:
+        fig.show()
+    else:
+        fig.write_image(output_file)
+
+files = [f'/Users/wladerer/research/pt3sn/slabs/111/al{i}/CONTCAR' for i in [4, 6, 8, 10 ,12] ]
+plot_radial_distribution_function(files, labels=['al4', 'al6', 'al8', 'al10', 'al12'])
