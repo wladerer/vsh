@@ -2,90 +2,34 @@ import argparse
 
 
 def analysis(subparsers):
-    subp_analysis = subparsers.add_parser(
-        "analysis", help="Analyze structure using ASE and pymatgen utilities"
-    )
-
-    # Structure parameters from file -f or --file
-    subp_analysis.add_argument(
-        "-i", "--input", type=str, help="Specify structure file", default="vasprun.xml"
-    )
-    subp_analysis.add_argument(
-        "--volume", help="Prints the volume of the structure", action="store_true"
-    )
-    subp_analysis.add_argument(
-        "--conflicts", type=float, help="Prints the conflicting atoms"
-    )
-    subp_analysis.add_argument(
-        "--cell", help="Prints the unit cell dimensions", action="store_true"
-    )
-    subp_analysis.add_argument(
-        "--params",
-        help="Prints the unit cell parameters (a,b,c) of the structure",
-        action="store_true",
-    )
-    subp_analysis.add_argument(
-        "--symmetry",
-        help="Prints the space group number and symbol",
-        action="store_true",
-    )
-    subp_analysis.add_argument(
-        "--energy", help="Prints the energy of the structure", action="store_true"
-    )
-    subp_analysis.add_argument(
-        "--vacuum", help="Prints the vacuum of the structure", action="store_true"
-    )
+    subp_analysis = subparsers.add_parser("analysis", help="Analyze structure using ASE and pymatgen utilities")
+    subp_analysis.add_argument("-i", "--input", type=str, help="Specify structure file", default="vasprun.xml")
+    subp_analysis.add_argument("--volume", help="Prints the volume of the structure", action="store_true")
+    subp_analysis.add_argument("--conflicts", type=float, help="Prints the conflicting atoms")
+    subp_analysis.add_argument("--cell", help="Prints the unit cell dimensions", action="store_true")
+    subp_analysis.add_argument("--params",help="Prints the unit cell parameters (a,b,c) of the structure",action="store_true")
+    subp_analysis.add_argument("--symmetry",help="Prints the space group number and symbol",action="store_true")
+    subp_analysis.add_argument("--energy", help="Prints the energy of the structure", action="store_true")
+    subp_analysis.add_argument("--vacuum", help="Prints the vacuum of the structure", action="store_true")
     subp_analysis.add_argument("--positions", help="Prints the positions of the atoms")
-    subp_analysis.add_argument(
-        "-c",
-        "--converged",
-        action="store_true",
-        help="Prints if the structure is converged",
-    )
+    subp_analysis.add_argument("-c","--converged",action="store_true", help="Prints if the structure is converged")
 
 
 def band(subparsers):
     subp_band = subparsers.add_parser("band", help="Plot band structure")
 
-    subp_band.add_argument(
-        "-e",
-        "--elimit",
-        type=float,
-        nargs="+",
-        default=[-2, 2],
-        help="Range of energy to plot",
-    )
-    subp_band.add_argument(
-        "-m", "--mode", type=str, default="parametric", help="Plotting mode"
-    )
-    subp_band.add_argument(
-        "--orbitals", nargs="+", default=None, help="Orbitals to plot"
-    )
-    subp_band.add_argument(
-        "--spins", type=int, nargs="+", default=None, help="Spins to plot"
-    )
-    subp_band.add_argument(
-        "--atoms", type=int, nargs="+", default=None, help="Atoms to plot"
-    )
+    subp_band.add_argument("-e", "--elimit",type=float,nargs="+",default=[-2, 2],help="Range of energy to plot")
+    subp_band.add_argument("-m", "--mode", type=str, default="parametric", help="Plotting mode")
+    subp_band.add_argument("--orbitals", nargs="+", default=None, help="Orbitals to plot")
+    subp_band.add_argument("--spins", type=int, nargs="+", default=None, help="Spins to plot")
+    subp_band.add_argument("--atoms", type=int, nargs="+", default=None, help="Atoms to plot")
     subp_band.add_argument("--cmap", type=str, default="cool", help="Color map")
-    subp_band.add_argument(
-        "--clim", type=float, nargs="+", default=[0, 1], help="Color map limits"
-    )
-    subp_band.add_argument(
-        "--code", type=str, default="vasp", help="Code used to generate the data"
-    )
-    subp_band.add_argument(
-        "--dirname", type=str, default=".", help="Directory where the data is stored"
-    )
-    subp_band.add_argument(
-        "-o", "--output", type=str, default=None, help="Output file name"
-    )
-    subp_band.add_argument(
-        "--fermi", type=float, default=None, help="Fermi energy (eV)"
-    )
-    subp_band.add_argument(
-        "--dpi", type=int, default=800, help="DPI of the output file"
-    )
+    subp_band.add_argument("--clim", type=float, nargs="+", default=[0, 1], help="Color map limits")
+    subp_band.add_argument("--code", type=str, default="vasp", help="Code used to generate the data")
+    subp_band.add_argument("--dirname", type=str, default=".", help="Directory where the data is stored")
+    subp_band.add_argument("-o", "--output", type=str, default=None, help="Output file name")
+    subp_band.add_argument("--fermi", type=float, default=None, help="Fermi energy (eV)")
+    subp_band.add_argument("--dpi", type=int, default=800, help="DPI of the output file")
 
 
 def db(subparsers):
@@ -106,8 +50,7 @@ def incar(subparsers):
 
 def poscar(subparsers):
     subp_poscar = subparsers.add_parser("poscar", help="Generate and update POSCAR files")
-    subp_poscar.add_argument("-i", "--input", type=str, help="Structure file")
-    subp_poscar.add_argument("--mp-poscar", type=str, help="Materials Project code")
+    subp_poscar.add_argument("input", type=str, help="Structure file")
     subp_poscar.add_argument("--rdf", action='store_true', help="Plot the radial distribution function of a structure")
     subp_poscar.add_argument("-p", "--primitive", action='store_true', help="Use primitive cell")
     subp_poscar.add_argument("-o", "--output", type=str, help="Output file name")
@@ -177,35 +120,17 @@ def manage(subparsers):
     subp_manage.add_argument("-s", "--snapshot", type=str, help="Take perspective view images of a structure file")
     subp_manage.add_argument("-n", "--note", type=str, help="Add a note to the pickle file")
     subp_manage.add_argument("-e", "--electronic-structure", action="store_true", help="Add projected electronic structure to the pickle file")
+    subp_manage.add_argument("--mp-poscar", type=str, help="Materials Project code")
 
 def adsorb(subparsers):
     subp_adsorb = subparsers.add_parser("adsorb", help="Generate adsorbed structures")
 
     subp_adsorb.add_argument("input", type=str, help="Input file")
-    subp_adsorb.add_argument(
-        "-a", "--adsorbate", type=str, default=None, help="Adsorbate file"
-    )
-    subp_adsorb.add_argument(
-        "-z",
-        "--distance",
-        type=float,
-        default=1.0,
-        help="Distance between adsorbate and surface",
-    )
-    subp_adsorb.add_argument(
-        "--freeze", type=float, default=5.0, help="Minimum z value for freezing"
-    )
-    subp_adsorb.add_argument(
-        "-c",
-        "--coverage",
-        type=int,
-        nargs=3,
-        default=[1, 1, 1],
-        help="Adsorbate coverage",
-    )
-    subp_adsorb.add_argument(
-        "-o", "--output", type=str, default=None, help="Output basename"
-    )
+    subp_adsorb.add_argument("-a", "--adsorbate", type=str, default=None, help="Adsorbate file")
+    subp_adsorb.add_argument("-z","--distance",type=float,default=1.0,help="Distance between adsorbate and surface")
+    subp_adsorb.add_argument("--freeze", type=float, default=5.0, help="Minimum z value for freezing")
+    subp_adsorb.add_argument("-c","--coverage",type=int,nargs=3,default=[1, 1, 1],help="Adsorbate coverage")
+    subp_adsorb.add_argument("-o", "--output", type=str, default=None, help="Output basename")
 
 def alchemy(subparsers):
 
@@ -221,7 +146,6 @@ def alchemy(subparsers):
     subp_alchemy.add_argument('-z', help='Z position of atoms to freeze', type=float)
     subp_alchemy.add_argument('--direction', help='Direction of atoms to freeze', type=str, choices=['above', 'below'])
     subp_alchemy.add_argument('--range', help='Range of atoms to freeze', nargs=2, type=float)
-
 
 def cohp(subparsers):
     subp_cohp = subparsers.add_parser("cohp", help="Plot COHPs")
