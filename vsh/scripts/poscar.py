@@ -220,6 +220,7 @@ def plot_radial_distribution_function(args):
 def run(args):
     functions = {
         "sort": sort_poscar,
+        "mp": mp_poscar,
         "convert": convert_to_poscar,
         "super": make_supercell,
         "list": list_poscar,

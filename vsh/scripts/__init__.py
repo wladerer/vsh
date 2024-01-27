@@ -59,6 +59,7 @@ def poscar(subparsers):
     subp_poscar.add_argument("--super", nargs=3, type=int, help="Generate a supercell")
     subp_poscar.add_argument("-l", "--list", action='store_true', help="List the positions of the atoms")
     subp_poscar.add_argument("-d", "--dynamics", action='store_true', help="List atoms and their degrees of freedom")
+    subp_poscar.add_argument("--mp", action='store_true', help="Retrieve (relaxed) poscar from Materials Project API") 
     
     molecule = subp_poscar.add_argument_group('Molecular Tools')
     molecule.add_argument("-b", "--box", action='store_true', help="Create a POSCAR for a molecule surrounded by vacuum")
