@@ -228,7 +228,7 @@ def structure_from_mpi_code(mpcode: str, api_key: str, is_conventional: bool = T
     if not mpcode.startswith("mp-"):
         mpcode = "mp-"+mpcode
 
-    with MPRester(api_key) as mpr:
+    with MPRester(api_key, mute_progress_bars=True) as mpr:
         structure = mpr.get_structure_by_material_id(
             mpcode, conventional_unit_cell=is_conventional)
 
