@@ -227,7 +227,6 @@ def run(args):
         "archive": write_data_pickle,
         "unarchive": unpack_pickle,
         "validate": validate_input,
-        "mp_poscar": mp_poscar,
     }
 
     for arg, func in functions.items():
