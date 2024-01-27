@@ -46,6 +46,7 @@ def incar(subparsers):
     subp_incar.add_argument("-i", "--input", type=str, help="INCAR file path")
     subp_incar.add_argument("-u", "--update", help="Update an INCAR file with the specified tag value pair", nargs=2, type=str)
     subp_incar.add_argument("-o", "--output", type=str, help="Output file name")
+    subp_incar.add_argument("-t", "--tag-info", type=str, help="Get help on a VASP tag")
     
 
 def poscar(subparsers):

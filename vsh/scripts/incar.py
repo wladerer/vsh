@@ -2,6 +2,7 @@ from ase.io import read
 import os
 import json
 
+
 def get_atoms(args):
     '''Creates ASE atoms object from a file'''
 
@@ -44,10 +45,26 @@ def update_incar_tag(args) -> None:
         
     return None
 
+
+def get_help(args):
+    '''Retrieve info on VASP tags using VaspDoc'''
+    from pymatgen.io.vasp.help import VaspDoc
+    doc = VaspDoc().get_help(args.tag_info)
+
+    if not args.output:
+
+        print(doc)
+
+    else:
+        with open(args.output, 'w') as f:
+            f.write(doc) 
+
+
 def run(args):
     functions = {
         'write': write_incar,
-        'update': update_incar_tag
+        'update': update_incar_tag,
+        'tag_info': get_help
     }
     
     for arg, func in functions.items():
