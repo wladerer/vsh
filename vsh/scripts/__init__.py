@@ -50,7 +50,7 @@ def incar(subparsers):
 
 def poscar(subparsers):
     subp_poscar = subparsers.add_parser("poscar", help="Generate and update POSCAR files")
-    subp_poscar.add_argument("input", type=str, help="Structure file")
+    subp_poscar.add_argument("input", type=str, help="Structure file or Materials Project ID")
     subp_poscar.add_argument("--rdf", action='store_true', help="Plot the radial distribution function of a structure")
     subp_poscar.add_argument("-p", "--primitive", action='store_true', help="Use primitive cell")
     subp_poscar.add_argument("-o", "--output", type=str, help="Output file name")
@@ -120,7 +120,6 @@ def manage(subparsers):
     subp_manage.add_argument("-s", "--snapshot", type=str, help="Take perspective view images of a structure file")
     subp_manage.add_argument("-n", "--note", type=str, help="Add a note to the pickle file")
     subp_manage.add_argument("-e", "--electronic-structure", action="store_true", help="Add projected electronic structure to the pickle file")
-    subp_manage.add_argument("--mp-poscar", type=str, help="Materials Project code")
 
 def adsorb(subparsers):
     subp_adsorb = subparsers.add_parser("adsorb", help="Generate adsorbed structures")
