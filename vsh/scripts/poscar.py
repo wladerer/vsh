@@ -216,6 +216,35 @@ def plot_radial_distribution_function(args):
     else:
         fig.write_image(args.output)
 
+def compare_rdf(args):
+    '''Compares the radial distribution function of two structures'''
+    import plotly.graph_objects as go
+    from pymatgen.core import Structure
+
+    structures = [Structure.from_file(args.input)]
+    for file in args.compare:
+        structures.append(Structure.from_file(file))
+    
+    fig = go.Figure()
+    for structure in structures:
+        coords = structure.cart_coords
+        bin_centers, rdf = calculate_rdf(coords)
+
+        # Plot RDF
+        fig.add_trace(go.Scatter(x=bin_centers, y=rdf, mode='lines', name=structure.formula))
+
+    fig.update_layout(
+        title='Radial distribution function',
+        xaxis_title='Distance (Å)',
+        yaxis_title='RDF',
+        template='plotly_white'
+    )
+
+    if not args.output:
+        fig.show()
+
+    else:
+        fig.write_image(args.output)
 
 def run(args):
     functions = {
@@ -226,7 +255,8 @@ def run(args):
         "list": list_poscar,
         "dynamics": list_selective_dynamics,
         "box": boxed_molecule,
-        "rdf": plot_radial_distribution_function
+        "rdf": plot_radial_distribution_function,
+        "compare": compare_rdf
     }
     
     for arg, func in functions.items():

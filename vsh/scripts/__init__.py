@@ -61,6 +61,7 @@ def poscar(subparsers):
     subp_poscar.add_argument("-l", "--list", action='store_true', help="List the positions of the atoms")
     subp_poscar.add_argument("-d", "--dynamics", action='store_true', help="List atoms and their degrees of freedom")
     subp_poscar.add_argument("--mp", action='store_true', help="Retrieve (relaxed) poscar from Materials Project API") 
+    subp_poscar.add_argument("--compare", nargs='+', type=str, help="Compare the radial distribution of multiple structures")
     
     molecule = subp_poscar.add_argument_group('Molecular Tools')
     molecule.add_argument("-b", "--box", action='store_true', help="Create a POSCAR for a molecule surrounded by vacuum")
