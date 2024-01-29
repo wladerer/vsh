@@ -15,7 +15,7 @@ def write_incar(args) -> dict:
     from pymatgen.io.vasp.inputs import Incar
     
     script_dir = os.path.dirname(__file__)
-    docs_dir = os.path.join(script_dir, '../..', 'docs') #watch
+    docs_dir = os.path.join(script_dir, 'defaults') #watch
     file_path = os.path.join(docs_dir, 'incars.json')
 
     with open(file_path, "r") as f:
