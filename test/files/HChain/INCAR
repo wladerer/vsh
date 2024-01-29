@@ -1,0 +1,17 @@
+ALGO = Fast
+AMIN = 0.01
+EDIFF = 1e-06
+ENCUT = 600 eV
+GGA = PE
+ISMEAR = 0
+ISYM = -1
+LASPH = True
+LDAU = False
+LMAXMIX = 4
+LORBIT = 12
+LREAL = Auto
+LWAVE = False
+MAGMOM = 100*0
+NELM = 100
+PREC = Accurate
+SIGMA = 0.05

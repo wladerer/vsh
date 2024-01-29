@@ -27,7 +27,20 @@ def write_kpoints(args):
     '''Writes a KPOINTS file'''
     from pymatgen.io.vasp.inputs import Kpoints 
 
-    kpoints = Kpoints.gamma_automatic(kpts=args.mesh)
+    if args.mesh_type == "monkhorst":
+
+        kpoints = Kpoints.monkhorst_automatic(kpts=args.mesh)
+
+    elif args.mesh_type == "gamma":
+
+        kpoints = Kpoints.gamma_automatic(kpts=args.mesh)
+
+    elif args.mesh_type == "automatic":
+
+        if not args.input:
+            raise ValueError("No input structure file provided. Automatic Density requires structure")
+        kpoints = Kpoints.automatic_density(args.input, args.mesh)
+
 
     if not args.output:
         print(kpoints)

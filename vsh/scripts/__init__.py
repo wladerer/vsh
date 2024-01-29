@@ -1,5 +1,17 @@
 import argparse
+from typing import Union
 
+def is_number(s):
+    try:
+        return int(s)
+    except ValueError:
+        return float(s)
+
+class MeshAction(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        if len(values) not in [1, 3]:
+            raise argparse.ArgumentError(self, "argument --mesh requires 1 or 3 integers")
+        setattr(namespace, self.dest, values)
 
 def analysis(subparsers):
     subp_analysis = subparsers.add_parser("analysis", help="Analyze structure using ASE and pymatgen utilities")
@@ -82,8 +94,8 @@ def kpoints(subparsers):
     subp_kpoints.add_argument("--path", type=int, help="Generate a KPOINTS file for a line mode calculation")
     subp_kpoints.add_argument("-i", "--input", type=str, help="Structure file")
     subp_kpoints.add_argument("--plane", type=int, help="Generate a KPOINTS file for a 2D plane mode calculation")
-    subp_kpoints.add_argument("--mesh", nargs=3, type=int, help="Generate a KPOINTS file for a mesh mode calculation")
-    subp_kpoints.add_argument("--mesh-type", choices=['gamma', 'monkhorst-pack'], default="gamma", help="Mesh type")
+    subp_kpoints.add_argument("--mesh", nargs='*', type=is_number, help="Generate a KPOINTS file for a mesh mode calculation")
+    subp_kpoints.add_argument("--mesh-type", choices=['gamma', 'monkhorst', 'automatic'], default="gamma", help="Mesh type")
     subp_kpoints.add_argument("-o", "--output", type=str, help="Output file name")
     # subp_kpoints.add_argument("--hybrid", action='store_true', help="Update a KPOINTS file for a hybrid calculation")
     # subp_kpoints.add_argument("--step", type=float, default=0.1, help="Step size for hybrid mesh")
