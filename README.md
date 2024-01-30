@@ -2,6 +2,18 @@
 
 vsh is a command line utility for interacting with VASP. This is meant to simplify the numerous tools provided by libraries such as 
 [pymatgen](https://pymatgen.org/), [ASE](https://wiki.fysik.dtu.dk/ase/), [pyprocar](https://romerogroup.github.io/pyprocar/), and others alike. 
+
+To view formatted documentation, you may open `docs/vsh.html` in your browser. This can be done with command line on most Linux distros
+
+```bash
+xdg-open docs/vsh.html
+```
+
+or in MacOs
+
+```bash
+open docs/vsh.html
+```
 ___
 
 ### Usage
@@ -53,9 +65,13 @@ slabgen is a module intended to simplify the process of making slabs of bulk mat
 
 These four modules handle the creation and modification of their respective files. Notably, `kpoints` can handle any type of KPOINTS file and can even produce high-symmetry k-paths from the SeekPath API. 
 
+`poscar` is able to convert and manipulate any file type containing structural information. You are also able to create molecules surrounded by vacuum to perform molecular calculations in VASP.
+
+Additionally, there is a static surface projected band path that follows $M - K - \Gamma - M$. 
+
 ##### wavecar
 
-Convert WAVECARS to cube, parchg, and Wannier90 U_nk files. You can also project coefficients onto a 3D fft mesh grid. 
+Convert WAVECARS to cube, parchg, and Wannier90 $U_{nk}$ files. You can also project coefficients onto a 3D fft mesh grid. 
 
 ##### procar
 
