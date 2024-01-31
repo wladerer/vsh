@@ -30,13 +30,18 @@ def write_incar(args) -> dict:
         
     return None
 
-def update_incar_tag(args) -> None:
-    '''Updates tags in an INCAR file'''
+def update_incar_tag(file: str, tag: str, value: str) -> None:  
     from pymatgen.io.vasp.inputs import Incar
     
-    incar = Incar.from_file(args.input)
-    
-    incar[args.update[0]] = args.update[1]
+    incar = Incar.from_file(file)
+    incar[tag] = value
+
+    return incar
+
+
+def cli_update_incar_tag(args) -> None:
+    '''Updates tags in an INCAR file'''
+    incar = update_incar_tag(args.input, args.tag, args.value)
 
     if not args.output:
         print(incar.get_str())
@@ -46,10 +51,16 @@ def update_incar_tag(args) -> None:
     return None
 
 
-def get_help(args):
+def get_help(tag: str) -> str:
     '''Retrieve info on VASP tags using VaspDoc'''
     from pymatgen.io.vasp.help import VaspDoc
-    doc = VaspDoc().get_help(args.tag_info)
+    doc = VaspDoc().get_help(tag)
+
+    return doc
+
+def cli_get_help(args):
+    '''Retrieve info on VASP tags using VaspDoc'''
+    doc = get_help(args.tag_info)
 
     if not args.output:
 
@@ -62,9 +73,9 @@ def get_help(args):
 
 def run(args):
     functions = {
-        'write': write_incar,
-        'update': update_incar_tag,
-        'tag_info': get_help
+        'write': cli_write_incar,
+        'update': cli_update_incar_tag,
+        'tag_info': cli_get_help
     }
     
     for arg, func in functions.items():
