@@ -264,6 +264,7 @@ def procar(subparsers):
     #add argument group for file handling 
     file_handling = subp_procar.add_argument_group('file handling')
     file_handling.add_argument('-p', '--pickle', action='store_true', help='Write projected eigenvalues from a vasprun.xml file to a pickle file')
+    file_handling.add_argument('--filter', help='Filter the projected eigenvalue data', action='store_true')
 
     #add argument group for plotting
     plotting = subp_procar.add_argument_group('Band Plotting')
