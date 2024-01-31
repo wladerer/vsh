@@ -437,13 +437,6 @@ def plot_compositional_variation(args):
         fig.write_image(args.output)
 
 
-
-
-
-
-    
-
-
 def analyze_kpoint(args):
     """Summarizes the data for a specific kpoint"""
     dataframe = load_dataframe_from_file(args.input)
@@ -496,9 +489,7 @@ def plot_bands(args):
     fig.show()
 
 
-def run_query(args):
-    data = load_dataframe_from_file(args.input)
-
+def create_query_dict(args) -> dict:
     query_dict = {
         "Spin": args.spin if args.spin is not None else None,
         "Kpoint": int(args.kpoint) if args.kpoint is not None else None,
@@ -508,6 +499,11 @@ def run_query(args):
         "Occupation": args.occupation if args.occupation is not None else None,
         "Energy": args.energy if args.energy is not None else None,
     }
+    return query_dict
+
+def run_query(args):
+    data = load_dataframe_from_file(args.input)
+    query_dict = create_query_dict(args)
 
     if args.efermi:
         data["Energy"] = data["Energy"] - args.efermi
@@ -551,6 +547,20 @@ def pickle_procar(args):
     else:
         print(dataframe.describe())
 
+def filter_pickle_data_by_energy(pickle_file: str, erange: list[float]) -> pd.DataFrame:
+    """Updates the pickle file to include only the specified query"""
+    dataframe = load_dataframe_from_file(pickle_file)
+    dataframe = filter_bands_by_energy(dataframe, min(erange), max(erange))
+
+    return dataframe
+
+def filter_pickle(args):
+    dataframe = filter_pickle_data_by_energy(args.input, args.erange)
+    
+    if args.output:
+        save_eigenvals(dataframe, args.output)
+    else:
+        print(dataframe)
 
 def run(args):
     functions = {
@@ -560,9 +570,10 @@ def run(args):
         "kplot": plot_kpoint_orbital_variation,
         "iplot": plot_compositional_variation,
         "analyze": analyze_kpoint,
+        "filter": filter_pickle
     }
 
-    selected = False
+    selected = False # assign default behavior as query
     for arg, func in functions.items():
         if getattr(args, arg):
             func(args)
