@@ -53,15 +53,6 @@ def get_metadata(file: str) -> dict:
 
     return metadata
 
-
-def check_for_vasprun(file: str) -> bool:
-    """Checks if a vasprun.xml file exists"""
-    if os.path.isfile(file):
-        return True
-    else:
-        return False
-
-
 def update_ase_db(vasprun_file: str, database: str):
     """Writes atoms and metadata to a database"""
     atoms = read(vasprun_file)

@@ -16,13 +16,14 @@ class TestWriteKpoints(unittest.TestCase):
             print(expected_kpoints)
             print(result)
 
+
     def test_write_kpoints_monkhorst(self):
         args = argparse.Namespace(mesh_type="monkhorst", mesh=(4, 4, 4), input=None, output=None)
         expected_kpoints = Kpoints.monkhorst_automatic(kpts=(4, 4, 4))
 
         with patch('builtins.print') as mock_print, patch('pymatgen.io.vasp.inputs.Kpoints.write_file') as mock_write_file:
             result = write_kpoints(args)
-            
+
             self.assertEqual(result, expected_kpoints)
             mock_print.assert_not_called()
             mock_write_file.assert_not_called()

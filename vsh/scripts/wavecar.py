@@ -14,7 +14,7 @@ def generate_parchg(args):
     if args.output:
         if args.cube:
             chgcar.to_cube(args.output)
-        else: 
+        else:
             chgcar.write_file(args.output)
     else:
         print(chgcar.__str__())
@@ -78,8 +78,3 @@ def run(args):
     for arg, func in functions.items():
         if getattr(args, arg):
             func(args)
-
-
-
-
-

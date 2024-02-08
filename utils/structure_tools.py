@@ -12,9 +12,9 @@ def xyz_to_dataframe(file: str):
         lines = [line for line in lines if len(line) == 4]
         df = pd.DataFrame(lines, columns=['atom', 'x', 'y', 'z'])
         df[['x', 'y', 'z']] = df[['x', 'y', 'z']].astype(float)
-        
+
         return df
-    
+
 def vasp_to_dataframe(file: str) -> pd.DataFrame:
     '''Reads a POSCAR or CONTCAR and returns a dataframe'''
     atoms = read(file)
@@ -25,21 +25,21 @@ def vasp_to_dataframe(file: str) -> pd.DataFrame:
 
     df = pd.DataFrame(lines, columns=['atom', 'x', 'y', 'z'])
     df[['x', 'y', 'z']] = df[['x', 'y', 'z']].astype(float)
-        
-    return df 
+
+    return df
 
 
 def sort_df_by_height(df : pd.DataFrame):
     '''Sorts a dataframe by the z coordinate.'''
     df = df.sort_values(by=['z'], ascending=False)
     df = df.reset_index(drop=True)
-    
+
     return df
 
 def get_top_n_atoms(df: pd.DataFrame, n: int):
     '''Returns the top n atoms of a dataframe.'''
     return df.iloc[:n, :]
-    
+
 
 def vasp_to_distance_matrix(file: str, n: int = 12):
     '''Reads a POSCAR or CONTCAR and returns a distance matrix'''
@@ -116,5 +116,16 @@ def plot_radial_distribution_function(input_files: list[str], labels: list[str],
     else:
         fig.write_image(output_file)
 
-files = [f'/Users/wladerer/research/pt3sn/slabs/111/al{i}/CONTCAR' for i in [4, 6, 8, 10 ,12] ]
-plot_radial_distribution_function(files, labels=['al4', 'al6', 'al8', 'al10', 'al12'])
+### symmetry tool section
+
+def get_symmetry_operations(file: str):
+    '''Returns the symmetry operations of a POSCAR or CONTCAR file.'''
+    from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
+    from pymatgen.core import Structure
+
+    structure = Structure.from_file(file)
+    sga = SpacegroupAnalyzer(structure)
+    symmetry_operations = sga.get_symmetry_operations()
+
+    return symmetry_operations
+
