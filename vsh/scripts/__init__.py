@@ -121,6 +121,7 @@ def slab(subparsers):
     subp_slabgen.add_argument("-b", "--beta", type=float, help="Beta angle")
     subp_slabgen.add_argument("-g", "--gamma", type=float, help="Gamma angle")
     subp_slabgen.add_argument("-V", "--verbose", action='store_true', help="Verbose output")
+    subp_slabgen.add_argument("--no-reduce", type=bool, help="Refrain from LLL reduce the lattice", default=False)
 
 
 def manage(subparsers):

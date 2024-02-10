@@ -26,6 +26,7 @@ def slab_from_structure(
     center_slab: bool,
     in_unit_planes: bool,
     reorient_lattice: bool,
+    reduce: bool = True,
 ) -> list[Structure]:
     slabgen = SlabGenerator(
         structure,
@@ -36,6 +37,7 @@ def slab_from_structure(
         center_slab=center_slab,
         in_unit_planes=in_unit_planes,
         reorient_lattice=reorient_lattice,
+        lll_reduce=reduce,
     )
     return slabgen.get_slabs()
 
@@ -160,6 +162,7 @@ def gen_slabs(args):
         center_slab=args.center_slab,
         in_unit_planes=args.in_unit_planes,
         reorient_lattice=args.reorient_lattice,
+        reduce=not(args.no_reduce), #this is a bit confusing, but it is to maintain simplified default behavior
     )
 
     if args.freeze:
