@@ -41,13 +41,27 @@ def get_chemical_formula(structure: Structure) -> str:
     '''
     return structure.composition.reduced_formula
 
-def add_adsorbate(structure: Structure, adsorbate: Molecule, min_z: float = 5.0, coverage: list[int] = [1, 1, 1], distance: float = 1.0) -> list[Structure]:
+def add_adsorbate_single(structure: Structure, adsorbate: Molecule, min_z: float = 5.0, coverage: list[int] = [1, 1, 1], distance: float = 1.0) -> list[Structure]:
     '''
     Finds all adsorption sites on a structure and adsorbs the adsorbate at each site. Returns a list of adsorbed structures.
     '''
 
     asf = AdsorbateSiteFinder(structure)
     ads_structs = asf.generate_adsorption_structures(adsorbate, repeat=coverage, find_args={"distance": distance})  # edit later
+
+    for ads_struct in ads_structs:
+        
+        freeze_structure(ads_struct, min_z=min_z)
+
+    return ads_structs
+
+def add_adsorbate_on_both_surfaces(structure: Structure, adsorbate: Molecule, min_z: float = 5.0, coverage: list[int] = [1, 1, 1], distance: float = 1.0) -> list[Structure]:
+    '''
+    Finds all adsorption sites on a structure and adsorbs the adsorbate at each site. Returns a list of adsorbed structures.
+    '''
+
+    asf = AdsorbateSiteFinder(structure)
+    ads_structs = asf.adsorb_both_surfaces(adsorbate, repeat=coverage, find_args={"distance": distance})  # edit later
 
     for ads_struct in ads_structs:
         
@@ -69,16 +83,17 @@ def create_adsorbed_structure(args):
     #get adsorption sites
     structure = structure_from_file(args.input)
     adsorbate = adsorbate_from_file(args.adsorbate)
-    ads_structs = add_adsorbate(structure, adsorbate, min_z=args.freeze, coverage=args.coverage, distance=args.distance)
+    
+    if args.both: 
+        ads_structs = add_adsorbate_on_both_surfaces(structure, adsorbate, min_z=args.min_z, coverage=args.coverage, distance=args.distance)
+    else:
+        ads_structs = add_adsorbate_single(structure, adsorbate, min_z=args.min_z, coverage=args.coverage, distance=args.distance)
 
     poscars = [ Poscar(ads_struct, sort_structure=True) for ads_struct in ads_structs ]
 
     return poscars
 
 def run(args):
-
-    #get structure
-    structure = structure_from_file(args.input)
 
     #create adsorbed structures
     poscars = create_adsorbed_structure(args)
