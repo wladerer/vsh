@@ -151,18 +151,29 @@ def orthogonalize_slab(
 
     return atoms
 
+def convert_vacuum_to_angstroms(vacuum_ang: float, structure: Structure) -> float:
+    """Converts a vacuum value to angstroms"""
+    # this is necessary because the vacuum value is in units of the lattice vectors
+    a,b,c = structure.lattice.abc
+    
+    vacuum_d = ( vacuum_ang // c ) + 2
+    
+    return vacuum_d
 
 def gen_slabs(args):
     """Generate slabs using pymatgen slab generator"""
-    if args.vacuum != 0:
-        args.vacuum = 3 if args.in_unit_planes else args.vacuum
-
+    
+    if args.in_unit_planes == True:
+        vacuum = convert_vacuum_to_angstroms(args.vacuum, structure_from_file(args.input))
+    else:
+        vacuum = args.vacuum
+    
     structure = structure_from_file(args.input)
     slabs = slab_from_structure(
         structure=structure,
         miller_plane=args.miller_plane,
         zmin=float(args.thickness),
-        vacuum=args.vacuum,
+        vacuum=vacuum,
         is_primitive=args.primitive,
         center_slab=args.center_slab,
         in_unit_planes=args.in_unit_planes,
