@@ -1,15 +1,13 @@
 #!/usr/bin/env python3
 
 
-'''Orthogonalization utilities were written by Dr. Yonghyuk Lee'''
+"""Orthogonalization utilities were written by Dr. Yonghyuk Lee"""
 
 from pymatgen.core.structure import Structure
 from pymatgen.core.surface import SlabGenerator
 from pymatgen.io.vasp.inputs import Poscar
 from pymatgen.io.ase import AseAtomsAdaptor
 import numpy as np
-from dscribe.descriptors import SOAP
-from sklearn.preprocessing import normalize
 from ase import Atoms
 
 
@@ -43,10 +41,9 @@ def slab_from_structure(
 
 
 def slab_to_poscar(slab: Structure) -> None:
-    '''Generates a pymatgen Poscar object from a slab'''
+    """Generates a pymatgen Poscar object from a slab"""
     poscar = Poscar(slab, sort_structure=True)
     return poscar
-    
 
 
 def generate_filename(structure: Structure, miller_plane: list, zmin) -> str:
@@ -63,14 +60,17 @@ def freeze_slab(structure: Structure, min_z: float) -> Structure:
         else:
             site.properties["selective_dynamics"] = [True, True, True]
 
+
 def update_structure(
-                     traj,
-                     soap_info = {
-                                  'rcut':5,
-                                  'nmax':8,
-                                  'lmax':4,
-                                  }
-                     ):
+    traj,
+    soap_info={
+        "rcut": 5,
+        "nmax": 8,
+        "lmax": 4,
+    },
+):
+    from dscribe.descriptors import SOAP
+    from sklearn.preprocessing import normalize
 
     species = []
     if type(traj) == list:
@@ -86,44 +86,48 @@ def update_structure(
                 species.append(e)
 
     soap = SOAP(
-                species=species,
-                periodic=True,
-                r_cut=soap_info['rcut'],
-                n_max=soap_info['nmax'],
-                l_max=soap_info['lmax'],
-                )
+        species=species,
+        periodic=True,
+        r_cut=soap_info["rcut"],
+        n_max=soap_info["nmax"],
+        l_max=soap_info["lmax"],
+    )
 
     if type(traj) == list:
         for s in traj:
             try:
-                del s.arrays['SOAP']
+                del s.arrays["SOAP"]
             except:
                 pass
-            s.set_array('SOAP',normalize(soap.create(s)))
+            s.set_array("SOAP", normalize(soap.create(s)))
     elif type(traj) == Atoms:
-            traj.set_array('SOAP',normalize(soap.create(traj)))
+        traj.set_array("SOAP", normalize(soap.create(traj)))
 
     return traj
 
 
 def quick_score(
-                test_structure,
-                training_structure,
-                ):
-    soap_test = test_structure.arrays['SOAP']
-    soap_train = training_structure.arrays['SOAP']
-    scores = np.dot(soap_train,soap_test.transpose())**2
-    score = np.min(np.max(scores,axis=0))
-    v = 2*(1-score)
+    test_structure,
+    training_structure,
+):
+    soap_test = test_structure.arrays["SOAP"]
+    soap_train = training_structure.arrays["SOAP"]
+    scores = np.dot(soap_train, soap_test.transpose()) ** 2
+    score = np.min(np.max(scores, axis=0))
+    v = 2 * (1 - score)
     if v < 10e-10:
-        score = 0 
+        score = 0
     else:
         score = np.sqrt(v)
     return score
 
-def orthogonalize_slab(file: str, alpha: float = None, beta: float = None, gamma: float = None):
+
+def orthogonalize_slab(
+    file: str, alpha: float = None, beta: float = None, gamma: float = None
+):
     """Orthogonalizes a structure"""
     from ase.io import read
+
     origin = read(file)
     atoms = read(file)
 
@@ -131,7 +135,7 @@ def orthogonalize_slab(file: str, alpha: float = None, beta: float = None, gamma
     atoms.set_cell(cell, scale_atoms=True)
 
     cell = atoms.cell.cellpar()
-    
+
     if alpha:
         cell[3] = alpha
     if beta:
@@ -147,8 +151,9 @@ def orthogonalize_slab(file: str, alpha: float = None, beta: float = None, gamma
 
     return atoms
 
+
 def gen_slabs(args):
-    '''Generate slabs using pymatgen slab generator'''
+    """Generate slabs using pymatgen slab generator"""
     if args.vacuum != 0:
         args.vacuum = 3 if args.in_unit_planes else args.vacuum
 
@@ -162,7 +167,9 @@ def gen_slabs(args):
         center_slab=args.center_slab,
         in_unit_planes=args.in_unit_planes,
         reorient_lattice=args.reorient_lattice,
-        reduce=not(args.no_reduce), #this is a bit confusing, but it is to maintain simplified default behavior
+        reduce=not (
+            args.no_reduce
+        ),  # this is a bit confusing, but it is to maintain simplified default behavior
     )
 
     if args.freeze:
@@ -173,20 +180,22 @@ def gen_slabs(args):
 
     if not args.output:
         for poscar in poscars:
-            print(poscar.get_str()) 
+            print(poscar.get_str())
     else:
         for i, poscar in enumerate(poscars):
             poscar.write_file(f"{args.output}_{i}.vasp")
 
 
 def orthogonalize(args):
-    '''Orthogonalize a slab'''
-    from ase.io import read 
-    
+    """Orthogonalize a slab"""
+    from ase.io import read
+
     orginal_atoms = read(args.input)
-    orthogonalized_atoms = orthogonalize_slab(args.input, args.alpha, args.beta, args.gamma)
-    
-    #convert to pymatgen structure
+    orthogonalized_atoms = orthogonalize_slab(
+        args.input, args.alpha, args.beta, args.gamma
+    )
+
+    # convert to pymatgen structure
     orthogonalized_structure = AseAtomsAdaptor.get_structure(orthogonalized_atoms)
     poscar = Poscar(orthogonalized_structure, sort_structure=True)
 
@@ -201,11 +210,11 @@ def orthogonalize(args):
     if not args.output:
         print(poscar.get_str())
     else:
-        poscar.write_file(f'{args.output}')
+        poscar.write_file(f"{args.output}")
 
 
 def run(args):
-    
+
     if args.orthogonalize:
 
         orthogonalize(args)
@@ -213,15 +222,3 @@ def run(args):
     else:
 
         gen_slabs(args)
-
-
-
-
-
-
-    
-
-
-
-
-

@@ -97,6 +97,7 @@ def kpoints(subparsers):
     subp_kpoints.add_argument("--mesh", nargs='*', type=is_number, help="Generate a KPOINTS file for a mesh mode calculation")
     subp_kpoints.add_argument("--mesh-type", choices=['gamma', 'monkhorst', 'automatic'], default="gamma", help="Mesh type")
     subp_kpoints.add_argument("-o", "--output", type=str, help="Output file name")
+    subp_kpoints.add_argument("--mueller-grid", action='store_true', help="Generate generalized regular grid designed by the Muller group at John's Hopkins. Requires KpLib")
     # subp_kpoints.add_argument("--hybrid", action='store_true', help="Update a KPOINTS file for a hybrid calculation")
     # subp_kpoints.add_argument("--step", type=float, default=0.1, help="Step size for hybrid mesh")
     # subp_kpoints.add_argument("--weight", type=int, default=0, help="Weight for hybrid mesh")
