@@ -18,7 +18,7 @@
     "LMAXMIX": 4,
     "LDAU": false,
     "LREAL": "Auto",
-    "LORBIT": 12,
+    "LORBIT": 11,
     "LWAVE": false
   },
   "bader": {
@@ -63,8 +63,10 @@
     "LMAXMIX": 4,
     "LDAU": false,
     "LREAL": "Auto",
-    "LORBIT": 12,
-    "LWAVE": false
+    "LORBIT": 11,
+    "LWAVE": false,
+    "LDIPOL": true,
+    "IDIPOL": 3
   },
   "band": {
     "PREC": "Accurate",
@@ -81,7 +83,7 @@
     "LMAXMIX": 4,
     "LDAU": false,
     "LREAL": "Auto",
-    "LORBIT": 12,
+    "LORBIT": 11,
     "LWAVE": false,
     "ISYM": -1
   },
@@ -96,11 +98,11 @@
     "SIGMA": 0.05,
     "MAGMOM": "100*0",
     "LASPH": true,
-    "LSORBIT": true,
+    "LSORBIT": false,
     "LMAXMIX": 4,
     "LDAU": false,
     "LREAL": "Auto",
-    "LORBIT": 12,
+    "LORBIT": 11,
     "LWAVE": false
   },
   "single-point-soc": {
@@ -118,7 +120,7 @@
     "LMAXMIX": 4,
     "LDAU": false,
     "LREAL": "Auto",
-    "LORBIT": 12,
+    "LORBIT": 11,
     "LWAVE": false
   },
   "single-point-slab": {
@@ -137,8 +139,10 @@
     "LMAXMIX": 4,
     "LDAU": false,
     "LREAL": "Auto",
-    "LORBIT": 12,
-    "LWAVE": false
+    "LORBIT": 11,
+    "LWAVE": false,
+    "LDIPOL": true,
+    "IDIPOL": 3
   },
   "single-point-slab-soc": {
     "PREC": "Accurate",
@@ -156,8 +160,10 @@
     "LMAXMIX": 4,
     "LDAU": false,
     "LREAL": "Auto",
-    "LORBIT": 12,
-    "LWAVE": false
+    "LORBIT": 11,
+    "LWAVE": false,
+    "LDIPOL": true,
+    "IDIPOL": 3
   },
   "band-soc": {
     "PREC": "Accurate",
@@ -173,7 +179,7 @@
     "LMAXMIX": 4,
     "LDAU": false,
     "LREAL": "Auto",
-    "LORBIT": 12,
+    "LORBIT": 11,
     "LSORBIT": true,
     "LWAVE": false,
     "ISYM": -1,
@@ -195,11 +201,13 @@
     "LMAXMIX": 4,
     "LDAU": false,
     "LREAL": "Auto",
-    "LORBIT": 12,
+    "LORBIT": 11,
     "LWAVE": false,
     "ISYM": -1,
     "EMIN": -5,
-    "EMAX": 5
+    "EMAX": 5,
+    "LDIPOL": true,
+    "IDIPOL": 3
   },
   "band-slab-soc": {
     "PREC": "Accurate",
@@ -216,10 +224,12 @@
     "LMAXMIX": 4,
     "LDAU": false,
     "LREAL": "Auto",
-    "LORBIT": 12,
+    "LORBIT": 11,
     "LWAVE": false,
     "ISYM": -1,
     "EMIN": -5,
-    "EMAX": 5
+    "EMAX": 5,
+    "LDIPOL": true,
+    "IDIPOL": 3
   }
 }
