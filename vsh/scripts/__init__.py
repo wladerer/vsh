@@ -143,8 +143,7 @@ def adsorb(subparsers):
 
     subp_adsorb.add_argument("input", type=str, help="Input file")
     subp_adsorb.add_argument("-a", "--adsorbate", type=str, default=None, help="Adsorbate file")
-    subp_adsorb.add_argument("-z","--distance",type=float,default=1.0,help="Distance between adsorbate and surface")
-    subp_adsorb.add_argument("--freeze", type=float, default=5.0, help="Minimum z value for freezing")
+    subp_adsorb.add_argument("-z","--distance",type=float,default=1.2,help="Distance between adsorbate and surface")
     subp_adsorb.add_argument("-c","--coverage",type=int,nargs=3,default=[1, 1, 1],help="Adsorbate coverage")
     subp_adsorb.add_argument("-b","--both",action='store_true',help="Adsorbate on both surfaces")
     subp_adsorb.add_argument("-o", "--output", type=str, default=None, help="Output basename")

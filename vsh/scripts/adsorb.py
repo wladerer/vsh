@@ -10,23 +10,6 @@ def structure_from_file(filename: str) -> Structure:
 
     return structure
 
-def freeze_structure(structure: Structure, min_z: float, dof: list[bool] = [False, False, False]) -> Structure:
-    '''
-    Freezes the bottom layer of a structure
-    '''
-    # if not isinstance(min_z, float) or not isinstance(min_z, int) or min_z <= 0:
-    #     raise TypeError("The min_z argument must be a positive, non-zero float or integer value.")
-    if not isinstance(dof, list) or not all(isinstance(x, bool) for x in dof) or len(dof) != 3:
-        raise TypeError("The dof argument must be a list of booleans with length 3.")
-
-    for site in structure:
-        if site.z < min_z:
-            site.properties["selective_dynamics"] = dof
-        else:
-            site.properties["selective_dynamics"] = [True, True, True]
-
-    return structure
-
 def adsorbate_from_file(filename: str) -> Molecule:
     '''
     Creates a pymatgen molecule from a file
@@ -41,7 +24,7 @@ def get_chemical_formula(structure: Structure) -> str:
     '''
     return structure.composition.reduced_formula
 
-def add_adsorbate_single(structure: Structure, adsorbate: Molecule, min_z: float = 5.0, coverage: list[int] = [1, 1, 1], distance: float = 1.0) -> list[Structure]:
+def add_adsorbate_single(structure: Structure, adsorbate: Molecule, coverage: list[int] = [1, 1, 1], distance: float = 1.0) -> list[Structure]:
     '''
     Finds all adsorption sites on a structure and adsorbs the adsorbate at each site. Returns a list of adsorbed structures.
     '''
@@ -49,23 +32,15 @@ def add_adsorbate_single(structure: Structure, adsorbate: Molecule, min_z: float
     asf = AdsorbateSiteFinder(structure)
     ads_structs = asf.generate_adsorption_structures(adsorbate, repeat=coverage, find_args={"distance": distance})  # edit later
 
-    for ads_struct in ads_structs:
-        
-        freeze_structure(ads_struct, min_z=min_z)
-
     return ads_structs
 
-def add_adsorbate_on_both_surfaces(structure: Structure, adsorbate: Molecule, min_z: float = 5.0, coverage: list[int] = [1, 1, 1], distance: float = 1.0) -> list[Structure]:
+def add_adsorbate_on_both_surfaces(structure: Structure, adsorbate: Molecule, coverage: list[int] = [1, 1, 1], distance: float = 1.0) -> list[Structure]:
     '''
     Finds all adsorption sites on a structure and adsorbs the adsorbate at each site. Returns a list of adsorbed structures.
     '''
 
     asf = AdsorbateSiteFinder(structure)
     ads_structs = asf.adsorb_both_surfaces(adsorbate, repeat=coverage, find_args={"distance": distance})  # edit later
-
-    for ads_struct in ads_structs:
-        
-        freeze_structure(ads_struct, min_z=min_z)
 
     return ads_structs
 
@@ -85,9 +60,9 @@ def create_adsorbed_structure(args):
     adsorbate = adsorbate_from_file(args.adsorbate)
     
     if args.both: 
-        ads_structs = add_adsorbate_on_both_surfaces(structure, adsorbate, min_z=args.min_z, coverage=args.coverage, distance=args.distance)
+        ads_structs = add_adsorbate_on_both_surfaces(structure, adsorbate, coverage=args.coverage, distance=args.distance)
     else:
-        ads_structs = add_adsorbate_single(structure, adsorbate, min_z=args.min_z, coverage=args.coverage, distance=args.distance)
+        ads_structs = add_adsorbate_single(structure, adsorbate, coverage=args.coverage, distance=args.distance)
 
     poscars = [ Poscar(ads_struct, sort_structure=True) for ads_struct in ads_structs ]
 
