@@ -129,3 +129,72 @@ def get_symmetry_operations(file: str):
 
     return symmetry_operations
 
+
+def plot_atomic_drift(initial_file: str, final_file: str, output_file: str = None):
+    '''Plots the atomic drift between two structures'''
+    from ase.io import read
+    from ase.data.colors import jmol_colors, cpk_colors
+    from ase.data import covalent_radii
+    import numpy as np
+    import plotly.graph_objects as go
+
+    initial = read(initial_file)
+    final = read(final_file)
+
+    #atom types 
+    atomic_numbers = initial.get_atomic_numbers()
+    atom_types = initial.get_chemical_symbols()
+    atomic_radii = [ covalent_radii[number] for number in atomic_numbers ]
+    atomic_colors = [ jmol_colors[number] for number in atomic_numbers ]
+    drift = final.get_positions() - initial.get_positions()
+
+    fig = go.Figure()
+
+    for i in range(len(initial)):
+        atom = initial[i]
+        x, y, z = atom.position
+        dx, dy, dz = drift[i]
+        r = atomic_radii[i]
+        color = f"rgb({atomic_colors[i][0]}, {atomic_colors[i][1]}, {atomic_colors[i][2]})",
+        fig.add_trace(go.Scatter3d(
+            x=[x+dx, x],
+            y=[y+dy, y],
+            z=[z+dz, z],
+            mode='lines+markers',
+            marker=dict(
+                size=18,
+                color=color,
+                line=dict(
+                    color='DarkSlateGrey',
+                    width=2
+                )
+            ),
+            line=dict(
+                color=color,
+                width=2
+            ),
+            name=atom_types[i]
+        ))
+
+
+    fig.update_layout(
+            title='Atomic drift',
+            scene=dict(
+                xaxis_title='x (Å)',
+                yaxis_title='y (Å)',
+                zaxis_title='z (Å)'
+            )
+        )
+
+    
+    #remove grid 
+    fig.update_xaxes(showgrid=False, zeroline=False)
+    fig.update_yaxes(showgrid=False, zeroline=False)
+    fig.update_scenes(xaxis_visible=False, yaxis_visible=False,zaxis_visible=False )
+
+
+    if not output_file:
+        fig.show()
+    else:
+        fig.write_image(output_file)
+
