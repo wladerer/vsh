@@ -245,6 +245,7 @@ def compare_rdf(args):
 
     else:
         fig.write_image(args.output)
+    
 
 def run(args):
     functions = {

@@ -34,10 +34,13 @@ def charge_density_from_file(file: str) -> np.array:
 
 def plot_charge_density_slice(file: str, height: float, repeat_x: int = 1, repeat_y: int = 1, title: str = 'Charge Density', output: str | None = None) -> None:
     '''Plots a CHGCAR file with repeated images in the x and y directions'''
-    data, dims, structure = charge_density_from_file(file)
+    data, _, structure = charge_density_from_file(file)
     
-    if height < 0 or height > structure.lattice.c:
-        raise ValueError(f'Height {height} is not within the range {structure.lattice.c}')
+    try:
+        if height < 0 or height > structure.lattice.c:
+            raise ValueError(f'Invalid height: {height}. Height must be within the range [0, {structure.lattice.c}].')
+    except TypeError as e:
+        raise TypeError(f"Invalid height type: {type(height)}. Please provide a float or int using the '-H' flag.") from e
     
     slice_index = int(height / structure.lattice.c * data.shape[2])
     slice_data = data[:, :, slice_index]
