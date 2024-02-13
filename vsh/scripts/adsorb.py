@@ -75,7 +75,7 @@ def run(args):
 
     if not args.output:
         for poscar in poscars:
-            print(poscar.get_string())
+            print(poscar.get_str())
     else:
         for i, poscar in enumerate(poscars):
             poscar.write_file(f'{args.output}_{i}.vasp')
