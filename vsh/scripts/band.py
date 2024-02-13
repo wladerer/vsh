@@ -62,11 +62,10 @@ def handle_atoms(poscar: str = './POSCAR') -> dict:
 
     return atom_indices
 
-
-def run(args):
+def plot_procar(args):
+    '''Plots the band structure from a  file'''
 
     args.orbitals = handle_orbitals(args.orbitals)
-
 
     fig, ax = pyprocar.bandsplot(code=args.code,
                            mode=args.mode,
@@ -82,4 +81,20 @@ def run(args):
 
     if args.output:
         fig.savefig(args.output, dpi=args.dpi)
+
+    return fig, ax
+
+def filter_procar(args):
+    '''Filters procar file based on user input'''
+    from pymatgen.io.vasp.outputs import Procar
+
+    pyprocar.filter(args.input,args.output,bands=[584,652])
+
+
+
+def run(args):
+
+    functions = {'plot': plot_procar, 'filter': filter_procar}
+
+    functions[args.function](args)
 
