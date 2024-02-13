@@ -258,7 +258,7 @@ def stm(subparsers):
     subp_stm.add_argument('-H', '--height', help='Height of the slice', type=float)
     subp_stm.add_argument('-D', '--dims', help='Repeat in x and y dimensions', type=int, nargs=2)
     subp_stm.add_argument('-a', '--animate', help='Animate slices', action='store_true')
-    subp_stm.add_argument('-p', '--plot', help='Plot charge density slice at a certain height', type=str)
+    subp_stm.add_argument('-p', '--plot', help='Plot charge density slice at a certain height', action='store_true')
     subp_stm.add_argument('-t', '--title', help='Title of the plot', type=str)
     subp_stm.add_argument('-o', '--output', help='Output file name', type=str)
 
