@@ -78,12 +78,17 @@ def animate_slices(file: str, repeat_x: int = 1, repeat_y: int = 1, title: str =
     else:
         plt.show()
 
+def plot_slice(args):
+    plot_charge_density_slice(args.input, args.height, args.dims[0], args.dims[1], args.title, args.output)
+    
+def animate(args):
+    animate_slices(args.input, args.dims[0], args.dims[1], args.title, args.output)
         
 def run(args):
     
     functions = {
-        'plot': plot_charge_density_slice,
-        'animate': animate_slices
+        'plot': plot_slice,
+        'animate': animate
     }
     
     for arg, func in functions.items():

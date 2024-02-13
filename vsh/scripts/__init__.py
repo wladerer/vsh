@@ -256,16 +256,12 @@ def stm(subparsers):
     subp_stm = subparsers.add_parser('stm', help='Reads, analyses, and plots STM data from CHGCAR or cube files')
     subp_stm.add_argument('input', help='CHGCAR or cube file')
     subp_stm.add_argument('-H', '--height', help='Height of the slice', type=float)
-    subp_stm.add_argument('-D', '--dims', help='Repeat in x and y dimensions', type=int, nargs=2)
+    subp_stm.add_argument('-D', '--dims', help='Repeat in x and y dimensions', type=int, nargs=2, default=[1, 1])
     subp_stm.add_argument('-a', '--animate', help='Animate slices', action='store_true')
     subp_stm.add_argument('-p', '--plot', help='Plot charge density slice at a certain height', action='store_true')
-    subp_stm.add_argument('-t', '--title', help='Title of the plot', type=str)
+    subp_stm.add_argument('-t', '--title', help='Title of the plot', type=str, default='Charge Density')
     subp_stm.add_argument('-o', '--output', help='Output file name', type=str)
 
-    args = subp_stm.parse_args()
-    if not args.animate and args.height is None:
-        subp_stm.error("The '--height' argument is required if '--animate' is not selected.")
-        
     
 def setup(subparsers):
     scripts = [adsorb, alchemy, analysis, band, chgcar, cohp, db, incar, kpoints, manage, poscar, procar, slab, stm, wavecar]
