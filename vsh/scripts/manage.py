@@ -219,6 +219,41 @@ def unpack_pickle(args):
         if 'note' in data.keys():
             print(f"Note: {data['note']}")
 
+def reconstitute_vasprun(file: str):
+    '''Unpacks POSCAR, INCAR, CONTCAR, and KPOINTS from a vasprun.xml file'''
+    from pymatgen.io.vasp import Vasprun, Poscar, Incar, Kpoints
+
+    # Load the vasprun file
+    vasprun = Vasprun(file, parse_potcar_file=False, parse_dos=False, parse_eigen=False, parse_projected_eigen=False)
+
+    poscar = Poscar(vasprun.initial_structure)
+    incar = Incar.from_dict(vasprun.incar)
+    kpoints = vasprun.kpoints
+    contcar = Poscar(vasprun.final_structure)
+
+    return poscar, incar, kpoints, contcar
+
+def unpack_vasprun(args):
+    '''Unpacks POSCAR, INCAR, CONTCAR, and KPOINTS from a vasprun.xml file'''
+    from pymatgen.io.vasp import Poscar, Incar, Kpoints
+
+    poscar, incar, kpoints, contcar = reconstitute_vasprun(args.input)
+
+    if args.output:
+        poscar.write_file(args.output + "/POSCAR")
+        incar.write_file(args.output + "/INCAR")
+        kpoints.write_file(args.output + "/KPOINTS")
+        contcar.write_file(args.output + "/CONTCAR")
+    else:
+        print("POSCAR:")
+        print(poscar)
+        print("INCAR:")
+        print(incar)
+        print("KPOINTS:")
+        print(kpoints.kpts)
+        print("CONTCAR:")
+        print(contcar)
+
 
 def run(args):
 
@@ -227,6 +262,7 @@ def run(args):
         "archive": write_data_pickle,
         "unarchive": unpack_pickle,
         "validate": validate_input,
+        "reconstitute": unpack_vasprun
     }
 
     for arg, func in functions.items():
