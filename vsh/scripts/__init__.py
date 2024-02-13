@@ -148,6 +148,8 @@ def adsorb(subparsers):
     subp_adsorb.add_argument("-c","--coverage",type=int,nargs=3,default=[1, 1, 1],help="Adsorbate coverage")
     subp_adsorb.add_argument("-b","--both",action='store_true',help="Adsorbate on both surfaces")
     subp_adsorb.add_argument("-o", "--output", type=str, default=None, help="Output basename")
+    subp_adsorb.add_argument("-p", "--positions", choices=['all', 'ontop', 'bridge', 'hollow'], default='all', help="Adsorption sites")
+    subp_adsorb.add_argument("-P", "--plane", type=int, nargs=3, help="Miller plane required for adsorbing on both surfaces")
 
 def alchemy(subparsers):
 
