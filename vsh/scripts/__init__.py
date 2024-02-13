@@ -166,86 +166,19 @@ def alchemy(subparsers):
 
 def cohp(subparsers):
     subp_cohp = subparsers.add_parser("cohp", help="Plot COHPs")
-
-    subp_cohp.add_argument(
-        "input",
-        type=str,
-        nargs="+",
-        help="Input file or directory containing COHP or COHP files",
-    )
-    subp_cohp.add_argument(
-        "-c",
-        "--cobi",
-        action="store_true",
-        help="Use COBIs instead of COHPs",
-    )
-    subp_cohp.add_argument(
-        "--label",
-        type=str,
-        default="",
-        help="Label for the COHP or COBIs",
-    )
-    subp_cohp.add_argument(
-        "-t",
-        "--title",
-        type=str,
-        default="",
-        help="Title for the plot",
-    )
-    subp_cohp.add_argument(
-        "-o",
-        "--output",
-        type=str,
-        nargs="+",
-        help="Output file name(s)",
-    )
-    subp_cohp.add_argument(
-        "-d",
-        "--dpi",
-        type=int,
-        default=800,
-        help="DPI of the output file",
-    )
-    subp_cohp.add_argument(
-        "-x",
-        "--xlim",
-        type=float,
-        nargs=2,
-        default=None,
-        help="X-axis limits",
-    )
-    subp_cohp.add_argument(
-        "-y",
-        "--ylim",
-        type=float,
-        nargs=2,
-        default=None,
-        help="Y-axis limits",
-    )
-    subp_cohp.add_argument(
-        "--integrated",
-        action="store_true",
-        help="Plot the integrated COHPs",
-    )
-    subp_cohp.add_argument(
-        "-p",
-        "--plot",
-        action="store_true",
-        help="Plot the COHPs",
-    )
-    subp_cohp.add_argument(
-        "-l",
-        "--list",
-        action="store_true",
-    )
-    subp_cohp.add_argument(
-        "--pickle",
-        action="store_true",   
-    )
-    subp_cohp.add_argument(
-        "--graph",
-        action="store_true",
-    )
+    subp_cohp.add_argument("input", type=str, nargs="+", help="Input file or directory containing COHP or COHP files")
+    subp_cohp.add_argument("-c", "--cobi", action="store_true", help="Use COBIs instead of COHPs")
+    subp_cohp.add_argument("--label", type=str, default="", help="Label for the COHP or COBIs")
+    subp_cohp.add_argument("-t", "--title", type=str, default="", help="Title for the plot")
+    subp_cohp.add_argument("-o", "--output", type=str, nargs="+", help="Output file name(s)")
+    subp_cohp.add_argument("-d", "--dpi", type=int, default=800, help="DPI of the output file")
+    subp_cohp.add_argument("-x", "--xlim", type=float, nargs=2, default=None, help="X-axis limits")
+    subp_cohp.add_argument("-y", "--ylim", type=float, nargs=2, default=None, help="Y-axis limits")
+    subp_cohp.add_argument("--integrated", action="store_true", help="Plot the integrated COHPs")
+    subp_cohp.add_argument("-p", "--plot", action="store_true", help="Plot the COHPs")
+    subp_cohp.add_argument("-l", "--list", action="store_true")
+    subp_cohp.add_argument("--pickle", action="store_true")
+    subp_cohp.add_argument("--graph", action="store_true")
 
 def procar(subparsers):
     '''Parser for procar files'''
@@ -318,6 +251,23 @@ def chgcar(subparsers):
     subp_chgcar.add_argument('-o', '--output', help='Save a PARCHG or CHGCAR file', type=str)
 
 
+def stm(subparsers):
+    
+    subp_stm = subparsers.add_parser('stm', help='Reads, analyses, and plots STM data from CHGCAR or cube files')
+    subp_stm.add_argument('input', help='CHGCAR or cube file')
+    subp_stm.add_argument('-H', '--height', help='Height of the slice', type=float)
+    subp_stm.add_argument('-D', '--dims', help='Repeat in x and y dimensions', type=int, nargs=2)
+    subp_stm.add_argument('-a', '--animate', help='Animate slices', action='store_true')
+    subp_stm.add_argument('-p', '--plot', help='Plot charge density slice at a certain height', type=str)
+    subp_stm.add_argument('-t', '--title', help='Title of the plot', type=str)
+    subp_stm.add_argument('-o', '--output', help='Output file name', type=str)
+
+    args = subp_stm.parse_args()
+    if not args.animate and args.height is None:
+        subp_stm.error("The '--height' argument is required if '--animate' is not selected.")
+        
+    
 def setup(subparsers):
-    for script in adsorb, alchemy, analysis, band, chgcar, cohp, db, incar, kpoints, manage, poscar, procar, slab, wavecar:
+    scripts = [adsorb, alchemy, analysis, band, chgcar, cohp, db, incar, kpoints, manage, poscar, procar, slab, stm, wavecar]
+    for script in scripts:
         script(subparsers)
