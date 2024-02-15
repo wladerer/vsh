@@ -1,32 +1,74 @@
 from pymatgen.io.vasp import Wavecar
 from pymatgen.io.vasp import Poscar
 from pymatgen.io.wannier90 import Unk
+from itertools import product
 import numpy as np
 
+
+def get_partial_charge_density(wavecar: Wavecar, structure: Poscar, kpoints: list[int], bands: list[int], spins: list[int], spinors: list[int], phases: list[int], scale: float):
+    '''Returns the partial charge densities for given kpoints, bands, spins, spinors, phases, and scale.'''
+    wave = Wavecar(wavecar)
+    poscar = Poscar.from_file(structure)
+
+    combinations = list(product(kpoints, bands, spins, spinors, phases))
+
+    #initialize the first chgcar
+    parchg = wave.get_parchg(poscar, *combinations[0], scale=scale)
+
+    #add the rest of the chgcar
+    for kpoint, band, spin, spinor, phase in combinations[1:]:
+        parchg += wave.get_parchg(poscar, kpoint, band, spin, spinor, phase, scale)
+
+    return parchg
+
+def handle_string_inputs(args, wavecar):
+    '''Checks if all is passed as an input and returns a list of all possible values.'''
+    args_mapping = {
+        'kpoints': (wavecar.nk, list(range(wavecar.nk))),
+        'bands': (wavecar.nb, list(range(wavecar.nb))),
+        'spins': (wavecar.spin, list(range(wavecar.spin))),
+        'spinors': (2, list(range(2))),
+        'phases': (2, list(range(2)))
+    }
+
+    for arg, (max_value, default_value) in args_mapping.items():
+        try:
+            if args.__dict__[arg] == 'all':
+                args.__dict__[arg] = default_value
+            elif ':' in args.__dict__[arg]:
+                start, end = map(int, args.__dict__[arg].split(':'))
+                args.__dict__[arg] = list(range(start, end+1))
+            else:
+                args.__dict__[arg] = [int(args.__dict__[arg])]
+        except (ValueError, TypeError):
+            print(f"Invalid input for {arg}. Please provide a valid input.")
+
+    return args
+ 
 
 def generate_parchg(args):
     '''Generates a PARCHG file from a WAVECAR file. '''
     wave = Wavecar(args.input)
     poscar = Poscar.from_file(args.structure)
-
-    chgcar = wave.get_parchg(poscar, args.kpoint, args.band, args.spin, args.spinor, args.phase, args.scale)
+    args = handle_string_inputs(args, wave)
+    parchg = get_partial_charge_density(wave, poscar, args.kpoints, args.bands, args.spins, args.spinors, args.phases, args.scale)
 
     if args.output:
         if args.cube:
-            chgcar.to_cube(args.output)
+            parchg.to_cube(args.output)
         else:
-            chgcar.write_file(args.output)
+            parchg.write_file(args.output)
     else:
-        print(chgcar.__str__())
+        print(parchg.__str__())
 
-def generate_fft_mesh(args):
-    '''Generates a COEFFS file from a WAVECAR file. '''
-    mesh = Wavecar(args.input).fft_mesh(args.kpoint, args.band, args.spin, args.spinor, args.shift)
-    evals = np.fft.ifftn(mesh)
-    if args.output:
-        np.save(args.output, evals)
-    else:
-        print(evals)
+# def generate_fft_mesh(args):
+#     '''Generates a COEFFS file from a WAVECAR file. '''
+#     mesh = Wavecar(args.input).fft_mesh(args.kpoints, args.bands, args.spins, args.spinors)
+#     evals = np.fft.ifftn(mesh)
+#     if args.output:
+#         np.save(args.output, evals)
+#     else:
+#         print(evals)
 
 def generate_unk(args):
     """
