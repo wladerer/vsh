@@ -64,7 +64,7 @@
     "LDAU": false,
     "LREAL": "Auto",
     "LORBIT": 11,
-    "LWAVE": false,
+    "LWAVE": false
   },
   "band": {
     "PREC": "Accurate",
