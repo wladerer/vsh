@@ -29,3 +29,13 @@ conda-env
 vsh.egg-info
 
 .DS_Store
+
+# Big vasp files
+
+WAVECAR
+test/files/Bi2Se3/POTCAR
+test/files/Bi2Se3/CHGCAR
+test/files/Bi2Se3/PARCHG
+test/files/Bi2Se3/*.cube
+
+*.tgz

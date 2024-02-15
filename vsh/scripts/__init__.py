@@ -72,8 +72,10 @@ def poscar(subparsers):
     subp_poscar.add_argument("--super", nargs=3, type=int, help="Generate a supercell")
     subp_poscar.add_argument("-l", "--list", action='store_true', help="List the positions of the atoms")
     subp_poscar.add_argument("-d", "--dynamics", action='store_true', help="List atoms and their degrees of freedom")
-    subp_poscar.add_argument("--mp", action='store_true', help="Retrieve (relaxed) poscar from Materials Project API") 
+    subp_poscar.add_argument("--mp", action='store_true', help="Retrieve (relaxed, conventional) poscar from Materials Project API") 
     subp_poscar.add_argument("--compare", nargs='+', type=str, help="Compare the radial distribution of multiple structures")
+    
+    
     
     molecule = subp_poscar.add_argument_group('Molecular Tools')
     molecule.add_argument("-b", "--box", action='store_true', help="Create a POSCAR for a molecule surrounded by vacuum")
@@ -224,13 +226,14 @@ def wavecar(subparsers):
 
     # Argument group for standard specifications
     standard_specs = subp_wavecar.add_argument_group('Standard Specifications')
-    standard_specs.add_argument('-k', '--kpoint', help='Kpoint of interest', type=int)
-    standard_specs.add_argument('-b', '--band', help='Band of interest', type=int)
-    standard_specs.add_argument('-s', '--spin', help='Spin channel of interest', type=int)
-    standard_specs.add_argument('--spinor', help='Spinor channel of interest', type=int)
+    standard_specs.add_argument('-k', '--kpoints', help='Kpoint(s) of interest', type=int, nargs='+')
+    standard_specs.add_argument('-b', '--bands', help='Band(s) of interest', type=int, nargs='+')
+    standard_specs.add_argument('-s', '--spin', help='Spin channel(s) of interest. Do not specify if you want all spin and magnetization', type=str, default=None, choices=['0','1', 'up', 'down'])
+    standard_specs.add_argument('--spinor', help='Spinor of interest', type=int)
     standard_specs.add_argument('-P', '--phase', help='Phase of interest', type=int)
     standard_specs.add_argument('--shift', help='Shift value of periodic part of wavefunction', type=int)
     standard_specs.add_argument('--scale', help='Scaling factor for PARCHG mesh density', type=int, default=2)
+    
 
     # Argument group for functional choices
     functional_choices = subp_wavecar.add_argument_group('Functional Choices')
@@ -238,6 +241,13 @@ def wavecar(subparsers):
     functional_choices.add_argument('-c', '--cube', help='Save WAVECAR partial charge density as a cube file', action='store_true')
     functional_choices.add_argument('-m', '--mesh', help='Extract wavefunction coefficients projected onto a 3D mesh', action='store_true')
     functional_choices.add_argument('-u', '--unk', help='Generate UNK files from a WAVECAR file', action='store_true')
+    
+    
+    info_choices = subp_wavecar.add_argument_group('Information Choices')
+    info_choices.add_argument('--nk', help='Print number of kpoints to stdout', action='store_true')
+    info_choices.add_argument('--nb', help='Print number of bands to stdout', action='store_true')
+    info_choices.add_argument('--efermi', help='Print Fermi energy to stdout', action='store_true')
+    info_choices.add_argument('--occ', help='Print bands near the Fermi level to stdout', action='store_true')
 
     subp_wavecar.add_argument('input', help='WAVECAR or cube file')
     subp_wavecar.add_argument('-S', '--structure', help='Structure file')

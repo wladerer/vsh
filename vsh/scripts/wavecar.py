@@ -5,53 +5,61 @@ from itertools import product
 import numpy as np
 
 
-def get_partial_charge_density(wavecar: Wavecar, structure: Poscar, kpoints: list[int], bands: list[int], spins: list[int], spinors: list[int], phases: list[int], scale: float):
-    '''Returns the partial charge densities for given kpoints, bands, spins, spinors, phases, and scale.'''
-    wave = Wavecar(wavecar)
-    poscar = Poscar.from_file(structure)
+def parse_spins(spin_channel_str: str):
+    if spin_channel_str in ['0', '1']:
+        return int(spin_channel_str)
+    elif spin_channel_str in ['up', 'down']:
+        # Handle 'up' or 'down' accordingly (this may also be a spinor)
+        return 0 if spin_channel_str == 'up' else 1
+    elif spin_channel_str is None:
+        return None
+    else:
+        raise ValueError("Invalid spin channel value")
+    
 
-    combinations = list(product(kpoints, bands, spins, spinors, phases))
+def get_partial_charge_density(wavecar: Wavecar, poscar: Poscar, kpoints: list[int], bands: list[int], spins: list[int], spinors: list[int], phases: list[int], scale: float):
+    '''Returns the partial charge densities for given kpoints, bands, spins, spinors, phases, and scale.'''
+
+    specifications = [kpoints, bands, spins, spinors, phases]
+    #check if any of the specications are None or list[None], if so, remove them
+    for i, spec in enumerate(specifications):
+        if spec is None:
+            specifications[i] = [None]
+        elif isinstance(spec, int):
+            specifications[i] = [spec]
+            
+    
+        
+    combinations = list(product(*specifications))
 
     #initialize the first chgcar
-    parchg = wave.get_parchg(poscar, *combinations[0], scale=scale)
+    parchg = wavecar.get_parchg(poscar, *combinations[0], scale=scale)
 
     #add the rest of the chgcar
     for kpoint, band, spin, spinor, phase in combinations[1:]:
-        parchg += wave.get_parchg(poscar, kpoint, band, spin, spinor, phase, scale)
+        parchg += wavecar.get_parchg(poscar, kpoint, band, spin, spinor, phase, scale)
 
     return parchg
 
-def handle_string_inputs(args, wavecar):
-    '''Checks if all is passed as an input and returns a list of all possible values.'''
-    args_mapping = {
-        'kpoints': (wavecar.nk, list(range(wavecar.nk))),
-        'bands': (wavecar.nb, list(range(wavecar.nb))),
-        'spins': (wavecar.spin, list(range(wavecar.spin))),
-        'spinors': (2, list(range(2))),
-        'phases': (2, list(range(2)))
-    }
-
-    for arg, (max_value, default_value) in args_mapping.items():
-        try:
-            if args.__dict__[arg] == 'all':
-                args.__dict__[arg] = default_value
-            elif ':' in args.__dict__[arg]:
-                start, end = map(int, args.__dict__[arg].split(':'))
-                args.__dict__[arg] = list(range(start, end+1))
-            else:
-                args.__dict__[arg] = [int(args.__dict__[arg])]
-        except (ValueError, TypeError):
-            print(f"Invalid input for {arg}. Please provide a valid input.")
-
-    return args
- 
 
 def generate_parchg(args):
     '''Generates a PARCHG file from a WAVECAR file. '''
     wave = Wavecar(args.input)
     poscar = Poscar.from_file(args.structure)
-    args = handle_string_inputs(args, wave)
-    parchg = get_partial_charge_density(wave, poscar, args.kpoints, args.bands, args.spins, args.spinors, args.phases, args.scale)
+    
+    #sanitize the input
+    
+    spins = parse_spins(args.spin)
+    spinor = parse_spins(args.spinor)
+
+    #check if the range of bands and kpoints exceeds the number of bands and kpoints
+    if args.bands and max(args.bands) > wave.nb:
+        raise ValueError(f"Maximum band index {max(args.bands)} exceeds the number of bands {wave.nb}")
+    if args.kpoints and max(args.kpoints) > wave.nk:
+        raise ValueError(f"Maximum kpoint index {max(args.kpoints)} exceeds the number of kpoints {wave.nk}")
+        
+    parchg = get_partial_charge_density(wave, poscar, args.kpoints, args.bands, spins, spinor, args.phase, args.scale)
+    
 
     if args.output:
         if args.cube:
@@ -109,12 +117,65 @@ def generate_unk(args):
                     data[ib, :, :, :] = np.fft.ifftn(wavecar.fft_mesh(ik, ib, spin=ispin)) * N
                 Unk(ik + 1, data).write_file(f"{args.output}_{fname}{ispin+1}")
 
+
+def print_number_of_kpoints(args):
+    wave = Wavecar(args.input)
+    print(f"{wave.nk}")
+
+def print_number_of_bands(args):
+    wave = Wavecar(args.input)
+    print(f"{wave.nb}")
+
+def print_fermi_energy(args):
+    wave = Wavecar(args.input)
+    print(f"{wave.efermi}")
+    
+
+def get_band_occupancy_info(wavecar: Wavecar):
+    '''Gets the band occupancy information from a WAVECAR file.'''
+    import pandas as pd
+    
+    band_energy = wavecar.band_energy
+    dfs = []
+    for kpoint, bands in enumerate(band_energy):
+        df = pd.DataFrame(bands, columns=['energy', 'idk', 'occupancy'])
+        df['kpoint'] = kpoint
+
+        # Update each row of bands to include band index (starting at 0)
+        for i, row in df.iterrows():
+            df.at[i, 'band'] = i
+
+        dfs.append(df)
+
+    df = pd.concat(dfs)
+
+    # Sum the occupation of each band and divide by the number of kpoints to get a relative occupancy
+    df['relative_occupancy'] = df.groupby('band')['occupancy'].transform('sum') / wavecar.nk
+
+    # Drop the kpoint and idk columns
+    df = df.drop(columns=['kpoint', 'idk', 'occupancy'])
+    # Remove duplicate bands
+    df = df.drop_duplicates()
+
+    return df[df['relative_occupancy'] > 0].tail(19)
+
+def print_band_occupancy_info(args):
+    wave = Wavecar(args.input)
+    df = get_band_occupancy_info(wave)
+    #print dataframe without index
+    
+    print(df.to_string(index=False))
+
+
 def run(args):
 
     functions = {
         'parchg': generate_parchg,
-        'mesh': generate_fft_mesh,
-        'unk': generate_unk
+        'unk': generate_unk,
+        'nk': print_number_of_kpoints,
+        'nb': print_number_of_bands,
+        'efermi': print_fermi_energy,
+        'occ': print_band_occupancy_info
     }
 
     for arg, func in functions.items():
