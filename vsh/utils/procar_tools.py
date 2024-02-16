@@ -1,5 +1,6 @@
-from vsh.scripts.procar import load_dataframe_from_file, add_kpoint_labels
 from pymatgen.io.vasp import Vasprun
+
+from vsh.scripts.procar import add_kpoint_labels, load_dataframe_from_file
 
 
 # get ions from vasprun

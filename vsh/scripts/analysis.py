@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
-from ase.calculators.vasp import Vasp
-from ase.spacegroup import get_spacegroup
-from ase import Atoms
-from ase.io import read
-from scipy.spatial.distance import cdist
 import numpy as np
+from ase import Atoms
+from ase.calculators.vasp import Vasp
+from ase.io import read
+from ase.spacegroup import get_spacegroup
+from scipy.spatial.distance import cdist
 
 
 def validate_atoms(atoms: Atoms) -> bool:

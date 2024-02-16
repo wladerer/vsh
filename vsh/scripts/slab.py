@@ -3,12 +3,12 @@
 
 """Orthogonalization utilities were written by Dr. Yonghyuk Lee"""
 
-from pymatgen.core.structure import Structure
-from pymatgen.core.surface import SlabGenerator
-from pymatgen.io.vasp.inputs import Poscar
-from pymatgen.io.ase import AseAtomsAdaptor
 import numpy as np
 from ase import Atoms
+from pymatgen.core.structure import Structure
+from pymatgen.core.surface import SlabGenerator
+from pymatgen.io.ase import AseAtomsAdaptor
+from pymatgen.io.vasp.inputs import Poscar
 
 
 def structure_from_file(filename: str) -> Structure:

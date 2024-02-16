@@ -1,7 +1,9 @@
+import argparse
 import unittest
 from unittest.mock import patch
+
 from pymatgen.io.vasp.inputs import Kpoints
-import argparse
+
 from vsh.scripts.kpoints import write_kpoints
 
 

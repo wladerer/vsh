@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
-from ase.io import read
 import os
-from pymatgen.io.vasp.outputs import Vasprun
+
 from ase.db import connect
+from ase.io import read
+from pymatgen.io.vasp.outputs import Vasprun
 
 
 def check_for_vasprun(file: str) -> bool:

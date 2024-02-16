@@ -1,8 +1,8 @@
-from pymatgen.io.vasp import Wavecar
-from pymatgen.io.vasp import Poscar
-from pymatgen.io.wannier90 import Unk
 from itertools import product
+
 import numpy as np
+from pymatgen.io.vasp import Poscar, Wavecar
+from pymatgen.io.wannier90 import Unk
 
 
 def parse_spins(spin_channel_str: str):

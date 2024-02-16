@@ -1,8 +1,9 @@
-import pandas as pd
-import numpy as np
-import pickle
 import itertools
 import logging
+import pickle
+
+import numpy as np
+import pandas as pd
 
 logging.basicConfig(level=logging.DEBUG)
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-from ase.io import read, write
 from ase.atoms import Atoms
 from ase.constraints import FixAtoms
+from ase.io import read, write
 
 
 def delete_atoms_by_index(atoms: Atoms, indices: list[int]) -> None:
@@ -141,10 +141,10 @@ def swap_atoms(args):
 
 def rattle_atoms(args):
     """Rattles atoms using MonteCarloRattleTransformation"""
+    from pymatgen.io.ase import AseAtomsAdaptor
     from pymatgen.transformations.advanced_transformations import (
         MonteCarloRattleTransformation,
     )
-    from pymatgen.io.ase import AseAtomsAdaptor
 
     atoms = read(args.input)
     structure = AseAtomsAdaptor.get_structure(atoms)

@@ -1,10 +1,10 @@
 import os
+
+import matplotlib.pyplot as plt
+import networkx as nx
+import pandas as pd
 from pymatgen.electronic_structure.cohp import CompleteCohp
 from pymatgen.electronic_structure.plotter import CohpPlotter
-import matplotlib.pyplot as plt
-import pandas as pd
-import networkx as nx
-
 
 plt.style.use("seaborn-v0_8-colorblind")
 

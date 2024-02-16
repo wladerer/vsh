@@ -1,8 +1,8 @@
-from pymatgen.io.vasp import Chgcar
-from pymatgen.io.common import VolumetricData
+import matplotlib.animation as animation
 import numpy as np
 from matplotlib import pyplot as plt
-import matplotlib.animation as animation
+from pymatgen.io.common import VolumetricData
+from pymatgen.io.vasp import Chgcar
 
 
 def get_charge_density_from_chgcar(file: str) -> np.array:

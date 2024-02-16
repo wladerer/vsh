@@ -15,8 +15,8 @@ def plot_linear_slice(
     npoints: int = 100,
 ):
     """Plots a linear slice of the CHGCAR file."""
-    from matplotlib import pyplot as plt
     import numpy as np
+    from matplotlib import pyplot as plt
 
     chgcar = Chgcar.from_file(file)
     charge_line = chgcar.linear_slice(

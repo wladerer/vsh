@@ -40,8 +40,8 @@ def plot_stm_from_dat(
     return plt.show()
 
 
-from pymatgen.io.vasp import Chgcar
 from pymatgen.io.common import VolumetricData
+from pymatgen.io.vasp import Chgcar
 
 
 def get_charge_density_from_chgcar(file: str) -> np.array:

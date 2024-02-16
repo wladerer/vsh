@@ -1,6 +1,6 @@
-from py4vasp.data import Band, Structure, Topology
 import pandas as pd
 import plotly.graph_objs as go
+from py4vasp.data import Band, Structure, Topology
 
 # this module is meant to be used as an api for the py4vasp package - it is not meant to be run as a script
 # most of these functions require the user to tinker with their data and inspect the output

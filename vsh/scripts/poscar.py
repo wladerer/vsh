@@ -1,6 +1,7 @@
-from ase.io import read
 import os
+
 import numpy as np
+from ase.io import read
 
 
 def get_atoms(args):
@@ -69,7 +70,7 @@ def mp_poscar(args):
 
 def boxed_molecule(args):
     """Creates a boxed molecule from an input file"""
-    from pymatgen.core import Structure, Molecule
+    from pymatgen.core import Molecule, Structure
     from pymatgen.io.vasp.inputs import Poscar
 
     # read the molecule
@@ -101,8 +102,8 @@ def convert_to_poscar(args):
 
 def make_supercell(args):
     """Make a supercell of a structure"""
-    from pymatgen.io.vasp.inputs import Poscar
     from pymatgen.core import Structure
+    from pymatgen.io.vasp.inputs import Poscar
     from pymatgen.transformations.standard_transformations import (
         SupercellTransformation,
     )

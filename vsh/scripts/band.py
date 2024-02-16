@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-from ase.io import read
 import pyprocar
+from ase.io import read
 
 orbital_dict = {
     "s": 0,

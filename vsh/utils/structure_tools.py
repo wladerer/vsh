@@ -1,7 +1,7 @@
-import pandas as pd
 import numpy as np
-from scipy.spatial import distance_matrix
+import pandas as pd
 from ase.io import read
+from scipy.spatial import distance_matrix
 
 
 def xyz_to_dataframe(file: str):
@@ -133,8 +133,8 @@ def plot_radial_distribution_function(
 
 def get_symmetry_operations(file: str):
     """Returns the symmetry operations of a POSCAR or CONTCAR file."""
-    from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
     from pymatgen.core import Structure
+    from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
     structure = Structure.from_file(file)
     sga = SpacegroupAnalyzer(structure)

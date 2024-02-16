@@ -1,8 +1,9 @@
-import pandas as pd
-import numpy as np
-from pymatgen.io.vasp.outputs import Vasprun
 import pickle
+
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from pymatgen.io.vasp.outputs import Vasprun
 
 
 def projected_eigenvalues_from_pickle(file: str) -> pd.DataFrame:

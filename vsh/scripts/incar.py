@@ -1,6 +1,7 @@
-from ase.io import read
-import os
 import json
+import os
+
+from ase.io import read
 
 
 def get_atoms(args):

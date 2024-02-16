@@ -1,10 +1,11 @@
+import os
 import pickle
 import uuid
+
 from ase.io import read, write
 from PIL import Image
-import os
+from pymatgen.io.vasp import Incar, Kpoints, Poscar, Potcar
 
-from pymatgen.io.vasp import Poscar, Incar, Kpoints, Potcar
 
 def validate_input(args):
     """Validates that INCAR, POSCAR, KPOINTS, and POTCAR files are present and formatted correctly"""

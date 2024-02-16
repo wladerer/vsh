@@ -1,5 +1,5 @@
-from ase.io import read
 import numpy as np
+from ase.io import read
 
 two_d_kpath_template = """Two dimensional Kpath 
    {{ kpath }}
