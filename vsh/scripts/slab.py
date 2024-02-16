@@ -93,14 +93,14 @@ def update_structure(
         l_max=soap_info["lmax"],
     )
 
-    if type(traj) == list:
+    if isinstance(traj, list):
         for s in traj:
             try:
                 del s.arrays["SOAP"]
             except:
                 pass
             s.set_array("SOAP", normalize(soap.create(s)))
-    elif type(traj) == Atoms:
+    elif isinstance(traj, Atoms):
         traj.set_array("SOAP", normalize(soap.create(traj)))
 
     return traj
@@ -165,7 +165,7 @@ def convert_vacuum_to_angstroms(vacuum_ang: float, structure: Structure) -> floa
 def gen_slabs(args):
     """Generate slabs using pymatgen slab generator"""
 
-    if args.in_unit_planes == True:
+    if args.in_unit_planes is True:
         vacuum = convert_vacuum_to_angstroms(
             args.vacuum, structure_from_file(args.input)
         )
