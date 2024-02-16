@@ -61,7 +61,7 @@ def unpack_indices(
 ):
     """Returns a dictionary of atom pairs"""
     # check if indices is an empty np array, if so return None
-    if any(len(index) < 2 for index in indices) or len(indices) == 0 or indices == None:
+    if any(len(index) < 2 for index in indices) or len(indices) == 0 or indices is None:
         return None
 
     atom_pairs = {}
