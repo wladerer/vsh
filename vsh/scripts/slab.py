@@ -73,13 +73,13 @@ def update_structure(
     from sklearn.preprocessing import normalize
 
     species = []
-    if type(traj) == list:
+    if isinstance(traj, list):
         for t in traj:
             elements = np.unique(t.get_chemical_symbols())
             for e in elements:
                 if e not in species:
                     species.append(e)
-    elif type(traj) == Atoms:
+    elif isinstance(traj, Atoms):
         elements = np.unique(traj.get_chemical_symbols())
         for e in elements:
             if e not in species:
