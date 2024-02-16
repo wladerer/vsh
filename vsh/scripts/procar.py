@@ -23,8 +23,8 @@ orbital_dict = {
     "f_xz2": 13,
     "f_z(x2 -y2)": 14,
     "f_x(x2 -3y2)": 15,
-    "p_x + p_y": 'Psum',
-    "d_xz + d_yz": 'Dsum'
+    "p_x + p_y": "Psum",
+    "d_xz + d_yz": "Dsum",
 }
 orbital_dict = {
     value: key for key, value in orbital_dict.items()
@@ -58,7 +58,9 @@ def dict_to_dataframe(projected_eigenvalues: dict) -> pd.DataFrame:
     for spin_index, spin in enumerate(data.values()):
         logging.info(f"Processing spin {spin_index}")
         nkpoints, nbands, nions, norbitals = np.shape(spin)
-        logging.info(f"nkpoints: {nkpoints}, nbands: {nbands}, nions: {nions}, norbitals: {norbitals}")
+        logging.info(
+            f"nkpoints: {nkpoints}, nbands: {nbands}, nions: {nions}, norbitals: {norbitals}"
+        )
         all_entries = list(
             itertools.product(
                 *[range(nkpoints), range(nbands), range(nions), range(norbitals)]
@@ -167,22 +169,21 @@ def save_eigenvals(projected_eigenvalues: pd.DataFrame, filename: str) -> None:
 
 def parse_query_input(query: dict):
     """Formats query to be compatible with Pandas"""
-    
+
     query_dict = {key: value for key, value in query.items() if value is not None}
-    
+
     # remove ions if it is an empty list
     if "Ion" in query_dict and len(query_dict["Ion"]) == 0:
         del query_dict["Ion"]
-        
+
     # pop ions to avoid duplicate entries in the dictionary
     if "Ion" in query_dict:
         ions = query_dict.pop("Ion")
 
     query_string = " and ".join([f"{k} == {v}" for k, v in query_dict.items()])
-    
+
     # add ions back to query string
     if "Ion" in query_dict:
-        
         for ion in ions:
             query_string += f" and Ion == {ion}"
 
@@ -261,32 +262,40 @@ def get_kpoint_data(file: str, kpoint: int, band: int):
 
     return kpoint_data
 
-def add_orbital_sum(dataframe: pd.DataFrame, orbitals: list[int], label: str):
-    '''Adds a new entry that is the sum of the Percent of entries with the same Kpoint, Band, and Spin, but only if Orbital is 1 or 3'''
 
-    filtered_dataframe = dataframe[dataframe['Orbital'].isin(orbitals)]
-    orbital_sum = filtered_dataframe.groupby(['Kpoint', 'Band', 'Spin'])['Value'].sum().reset_index()
-    orbital_sum['Orbital'] = label
+def add_orbital_sum(dataframe: pd.DataFrame, orbitals: list[int], label: str):
+    """Adds a new entry that is the sum of the Percent of entries with the same Kpoint, Band, and Spin, but only if Orbital is 1 or 3"""
+
+    filtered_dataframe = dataframe[dataframe["Orbital"].isin(orbitals)]
+    orbital_sum = (
+        filtered_dataframe.groupby(["Kpoint", "Band", "Spin"])["Value"]
+        .sum()
+        .reset_index()
+    )
+    orbital_sum["Orbital"] = label
     dataframe = pd.concat([dataframe, orbital_sum], ignore_index=True)
 
     return dataframe
 
+
 def get_kpoint_orbital_variation(file: str, band: int, ions: list[int] = None):
     """Plots the orbital variation within a band"""
-    
+
     dataframe = load_dataframe_from_file(file)
     dataframe = dataframe[dataframe["Band"] == int(band)]
-    
+
     if ions:
         dataframe = dataframe[dataframe["Ion"].isin(ions)]
-    
-    dataframe = (dataframe.groupby(["Spin", "Kpoint", "Band", "Orbital"]).sum().reset_index())
+
+    dataframe = (
+        dataframe.groupby(["Spin", "Kpoint", "Band", "Orbital"]).sum().reset_index()
+    )
 
     return dataframe
 
 
 def calculate_absolute_charge_spilling(dataframe: pd.DataFrame):
-    #finds the charge spilling for each kpoint
+    # finds the charge spilling for each kpoint
     kpoints = dataframe["Kpoint"].unique()
     sum_values = []
     for kpoint in kpoints:
@@ -294,18 +303,18 @@ def calculate_absolute_charge_spilling(dataframe: pd.DataFrame):
         sum_values.append(kpoint_data["Value"].sum())
 
     # sum values should be 1 - the sum of the absolute charge spilling
-    sum_values = [ 1 - value for value in sum_values]  
-    
+    sum_values = [1 - value for value in sum_values]
+
     return kpoints, sum_values
 
-def plot_kpoint_orbital_variation(args):
 
+def plot_kpoint_orbital_variation(args):
     dataframe = load_dataframe_from_file(args.input)
     dataframe = get_kpoint_orbital_variation(args.input, args.band, args.ions)
     kpoints, sum_values = calculate_absolute_charge_spilling(dataframe)
-    dataframe = add_orbital_sum(dataframe, [1, 3], label='Psum')
-    dataframe = add_orbital_sum(dataframe, [5, 7], label='Dsum')
-    
+    dataframe = add_orbital_sum(dataframe, [1, 3], label="Psum")
+    dataframe = add_orbital_sum(dataframe, [5, 7], label="Dsum")
+
     import plotly.graph_objects as go
 
     fig = go.Figure()
@@ -327,16 +336,17 @@ def plot_kpoint_orbital_variation(args):
             y=sum_values,
             mode="lines",
             name=f"Charge Spilling",
-            line=dict(color='grey', dash='dash', width=1)
+            line=dict(color="grey", dash="dash", width=1),
         )
     )
 
     # Remove px, py, dxz, and dyz from the plot
-    fig.data = [trace for trace in fig.data if trace.name not in ['p_x', 'p_y', 'd_xz', 'd_yz']]
+    fig.data = [
+        trace for trace in fig.data if trace.name not in ["p_x", "p_y", "d_xz", "d_yz"]
+    ]
 
     title = f"Band {args.band} Orbital Variation"
     if args.ions:
-        
         title += f" for Ions {args.ions}"
 
     fig.update_layout(
@@ -348,32 +358,38 @@ def plot_kpoint_orbital_variation(args):
     if args.labels:
         add_kpoint_labels(fig, dataframe, args.labels)
 
-    fig.update_layout(template='simple_white')
+    fig.update_layout(template="simple_white")
 
     if not args.output:
         fig.show()
     else:
         fig.write_image(args.output)
 
-    
+
 def parse_structure_file(file: str):
-    '''Reads a structure file and returns an atom dataframe'''
+    """Reads a structure file and returns an atom dataframe"""
     try:
         from ase.io import read
 
         atoms = read(file)
 
         heights = atoms.get_positions()[:, 2]
-        atom_tuples = [ (label, ion, height) for label, ion, height in zip(atoms.get_chemical_symbols(), range(0, len(atoms)), heights) ]
-        #create an df for the atoms
-        atom_df = pd.DataFrame(atom_tuples, columns=['Label', 'Ion', 'Height'])
+        atom_tuples = [
+            (label, ion, height)
+            for label, ion, height in zip(
+                atoms.get_chemical_symbols(), range(0, len(atoms)), heights
+            )
+        ]
+        # create an df for the atoms
+        atom_df = pd.DataFrame(atom_tuples, columns=["Label", "Ion", "Height"])
 
         return atom_df
-        
+
     except:
-        
-        raise Exception("Could not read structure file. Please provide a valid structure file.")
-    
+        raise Exception(
+            "Could not read structure file. Please provide a valid structure file."
+        )
+
 
 def get_compositional_variation(file: str, band: int):
     """Get compositional variation of a band"""
@@ -383,21 +399,23 @@ def get_compositional_variation(file: str, band: int):
 
     for kpoint in dataframe["Kpoint"].unique():
         kpoint_data = dataframe[dataframe["Kpoint"] == int(kpoint)]
-        dataframe.loc[dataframe["Kpoint"] == int(kpoint), "Percent"] = kpoint_data["Value"] / kpoint_data["Value"].sum() * 100
+        dataframe.loc[dataframe["Kpoint"] == int(kpoint), "Percent"] = (
+            kpoint_data["Value"] / kpoint_data["Value"].sum() * 100
+        )
 
     return dataframe
 
 
 def plot_compositional_variation(args):
     """Plots the compositional variation of a band"""
-    
+
     dataframe = get_compositional_variation(args.input, args.band)
 
     atom_df = parse_structure_file(args.structure)
     # merge the atom dataframe with the dataframe
     dataframe = pd.merge(dataframe, atom_df, on="Ion")
 
-    #create color mask for Height
+    # create color mask for Height
     height_mask = dataframe["Height"].unique()
     height_mask.sort()
     height_mask = dict(zip(height_mask, range(len(height_mask))))
@@ -414,7 +432,9 @@ def plot_compositional_variation(args):
                 y=ion_data["Percent"],
                 mode="lines",
                 name=f"{ion_data['Label'].iloc[0]} {ion_data['Ion'].iloc[0]} ( z = {ion_data['Height'].iloc[0]:.2f} )",
-                line=dict(color=f'rgb(0,{height_mask[ion_data["Height"].iloc[0]]*30}, 0)')
+                line=dict(
+                    color=f'rgb(0,{height_mask[ion_data["Height"].iloc[0]]*30}, 0)'
+                ),
             )
         )
 
@@ -425,11 +445,10 @@ def plot_compositional_variation(args):
         yaxis_title="Percent (%)",
     )
 
-
     if args.labels:
         add_kpoint_labels(fig, dataframe, args.labels)
 
-    fig.update_layout(template='simple_white')
+    fig.update_layout(template="simple_white")
 
     if not args.output:
         fig.show()
@@ -494,12 +513,13 @@ def create_query_dict(args) -> dict:
         "Spin": args.spin if args.spin is not None else None,
         "Kpoint": int(args.kpoint) if args.kpoint is not None else None,
         "Band": int(args.band) if args.band is not None else None,
-        "Ion": [ int(ion) for ion in args.ions] if args.ions is not None else None,
+        "Ion": [int(ion) for ion in args.ions] if args.ions is not None else None,
         "Orbital": args.orbital if args.orbital is not None else None,
         "Occupation": args.occupation if args.occupation is not None else None,
         "Energy": args.energy if args.energy is not None else None,
     }
     return query_dict
+
 
 def run_query(args):
     data = load_dataframe_from_file(args.input)
@@ -547,6 +567,7 @@ def pickle_procar(args):
     else:
         print(dataframe.describe())
 
+
 def filter_pickle_data_by_energy(pickle_file: str, erange: list[float]) -> pd.DataFrame:
     """Updates the pickle file to include only the specified query"""
     dataframe = load_dataframe_from_file(pickle_file)
@@ -554,13 +575,15 @@ def filter_pickle_data_by_energy(pickle_file: str, erange: list[float]) -> pd.Da
 
     return dataframe
 
+
 def filter_pickle(args):
     dataframe = filter_pickle_data_by_energy(args.input, args.erange)
-    
+
     if args.output:
         save_eigenvals(dataframe, args.output)
     else:
         print(dataframe)
+
 
 def run(args):
     functions = {
@@ -570,10 +593,10 @@ def run(args):
         "kplot": plot_kpoint_orbital_variation,
         "iplot": plot_compositional_variation,
         "analyze": analyze_kpoint,
-        "filter": filter_pickle
+        "filter": filter_pickle,
     }
 
-    selected = False # assign default behavior as query
+    selected = False  # assign default behavior as query
     for arg, func in functions.items():
         if getattr(args, arg):
             func(args)

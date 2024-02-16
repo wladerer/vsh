@@ -28,7 +28,13 @@ def get_metadata(file: str) -> dict:
     """Returns metadata from vasprun.xml file"""
     # check for vasprun.xml file
     check_for_vasprun(file)
-    vasprun = Vasprun(file, parse_dos=False, parse_eigen=False, parse_projected_eigen=False, parse_potcar_file=False)
+    vasprun = Vasprun(
+        file,
+        parse_dos=False,
+        parse_eigen=False,
+        parse_projected_eigen=False,
+        parse_potcar_file=False,
+    )
 
     spin = vasprun.parameters["ISPIN"]
     soc = vasprun.parameters["LSORBIT"]
@@ -52,6 +58,7 @@ def get_metadata(file: str) -> dict:
     }
 
     return metadata
+
 
 def update_ase_db(vasprun_file: str, database: str):
     """Writes atoms and metadata to a database"""
@@ -80,8 +87,7 @@ def setup_args(subparsers):
     subp_db.add_argument(
         "-i", "--input", default="vasprun.xml", type=str, help="vasprun.xml file"
     )
-    subp_db.add_argument(
-        "database", type=str, help="Database file", required=True)
+    subp_db.add_argument("database", type=str, help="Database file", required=True)
 
 
 def run(args):

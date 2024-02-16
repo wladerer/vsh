@@ -1,21 +1,17 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='vsh',
-    version='0.4',
+    name="vsh",
+    version="0.4",
     packages=find_packages(),
     install_requires=[
-        'ase',
-        'numpy',
-        'matplotlib',
-        'pymatgen',
-        'mp-api',
-        'pyprocar',
-        'pydantic'
+        "ase",
+        "numpy",
+        "matplotlib",
+        "pymatgen",
+        "mp-api",
+        "pyprocar",
+        "pydantic",
     ],
-    entry_points={
-        'console_scripts': [
-            'vsh = vsh.cli:main'
-        ]
-    }
+    entry_points={"console_scripts": ["vsh = vsh.cli:main"]},
 )

@@ -3,7 +3,7 @@ from unittest.mock import patch
 from pymatgen.io.vasp.outputs import Wavecar
 import argparse
 
-'''
+"""
     Attributes:
         filename (str): String of the input file (usually WAVECAR).
         vasp_type (str): String that determines VASP type the WAVECAR was generated with.
@@ -31,50 +31,45 @@ import argparse
             (e.g. self.coeffs[kp][b] corresponds to k-point kp and band b). For spin-polarized calculations,
             the first index is for the spin. If the calculation was non-collinear, then self.coeffs[kp][b] will have
             two columns (one for each component of the spinor).
-'''
+"""
 
 
-bi2se3_wavecar = '/home/wladerer/github/vsh/test/files/Bi2Se3/WAVECAR'
-bi2se3_poscar = '/home/wladerer/github/vsh/test/files/Bi2Se3/POSCAR'
+bi2se3_wavecar = "/home/wladerer/github/vsh/test/files/Bi2Se3/WAVECAR"
+bi2se3_poscar = "/home/wladerer/github/vsh/test/files/Bi2Se3/POSCAR"
 # nk = 6, nb = 64, spin = 1, efermi = 4.0126579574404495, encut = 600.0
-#lets get some info from the wavecar file
+# lets get some info from the wavecar file
 import pandas as pd
 from pymatgen.io.vasp.outputs import Wavecar
 
-def get_band_occupancy_info(wavecar: Wavecar):
 
+def get_band_occupancy_info(wavecar: Wavecar):
     band_energy = wavecar.band_energy
     dfs = []
     for kpoint, bands in enumerate(band_energy):
-        df = pd.DataFrame(bands, columns=['energy', 'idk', 'occupancy'])
-        df['kpoint'] = kpoint
+        df = pd.DataFrame(bands, columns=["energy", "idk", "occupancy"])
+        df["kpoint"] = kpoint
 
         # Update each row of bands to include band index (starting at 0)
         for i, row in df.iterrows():
-            df.at[i, 'band'] = i
+            df.at[i, "band"] = i
 
         dfs.append(df)
 
     df = pd.concat(dfs)
 
     # Sum the occupation of each band and divide by the number of kpoints to get a relative occupancy
-    df['relative_occupancy'] = df.groupby('band')['occupancy'].transform('sum') / wavecar.nk
+    df["relative_occupancy"] = (
+        df.groupby("band")["occupancy"].transform("sum") / wavecar.nk
+    )
 
     # Drop the kpoint and idk columns
-    df = df.drop(columns=['kpoint', 'idk', 'occupancy'])
+    df = df.drop(columns=["kpoint", "idk", "occupancy"])
     # Remove duplicate bands
     df = df.drop_duplicates()
 
-    return df[df['relative_occupancy'] > 0].tail(19)
+    return df[df["relative_occupancy"] > 0].tail(19)
+
 
 wavecar = Wavecar(bi2se3_wavecar)
 df = get_band_occupancy_info(wavecar)
 print(df)
-
-
-
-
-
-
-
-

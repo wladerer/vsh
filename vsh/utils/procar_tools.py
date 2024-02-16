@@ -4,12 +4,11 @@ from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from pymatgen.core.structure import Structure
 
 
-
-
-#get ions from vasprun
+# get ions from vasprun
 def get_ions(vasprun: Vasprun):
     """Get the ions from a vasprun file"""
     return vasprun.atomic_symbols
+
 
 def get_compositional_variation(file: str, band: int):
     """Get compositional variation of a band"""
@@ -56,6 +55,7 @@ def plot_compositional_variation(file: str, band: int, labels: list[str] = None)
 
     fig.show()
 
+
 def get_equivalent_positions(pmg_structure):
     """Get the equivalent positions of a structure"""
     from pymatgen.core.structure import Structure
@@ -67,7 +67,5 @@ def get_equivalent_positions(pmg_structure):
 
     for site in sites:
         print(f"Type: {site[0].species_string} \t Count: {len(site)}")
-    
+
     return None
-
-

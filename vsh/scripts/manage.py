@@ -4,51 +4,49 @@ from ase.io import read, write
 from PIL import Image
 import os
 
+
 def validate_input(args):
-    '''Validates that INCAR, POSCAR, KPOINTS, and POTCAR files are present and formatted correctly'''
+    """Validates that INCAR, POSCAR, KPOINTS, and POTCAR files are present and formatted correctly"""
     from pymatgen.io.vasp import Incar, Poscar, Kpoints, Potcar
     import os
 
     # check that each file exists
     directory = args.input
-    incar_file = os.path.join(directory, 'INCAR')
-    poscar_file = os.path.join(directory, 'POSCAR')
-    kpoints_file = os.path.join(directory, 'KPOINTS')
-    potcar_file = os.path.join(directory, 'POTCAR')
+    incar_file = os.path.join(directory, "INCAR")
+    poscar_file = os.path.join(directory, "POSCAR")
+    kpoints_file = os.path.join(directory, "KPOINTS")
+    potcar_file = os.path.join(directory, "POTCAR")
 
     for file in [incar_file, poscar_file, kpoints_file, potcar_file]:
         if not os.path.isfile(file):
             raise FileNotFoundError(f"File not found: {file}")
-        
+
     # check that each file is formatted correctly
     incar = Incar.from_file(incar_file)
     poscar = Poscar.from_file(poscar_file)
     kpoints = Kpoints.from_file(kpoints_file)
     potcar = Potcar.from_file(potcar_file)
 
-    #check that incar has valid tags
-    incar.check_params() #stdout is empty if no errors
-
+    # check that incar has valid tags
+    incar.check_params()  # stdout is empty if no errors
 
     print("Input files validated successfully")
 
 
-
 def snapshot(args):
-
     if not args.output:
         raise ValueError("No output file specified")
-    
+
     # Create an example atomic structure
-    atoms = read(args.snapshot) 
-    write('profile_view.png', atoms, rotation='-90x,-90y')
-    write('top_view.png', atoms, rotation='0x,0y,-90z')
-    write('oblique_view.png', atoms, rotation='10z,-80x,0y')
+    atoms = read(args.snapshot)
+    write("profile_view.png", atoms, rotation="-90x,-90y")
+    write("top_view.png", atoms, rotation="0x,0y,-90z")
+    write("oblique_view.png", atoms, rotation="10z,-80x,0y")
 
     # Open the three images
-    top_image = Image.open('top_view.png')
-    side_image = Image.open('profile_view.png')
-    oblique_image = Image.open('oblique_view.png')
+    top_image = Image.open("top_view.png")
+    side_image = Image.open("profile_view.png")
+    oblique_image = Image.open("oblique_view.png")
 
     # Get the dimensions of the images
     top_width, top_height = top_image.size
@@ -60,7 +58,7 @@ def snapshot(args):
     max_height = max(top_height, side_height, oblique_height)
 
     # Create a new blank image with a white background
-    combined_image = Image.new('RGB', (max_width * 3, max_height), 'white')
+    combined_image = Image.new("RGB", (max_width * 3, max_height), "white")
 
     # Calculate the positions to center each image
     top_position = ((max_width - top_width) // 2, (max_height - top_height) // 2)
@@ -74,22 +72,29 @@ def snapshot(args):
 
     try:
         combined_image.save(args.output)
-        os.remove('profile_view.png')
-        os.remove('top_view.png')
-        os.remove('oblique_view.png')
+        os.remove("profile_view.png")
+        os.remove("top_view.png")
+        os.remove("oblique_view.png")
         print(f"Saved snapshot to {args.output}")
 
     except:
-        os.remove('profile_view.png')
-        os.remove('top_view.png')
-        os.remove('oblique_view.png')
+        os.remove("profile_view.png")
+        os.remove("top_view.png")
+        os.remove("oblique_view.png")
         print("Error: Unable to save snapshot")
 
 
 def parse_general_vasprun(file: str) -> dict:
-    '''Parses the general vasprun.xml file for structure, kpoint info, and energy'''
+    """Parses the general vasprun.xml file for structure, kpoint info, and energy"""
     from pymatgen.io.vasp import Vasprun
-    vasprun = Vasprun(file, parse_potcar_file=False, parse_dos=False, parse_eigen=False, parse_projected_eigen=False)
+
+    vasprun = Vasprun(
+        file,
+        parse_potcar_file=False,
+        parse_dos=False,
+        parse_eigen=False,
+        parse_projected_eigen=False,
+    )
 
     # Get INCAR parameters
     incar = vasprun.incar
@@ -119,43 +124,47 @@ def parse_general_vasprun(file: str) -> dict:
         "initial_structure": initial_structure,
         "final_structure": final_structure,
         "energy": energy,
-        "converged": converged
+        "converged": converged,
     }
 
     return output
 
+
 def note_to_string(file: str) -> str:
-    '''Converts a note file to a string'''
-    with open(file, 'r') as f:
+    """Converts a note file to a string"""
+    with open(file, "r") as f:
         note = f.read()
     return note
 
+
 def unique_serial_number():
-    '''Generates a unique serial number for each simulation'''
+    """Generates a unique serial number for each simulation"""
     return uuid.uuid4()
 
+
 def write_data_pickle(args):
-    '''Stores a snapshot of the simulation in a pickle file. '''
-    
+    """Stores a snapshot of the simulation in a pickle file."""
+
     # Get the data dictionary
     data = parse_general_vasprun(args.input)
 
     if args.note:
         note = note_to_string(args.note)
-        data['note'] = note
+        data["note"] = note
 
     if args.electronic_structure:
         from procar import load_dataframe_from_file
+
         df = load_dataframe_from_file(args.input)
-        data['electronic_structure'] = df
+        data["electronic_structure"] = df
 
     # Generate a unique serial number
     serial_number = unique_serial_number()
-    data['serial_number'] = serial_number
+    data["serial_number"] = serial_number
 
     if args.output:
         # Save the data dictionary
-        with open(args.output, 'wb') as f:
+        with open(args.output, "wb") as f:
             pickle.dump(data, f)
 
     else:
@@ -163,25 +172,25 @@ def write_data_pickle(args):
 
 
 def unpack_pickle(args):
-    '''Unpacks POSCAR, INCAR, CONTCAR, and KPOINTS from a pickle file'''
+    """Unpacks POSCAR, INCAR, CONTCAR, and KPOINTS from a pickle file"""
     from pymatgen.io.vasp import Poscar, Incar, Kpoints
     import pandas as pd
 
     try:
-        with open(args.input, 'rb') as f:
+        with open(args.input, "rb") as f:
             data = pickle.load(f)
     except Exception as e:
         print(f"Error loading pickle file: {e}")
         return
-    
+
     # Unpack the data
-    incar = Incar.from_dict(data['incar'])
+    incar = Incar.from_dict(data["incar"])
     # kpoints = Kpoints.from_dict(data['kpoints'])
-    poscar = Poscar(data['initial_structure'])
-    contcar = Poscar(data['final_structure'])
-    energy = data['energy']
-    converged = data['converged']
-    serial_number = data['serial_number']
+    poscar = Poscar(data["initial_structure"])
+    contcar = Poscar(data["final_structure"])
+    energy = data["energy"]
+    converged = data["converged"]
+    serial_number = data["serial_number"]
 
     # Save the data
     if args.output:
@@ -190,21 +199,18 @@ def unpack_pickle(args):
         poscar.write_file(args.output + "/POSCAR")
         contcar.write_file(args.output + "/CONTCAR")
 
-        with open(f"{args.output}/note.vsh", 'w') as f:
+        with open(f"{args.output}/note.vsh", "w") as f:
             f.write(f"Energy: {energy}\n")
             f.write(f"Converged: {converged}\n")
             f.write(f"Serial Number: {serial_number}\n")
-            if 'note' in data.keys():
+            if "note" in data.keys():
                 f.write(f"Note: {data['note']}\n")
 
-
-        if 'electronic_structure' in data.keys():
-            df = data['electronic_structure']
+        if "electronic_structure" in data.keys():
+            df = data["electronic_structure"]
             pd.to_pickle(df, args.output + "/electronic_structure.pkl")
 
-
     else:
-
         print("INCAR:")
         print(incar)
         # print("KPOINTS:")
@@ -216,15 +222,22 @@ def unpack_pickle(args):
         print(f"Energy: {energy}")
         print(f"Converged: {converged}")
         print(f"Serial Number: {serial_number}")
-        if 'note' in data.keys():
+        if "note" in data.keys():
             print(f"Note: {data['note']}")
 
+
 def reconstitute_vasprun(file: str):
-    '''Unpacks POSCAR, INCAR, CONTCAR, and KPOINTS from a vasprun.xml file'''
+    """Unpacks POSCAR, INCAR, CONTCAR, and KPOINTS from a vasprun.xml file"""
     from pymatgen.io.vasp import Vasprun, Poscar, Incar, Kpoints
 
     # Load the vasprun file
-    vasprun = Vasprun(file, parse_potcar_file=False, parse_dos=False, parse_eigen=False, parse_projected_eigen=False)
+    vasprun = Vasprun(
+        file,
+        parse_potcar_file=False,
+        parse_dos=False,
+        parse_eigen=False,
+        parse_projected_eigen=False,
+    )
 
     poscar = Poscar(vasprun.initial_structure)
     incar = Incar.from_dict(vasprun.incar)
@@ -233,8 +246,9 @@ def reconstitute_vasprun(file: str):
 
     return poscar, incar, kpoints, contcar
 
+
 def unpack_vasprun(args):
-    '''Unpacks POSCAR, INCAR, CONTCAR, and KPOINTS from a vasprun.xml file'''
+    """Unpacks POSCAR, INCAR, CONTCAR, and KPOINTS from a vasprun.xml file"""
     from pymatgen.io.vasp import Poscar, Incar, Kpoints
 
     poscar, incar, kpoints, contcar = reconstitute_vasprun(args.input)
@@ -256,19 +270,14 @@ def unpack_vasprun(args):
 
 
 def run(args):
-
-    functions = { 
+    functions = {
         "snapshot": snapshot,
         "archive": write_data_pickle,
         "unarchive": unpack_pickle,
         "validate": validate_input,
-        "reconstitute": unpack_vasprun
+        "reconstitute": unpack_vasprun,
     }
 
     for arg, func in functions.items():
         if getattr(args, arg):
             func(args)
-
-
-
-
