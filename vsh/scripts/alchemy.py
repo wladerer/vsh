@@ -25,7 +25,7 @@ def calculate_vacuum(atoms: Atoms) -> float:
 
     # get max and min z positions
     zmax = max(z_positions)
-    zmin = min(z_positions)
+    min(z_positions)
 
     # get c vector
     c = atoms.cell[2][2]

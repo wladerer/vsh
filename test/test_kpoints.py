@@ -14,9 +14,9 @@ class TestWriteKpoints(unittest.TestCase):
         )
         expected_kpoints = Kpoints.monkhorst_automatic(kpts=(4, 4, 4))
 
-        with patch("builtins.print") as mock_print, patch(
+        with patch("builtins.print"), patch(
             "pymatgen.io.vasp.inputs.Kpoints.write_file"
-        ) as mock_write_file:
+        ):
             result = write_kpoints(args)
 
             print(expected_kpoints)

@@ -73,7 +73,6 @@ def calculate_rdf(coordinates, bins=1000, r_max=15):
     - bin_centers: centers of the bins.
     - rdf: radial distribution function.
     """
-    n_particles = len(coordinates)
     if r_max is None:
         r_max = np.max(np.linalg.norm(coordinates - coordinates[0], axis=1))
 

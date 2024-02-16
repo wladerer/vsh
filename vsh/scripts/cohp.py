@@ -69,12 +69,12 @@ def check_cohp_path(input_path):
     return file_path
 
 
-def show_cohp_species(input_path):
+def show_cohp_species(input_path) -> None:
     """Prints a list of the species in the ICOHPLIST.lobster file"""
 
     input_path = os.path.abspath(input_path)
     file_path = check_cohp_path(input_path)
-    df = ichop_list_to_dataframe(file_path)
+    print(ichop_list_to_dataframe(file_path))
 
     return None
 
@@ -91,7 +91,6 @@ def icohp_to_pickle(args):
         file_path = check_cohp_path(input_path)
         df = ichop_list_to_dataframe(file_path)
 
-        # save to pickle file
         df.to_pickle(output)
 
     return None
