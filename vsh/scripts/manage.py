@@ -4,7 +4,7 @@ from ase.io import read, write
 from PIL import Image
 import os
 
-from pymatgen.io.vasp import Poscar, Incar, Kpoints
+from pymatgen.io.vasp import Poscar, Incar, Kpoints, Potcar
 
 def validate_input(args):
     """Validates that INCAR, POSCAR, KPOINTS, and POTCAR files are present and formatted correctly"""
@@ -20,13 +20,10 @@ def validate_input(args):
             raise FileNotFoundError(f"File not found: {file}")
 
     # check that each file is formatted correctly
-    incar = Incar.from_file(incar_file)
-    poscar = Poscar.from_file(poscar_file)
-    kpoints = Kpoints.from_file(kpoints_file)
-    potcar = Potcar.from_file(potcar_file)
-
-    # check that incar has valid tags
-    incar.check_params()  # stdout is empty if no errors
+    Incar.from_file(incar_file).check_params()
+    Poscar.from_file(poscar_file)
+    Kpoints.from_file(kpoints_file)
+    Potcar.from_file(potcar_file)
 
     print("Input files validated successfully")
 
