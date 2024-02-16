@@ -4,12 +4,10 @@ from ase.io import read, write
 from PIL import Image
 import os
 
+from pymatgen.io.vasp import Poscar, Incar, Kpoints
 
 def validate_input(args):
     """Validates that INCAR, POSCAR, KPOINTS, and POTCAR files are present and formatted correctly"""
-    from pymatgen.io.vasp import Incar, Poscar, Kpoints, Potcar
-    import os
-
     # check that each file exists
     directory = args.input
     incar_file = os.path.join(directory, "INCAR")
@@ -173,7 +171,6 @@ def write_data_pickle(args):
 
 def unpack_pickle(args):
     """Unpacks POSCAR, INCAR, CONTCAR, and KPOINTS from a pickle file"""
-    from pymatgen.io.vasp import Poscar, Incar, Kpoints
     import pandas as pd
 
     try:
@@ -228,7 +225,7 @@ def unpack_pickle(args):
 
 def reconstitute_vasprun(file: str):
     """Unpacks POSCAR, INCAR, CONTCAR, and KPOINTS from a vasprun.xml file"""
-    from pymatgen.io.vasp import Vasprun, Poscar, Incar, Kpoints
+    from pymatgen.io.vasp import Vasprun
 
     # Load the vasprun file
     vasprun = Vasprun(
@@ -249,7 +246,6 @@ def reconstitute_vasprun(file: str):
 
 def unpack_vasprun(args):
     """Unpacks POSCAR, INCAR, CONTCAR, and KPOINTS from a vasprun.xml file"""
-    from pymatgen.io.vasp import Poscar, Incar, Kpoints
 
     poscar, incar, kpoints, contcar = reconstitute_vasprun(args.input)
 

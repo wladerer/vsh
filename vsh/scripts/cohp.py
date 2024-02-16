@@ -4,7 +4,6 @@ from pymatgen.electronic_structure.plotter import CohpPlotter
 import matplotlib.pyplot as plt
 import pandas as pd
 import networkx as nx
-from mpl_toolkits import axes_grid1
 
 
 plt.style.use("seaborn-v0_8-colorblind")
@@ -154,7 +153,7 @@ def plot_icohp_graph(args):
         edges = G.edges()
         weights = [G[u][v]["ICOHP"] for u, v in edges]
         nx.draw(G, pos, edge_color=weights, width=2, edge_cmap=plt.cm.plasma)
-        pathcollection = nx.draw_networkx_nodes(
+        nx.draw_networkx_nodes(
             G, pos, node_size=600, node_color="black"
         )
         nx.draw_networkx_labels(

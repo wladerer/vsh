@@ -3,7 +3,7 @@
 from ase.calculators.vasp import Vasp
 from ase.spacegroup import get_spacegroup
 from ase import Atoms
-from ase.io import read, write
+from ase.io import read
 from scipy.spatial.distance import cdist
 import numpy as np
 
@@ -18,7 +18,7 @@ def validate_atoms(atoms: Atoms) -> bool:
 
 def is_diatomic(atoms: Atoms) -> bool:
     """Checks if an atoms object is diatomic"""
-    if validate_atoms(atoms) == False:
+    if validate_atoms(atoms) is False:
         raise ValueError("Invalid atoms object")
     if len(atoms) == 2:
         return True
@@ -28,7 +28,7 @@ def is_diatomic(atoms: Atoms) -> bool:
 
 def get_adjacency_matrix(atoms: Atoms) -> np.ndarray:
     """Gets the adjacency matrix of a structure"""
-    if validate_atoms(atoms) == False:
+    if validate_atoms(atoms) is False:
         raise ValueError("Invalid atoms object")
     # get the positions of the atoms object
     positions = atoms.get_positions()
@@ -93,7 +93,7 @@ def conflicting_atoms(atoms: Atoms, min_dist: float) -> dict:
     indices, bond_lengths = analyze_adjacency_matrix(neighbor_list, min_dist)
     element_list: tuple[np.ndarray] = atoms.get_chemical_symbols()
 
-    if indices == None or len(indices) == 0:
+    if indices is None or len(indices) == 0:
         return None
 
     print(indices)
@@ -107,7 +107,7 @@ def conflicting_atoms(atoms: Atoms, min_dist: float) -> dict:
 
 def print_conflicts(conflicts: dict):
     """Prints the conflicting atoms"""
-    if conflicts == None:
+    if conflicts is None:
         print("No conflicting atoms")
     else:
         print("Atom pair Bond length")
@@ -119,7 +119,6 @@ def print_conflicts(conflicts: dict):
 
 def check_convergence(file: str = "./vasprun.xml") -> list[bool]:
     """Looks for vasprun.xml file and checks if converged"""
-    import os
 
     # import Vasprun from pymatgen
     from pymatgen.io.vasp.outputs import Vasprun
@@ -211,7 +210,6 @@ def get_converged(args):
 
 def get_equivalent_positions(pmg_structure):
     """Get the equivalent positions of a structure"""
-    from pymatgen.core.structure import Structure
     from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
     spacegroup = SpacegroupAnalyzer(pmg_structure)

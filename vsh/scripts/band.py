@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from ase.io import read, write
+from ase.io import read
 import pyprocar
 
 orbital_dict = {
@@ -110,7 +110,6 @@ def plot_procar(args):
 
 def filter_procar(args):
     """Filters procar file based on user input"""
-    from pymatgen.io.vasp.outputs import Procar
 
     pyprocar.filter(args.input, args.output, bands=[584, 652])
 

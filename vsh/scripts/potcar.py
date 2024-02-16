@@ -1,4 +1,4 @@
-from ase.io import read, write
+from ase.io import read
 from pymatgen.io.vasp.inputs import Poscar, Potcar
 
 

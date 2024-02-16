@@ -1,7 +1,5 @@
 from vsh.scripts.procar import load_dataframe_from_file, add_kpoint_labels
 from pymatgen.io.vasp import Vasprun
-from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
-from pymatgen.core.structure import Structure
 
 
 # get ions from vasprun
@@ -58,7 +56,6 @@ def plot_compositional_variation(file: str, band: int, labels: list[str] = None)
 
 def get_equivalent_positions(pmg_structure):
     """Get the equivalent positions of a structure"""
-    from pymatgen.core.structure import Structure
     from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
     spacegroup = SpacegroupAnalyzer(pmg_structure)

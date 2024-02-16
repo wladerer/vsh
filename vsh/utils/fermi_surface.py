@@ -3,7 +3,6 @@ import numpy as np
 from pymatgen.io.vasp.outputs import Vasprun
 import pickle
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 
 
 def projected_eigenvalues_from_pickle(file: str) -> pd.DataFrame:

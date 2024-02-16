@@ -1,6 +1,5 @@
 import numpy as np
 from matplotlib import pyplot as plt
-import matplotlib.font_manager as fm
 
 
 def get_plot_stm_from_dat(file: str, gridsize: int = 300) -> plt:

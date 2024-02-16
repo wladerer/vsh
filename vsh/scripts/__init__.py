@@ -1,5 +1,4 @@
 import argparse
-from typing import Union
 
 
 def is_number(s):

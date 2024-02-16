@@ -1,4 +1,4 @@
-from ase.io import read, write
+from ase.io import read
 import numpy as np
 
 two_d_kpath_template = """Two dimensional Kpath 

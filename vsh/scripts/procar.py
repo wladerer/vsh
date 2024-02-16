@@ -335,7 +335,7 @@ def plot_kpoint_orbital_variation(args):
             x=kpoints,
             y=sum_values,
             mode="lines",
-            name=f"Charge Spilling",
+            name="Charge Spilling",
             line=dict(color="grey", dash="dash", width=1),
         )
     )
@@ -458,7 +458,6 @@ def plot_compositional_variation(args):
 
 def analyze_kpoint(args):
     """Summarizes the data for a specific kpoint"""
-    dataframe = load_dataframe_from_file(args.input)
     kpoint = args.kpoint
     band = args.band
 

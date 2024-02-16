@@ -147,7 +147,6 @@ def plot_atomic_drift(initial_file: str, final_file: str, output_file: str = Non
     """Plots the atomic drift between two structures"""
     import sisl
     import sisl.viz
-    import numpy as np
 
     intial_atoms = read(initial_file)
     final_atoms = read(final_file)
