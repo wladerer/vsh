@@ -88,9 +88,10 @@ def boxed_molecule(args):
 def convert_to_poscar(args):
     """Converts a file to a POSCAR file"""
     from pymatgen.io.vasp.inputs import Poscar
+    from pymatgen.io.ase import AseAtomsAdaptor
 
-    structure = read(args.input)
-    poscar = Poscar(structure, sort_structure=args.sort)
+    atoms = read(args.input)
+    poscar = Poscar(AseAtomsAdaptor.get_structure(atoms), sort_structure=args.sort)
 
     if not args.output:
         print(poscar.get_str())
@@ -196,7 +197,7 @@ def calculate_rdf(coordinates, bins=1000, r_max=None):
     - bin_centers: centers of the bins.
     - rdf: radial distribution function.
     """
-    
+
     if r_max is None:
         r_max = np.max(np.linalg.norm(coordinates - coordinates[0], axis=1))
 
