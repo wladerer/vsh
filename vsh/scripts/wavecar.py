@@ -51,7 +51,7 @@ def get_partial_charge_density(
 
 def generate_parchg(args):
     """Generates a PARCHG file from a WAVECAR file."""
-    wave = Wavecar(args.input, args.vasp_type)
+    wave = Wavecar(args.input, vasp_type=args.vasp_type)
     poscar = Poscar.from_file(args.structure)
 
     # sanitize the input
