@@ -585,6 +585,7 @@ def wavecar(subparsers):
     standard_specs.add_argument(
         "--scale", help="Scaling factor for PARCHG mesh density", type=int, default=2
     )
+    standard_specs.add_argument("--vasp-type", help="VASP type", type=str, choices=['std', 'gam', 'ncl'], default=None)
 
     # Argument group for functional choices
     functional_choices = subp_wavecar.add_argument_group("Functional Choices")
