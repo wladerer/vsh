@@ -117,4 +117,8 @@ def filter_procar(args):
 def run(args):
     functions = {"plot": plot_procar, "filter": filter_procar}
 
-    functions[args.function](args)
+    #if filter, run filter function, else plot
+    if args.filter:
+        functions["filter"](args)
+    else:
+        functions["plot"](args)

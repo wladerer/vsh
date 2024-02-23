@@ -101,6 +101,8 @@ def band(subparsers):
         "--dpi", type=int, default=800, help="DPI of the output file"
     )
 
+    subp_band.add_argument("--filter", action="store_true", help="Filter the data")
+
 
 def db(subparsers):
     """Parse command line arguments"""
