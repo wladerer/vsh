@@ -280,6 +280,31 @@ def compare_rdf(args):
     else:
         fig.write_image(args.output)
 
+def get_symmetry_operations(file: str):
+    """Returns the symmetry operations of a POSCAR or CONTCAR file."""
+    from pymatgen.core import Structure
+    from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
+
+    structure = Structure.from_file(file)
+    sga = SpacegroupAnalyzer(structure)
+    symmetry_operations = sga.get_symmetry_operations()
+    symop_strings = [ symop.as_xyz_str() for symop in symmetry_operations]
+
+    return symop_strings
+
+
+def print_symmetry_operations(args):
+    """Prints the symmetry operations of a POSCAR or CONTCAR file."""
+    symops = get_symmetry_operations(args.input)
+
+    if not args.output:
+        for symop in symops:
+            print(f"{symop}")
+    else:
+        with open(args.output, "w") as f:
+            for symop in symops:
+                f.write(f"{symop}\n")
+
 
 def run(args):
     functions = {
@@ -292,6 +317,7 @@ def run(args):
         "box": boxed_molecule,
         "rdf": plot_radial_distribution_function,
         "compare": compare_rdf,
+        "symops": print_symmetry_operations,
     }
 
     for arg, func in functions.items():

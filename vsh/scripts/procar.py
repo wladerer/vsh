@@ -5,6 +5,9 @@ import pickle
 import numpy as np
 import pandas as pd
 
+import plotly.express as px
+import plotly.graph_objects as go
+
 logging.basicConfig(level=logging.DEBUG)
 
 orbital_dict = {
@@ -407,35 +410,35 @@ def get_compositional_variation(file: str, band: int):
     return dataframe
 
 
+
 def plot_compositional_variation(args):
     """Plots the compositional variation of a band"""
 
-    dataframe = get_compositional_variation(args.input, args.band)
-
+    dfs = []
+    for band in args.bands:
+        dataframe = get_compositional_variation(args.input, band)
+        dfs.append(dataframe)
+    dataframe = pd.concat(dfs)
     atom_df = parse_structure_file(args.structure)
     # merge the atom dataframe with the dataframe
     dataframe = pd.merge(dataframe, atom_df, on="Ion")
 
-    # create color mask for Height
-    height_mask = dataframe["Height"].unique()
-    height_mask.sort()
-    height_mask = dict(zip(height_mask, range(len(height_mask))))
+    # Create a colormap for the heights using RdBu colorscale
+    heights = dataframe["Height"].values
+    colorscale = px.colors.diverging.RdBu[::-1]  # Reverse RdBu for ascending height
+    norm_heights = (heights - heights.min()) / (heights.max() - heights.min())
 
-    # plot Percent vs Kpoint for each Ion as a line
-    import plotly.graph_objects as go
-
+    # plot Percent vs Kpoint for each Ion as a line with color based on height
     fig = go.Figure()
-    for ion in dataframe["Ion"].unique():
-        ion_data = dataframe[dataframe["Ion"] == int(ion)]
+    for ion, ion_data in dataframe.groupby("Ion"):
+        color = colorscale[int(round(norm_heights[ion_data.index[0]] * (len(colorscale) - 1)))]
         fig.add_trace(
             go.Scatter(
                 x=ion_data["Kpoint"],
                 y=ion_data["Percent"],
                 mode="lines",
                 name=f"{ion_data['Label'].iloc[0]} {ion_data['Ion'].iloc[0]} ( z = {ion_data['Height'].iloc[0]:.2f} )",
-                line=dict(
-                    color=f'rgb(0,{height_mask[ion_data["Height"].iloc[0]]*30}, 0)'
-                ),
+                line=dict(color=color, width=2)
             )
         )
 

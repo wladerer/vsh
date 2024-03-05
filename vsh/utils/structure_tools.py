@@ -138,8 +138,11 @@ def get_symmetry_operations(file: str):
     structure = Structure.from_file(file)
     sga = SpacegroupAnalyzer(structure)
     symmetry_operations = sga.get_symmetry_operations()
+    symop_strings = [ symop.as_xyz_string() for symop in symmetry_operations]
 
-    return symmetry_operations
+    return symop_strings
+
+
 
 
 def plot_atomic_drift(initial_file: str, final_file: str, output_file: str = None):
@@ -159,3 +162,5 @@ def plot_atomic_drift(initial_file: str, final_file: str, output_file: str = Non
     )
 
     plot.show()
+
+

@@ -189,6 +189,7 @@ def poscar(subparsers):
         type=str,
         help="Compare the radial distribution of multiple structures",
     )
+    subp_poscar.add_argument("--symops", action="store_true", help="Print symmetry operations")
 
     molecule = subp_poscar.add_argument_group("Molecular Tools")
     molecule.add_argument(
@@ -499,6 +500,7 @@ def procar(subparsers):
     subp_procar.add_argument("input", help="Either vasprun.xml or vsh pickle file")
     subp_procar.add_argument("-k", "--kpoint", help="Kpoint of interest")
     subp_procar.add_argument("-b", "--band", help="Band of interest")
+    subp_procar.add_argument("-B", "--bands", help="Band range of interest", nargs="+", type=int)
     subp_procar.add_argument(
         "-i", "--ions", help="Ion(s) of interest", type=int, nargs="+"
     )

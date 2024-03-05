@@ -23,7 +23,6 @@ def plot_linear_slice(
         point1, point2, npoints
     )  # 1d array of values along the slice
     # get fractional coordinates along the slice
-    frac_coords = chgcar.structure.lattice.get_fractional_coords(charge_line[0])
     # get the distance along the slice
     dist = np.linalg.norm(charge_line[0] - charge_line[-1])
     # get the distance between each point along the slice
