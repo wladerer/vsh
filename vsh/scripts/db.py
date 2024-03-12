@@ -1,96 +1,129 @@
 #!/usr/bin/env python3
 
-import os
-
-from ase.db import connect
-from ase.io import read
 from pymatgen.io.vasp.outputs import Vasprun
+import json
+import hashlib
+import time
+import gzip
 
+def parse_vasprun_file(file_path: str, **parse_kwargs) -> dict:
+    """
+    Parse the Vasprun file and return the results as a dictionary.
 
-def check_for_vasprun(file: str) -> bool:
-    """Checks if a vasprun.xml file exists and is valid"""
-    is_file = os.path.isfile(file)
+    Parameters:
+        file_path (str): Path to the Vasprun file.
+        parse_kwargs (dict): Additional keyword arguments for Vasprun parsing.
 
-    if not is_file:
-        raise ValueError(f"{file} not found")
+    Returns:
+        dict: Parsed results as a dictionary.
+    """
+    try:
+        return Vasprun(file_path, **parse_kwargs).as_dict()
+    except Exception as e:
+        print(f"Error parsing Vasprun file: {e}")
+        return {}
 
+def calculate_hashes(data: dict) -> dict:
+    """
+    Calculate MD5 hashes for INCAR, KPOINTS, and POSCAR.
 
-def handle_kpoints(kpoints: list[tuple]) -> str:
-    """Handles kpoints returned by pymatgen"""
-    if len(kpoints) == 1:
-        # this is an automatic generated mesh, just return the value as a string
-        return str(kpoints[0])
-    else:
-        # this is a manual mesh, return the values as a string
-        return str(kpoints)
+    Parameters:
+        data (dict): Dictionary containing INCAR, KPOINTS, and POSCAR data.
 
+    Returns:
+        dict: Dictionary containing MD5 hashes for INCAR, KPOINTS, and POSCAR.
+    """
+    hashes = {}
+    for key, value in data['input'].items():
+        hashes[f"{key}_hash"] = hashlib.md5(json.dumps(value).encode()).hexdigest()
+    return hashes
 
-def get_metadata(file: str) -> dict:
-    """Returns metadata from vasprun.xml file"""
-    # check for vasprun.xml file
-    check_for_vasprun(file)
-    vasprun = Vasprun(
-        file,
-        parse_dos=False,
-        parse_eigen=False,
-        parse_projected_eigen=False,
-        parse_potcar_file=False,
-    )
+def update_dict_with_hashes(data: dict, hashes: dict) -> dict:
+    """
+    Update the dictionary with MD5 hashes.
 
-    spin = vasprun.parameters["ISPIN"]
-    soc = vasprun.parameters["LSORBIT"]
-    xc = vasprun.parameters["GGA"]
-    kpoints = handle_kpoints(vasprun.kpoints.kpts)
-    converged_ionic = vasprun.converged_ionic
-    converged_electronic = vasprun.converged_electronic
+    Parameters:
+        data (dict): Original dictionary.
+        hashes (dict): Dictionary containing MD5 hashes.
 
-    # get the path of the calculation
-    path = os.path.abspath(file)
-    path = os.path.dirname(path)
+    Returns:
+        dict: Updated dictionary.
+    """
+    input_data = data.get('input', {})
 
-    metadata = {
-        "spin": spin,
-        "soc": soc,
-        "xc": xc,
-        "kpoints": kpoints,
-        "ionic": converged_ionic,
-        "electronic": converged_electronic,
-        "path": path,
-    }
+    for key, value in hashes.items():
+        target_key = key.replace('_hash', '')
+        if target_key in input_data and isinstance(input_data[target_key], dict):
+            input_data[target_key]['hash'] = value
 
-    return metadata
+    return data
 
+def update_dict_with_time(data: dict) -> dict:
+    """
+    Update the dictionary with the current time.
 
-def update_ase_db(vasprun_file: str, database: str):
-    """Writes atoms and metadata to a database"""
-    atoms = read(vasprun_file)
-    metadata = get_metadata(vasprun_file)
-    db = connect(database)
-    db.write(
-        atoms,
-        xc=metadata["xc"],
-        spin=metadata["spin"],
-        soc=metadata["soc"],
-        kpoints=metadata["kpoints"],
-        ionic=metadata["ionic"],
-        electronic=metadata["electronic"],
-        path=metadata["path"],
-    )
+    Parameters:
+        data (dict): Original dictionary.
 
-    return None
+    Returns:
+        dict: Updated dictionary.
+    """
+    data['time'] = time.time()
+    return data
 
+def write_to_file(data: dict, file_path: str):
+    """
+    Serialize and compress dictionary data, then write to a file.
 
-def setup_args(subparsers):
-    """Parse command line arguments"""
-    subp_db = subparsers.add_parser(
-        "db", help="Interact with ASE database using extended vsh logic"
-    )
-    subp_db.add_argument(
-        "-i", "--input", default="vasprun.xml", type=str, help="vasprun.xml file"
-    )
-    subp_db.add_argument("database", type=str, help="Database file", required=True)
+    Parameters:
+        data (dict): Dictionary to be written.
+        file_path (str): Output file path.
+    """
+    serialized_data = json.dumps(data, indent=4)
+    compressed_data = gzip.compress(serialized_data.encode('utf-8'))
+    
+    with open(file_path, 'wb') as f:
+        f.write(compressed_data)
+
+def save_vasprun_to_file(args):
+
+    results_dict = parse_vasprun_file(args.input, parse_dos=args.dos, parse_eigen=args.eigen, parse_projected_eigen=args.projected_eigen, parse_potcar_file=args.potcar)
+    
+    if results_dict:
+        hashes = calculate_hashes(results_dict)
+        results_dict = update_dict_with_hashes(results_dict, hashes)
+        results_dict = update_dict_with_time(results_dict)
+        write_to_file(results_dict, args.output)
+
+def summarize_vasprun(args):
+    """Summarizes either vasprun.xml or vasprun.tgz file."""
+
+    #try tgz first
+    try:
+        with gzip.open(args.input, 'rb') as f:
+            results_dict = json.loads(f.read().decode('utf-8'))
+    except OSError:
+        results_dict = parse_vasprun_file(args.input, parse_dos=args.dos, parse_eigen=args.eigen, parse_projected_eigen=args.projected_eigen, parse_potcar_file=args.potcar)
+    except Exception as e:
+        print(f"Error summarizing Vasprun file: {e}")
+    
+    #print time, convergence, and formula
+    print(f"Time: {results_dict['time']}")
+    print(f"Formula: {results_dict['output']['final_structure']['composition']['reduced_formula']}")
+    print(f"Converged: {results_dict['converged']}")
 
 
 def run(args):
-    """Run the db command"""
-    update_ase_db(args.input, args.database)
+
+    functions = {
+        'save': save_vasprun_to_file,
+        'summarize': summarize_vasprun
+    }
+
+    for arg, func in functions.items():
+        if getattr(args, arg):
+            func(args)
+
+
+
+

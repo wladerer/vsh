@@ -106,14 +106,19 @@ def band(subparsers):
 
 def db(subparsers):
     """Parse command line arguments"""
-    subp_db = subparsers.add_parser(
-        "db", help="Interact with ASE database using extended vsh logic"
-    )
-    subp_db.add_argument(
-        "-i", "--input", default="vasprun.xml", type=str, help="vasprun.xml file"
-    )
-    subp_db.add_argument("database", type=str, help="Database file")
+    subp_db = subparsers.add_parser("db", help="Store vasp input and output files in a compressed json file")
+    subp_db.add_argument("input", default="-", help="Path to the Vasprun file.")
+    subp_db.add_argument("-o", "--output", help="Output file path.", default="vasprun.tgz")
+    
+    data_group = subp_db.add_argument_group("Data Options")
+    data_group.add_argument("--dos", action="store_true", help="Parse DOS data.", default=False)
+    data_group.add_argument("--eigen", action="store_true", help="Parse eigenvalues.", default=False)
+    data_group.add_argument("--projected", action="store_true", help="Parse projected eigenvalues.", default=False)
+    data_group.add_argument("--potcar", action="store_true", help="Parse POTCAR file.", default=False)
 
+    #add functional choices
+    subp_db.add_argument("--save", action="store_true", help="Save the parsed data to a file.", default=False)
+    subp_db.add_argument("--summarize", action="store_true", help="Summarize the parsed data.", default=False)
 
 def incar(subparsers):
     subp_incar = subparsers.add_parser("incar", help="Generate and update INCAR files")
