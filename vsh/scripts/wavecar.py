@@ -153,7 +153,7 @@ def print_fermi_energy(args):
     print(f"{wave.efermi}")
 
 
-def get_band_occupancy_info(wavecar: Wavecar):
+def get_band_occupancy_info(wavecar: Wavecar, nbands=19):
     """Gets the band occupancy information from a WAVECAR file."""
     import pandas as pd
 
@@ -181,12 +181,12 @@ def get_band_occupancy_info(wavecar: Wavecar):
     # Remove duplicate bands
     df = df.drop_duplicates()
 
-    return df[df["relative_occupancy"] > 0].tail(19)
+    return df[df["relative_occupancy"] > 0].tail(nbands)
 
 
 def print_band_occupancy_info(args):
     wave = Wavecar(args.input)
-    df = get_band_occupancy_info(wave)
+    df = get_band_occupancy_info(wave, args.nbands)
     # print dataframe without index
 
     print(df.to_string(index=False))

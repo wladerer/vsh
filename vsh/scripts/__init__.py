@@ -637,6 +637,7 @@ def wavecar(subparsers):
     info_choices.add_argument(
         "--occ", help="Print bands near the Fermi level to stdout", action="store_true"
     )
+    info_choices.add_argument("--nbands", help="Number of bands to print for --occ", type=int, default=19)
 
     subp_wavecar.add_argument("input", help="WAVECAR or cube file")
     subp_wavecar.add_argument("-S", "--structure", help="Structure file")
